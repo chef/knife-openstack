@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Seth Chisamore"]
   s.email       = ["schisamo@opscode.com"]
   s.homepage    = "https://github.com/opscode/knife-openstack"
-  s.summary     = %q{OpenStack Support for Chef's Knife Command}
+  s.summary     = %q{OpenStack Compute Support for Chef's Knife Command}
   s.description = s.summary
 
   s.files         = `git ls-files`.split("\n")

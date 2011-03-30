@@ -2,7 +2,7 @@
 
 = DESCRIPTION:
 
-This is the official Opscode Knife plugin for OpenStack. This plugin gives knife the ability to create, bootstrap, and manage OpenStack Compute instances.
+This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap, and manage instances in OpenStack Compute clouds.
 
 = INSTALLATION:
 
