@@ -17,11 +17,17 @@
 #
 
 require 'chef/knife'
-require 'chef/json_compat'
 
 class Chef
   class Knife
     class OpenstackServerDelete < Knife
+
+      deps do
+        require 'fog'
+        require 'net/ssh/multi'
+        require 'readline'
+        require 'chef/json_compat'
+      end
 
       banner "knife openstack server delete SERVER [SERVER] (options)"
 
@@ -47,16 +53,7 @@ class Chef
         :description => "Your OpenStack region",
         :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
 
-      def h
-        @highline ||= HighLine.new
-      end
-
       def run
-        require 'fog'
-        require 'highline'
-        require 'net/ssh/multi'
-        require 'readline'
-
         connection = Fog::Compute.new(
           :provider => 'AWS',
           :aws_access_key_id => Chef::Config[:knife][:openstack_access_key_id],
@@ -84,13 +81,13 @@ class Chef
 
           server.destroy
 
-          Chef::Log.warn("Deleted server #{server.id}")
+          ui.warn("Deleted server #{server.id}")
         end
       end
 
       def msg(label, value)
         if value && !value.empty?
-          puts "#{h.color(label, :cyan)}: #{value}"
+          puts "#{ui.color(label, :cyan)}: #{value}"
         end
       end
 

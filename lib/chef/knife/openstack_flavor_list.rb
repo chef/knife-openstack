@@ -16,14 +16,17 @@
 # limitations under the License.
 #
 
-require 'fog'
 require 'chef/knife'
-require 'chef/json_compat'
 
 class Chef
   class Knife
     class OpenstackFlavorList < Knife
 
+      deps do
+        require 'fog'
+        require 'chef/json_compat'
+      end
+      
       banner "knife openstack flavor list (options)"
 
       option :openstack_access_key_id,
@@ -48,13 +51,7 @@ class Chef
         :description => "Your OpenStack region",
         :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
 
-      def h
-        @highline ||= HighLine.new
-      end
-
       def run
-        require 'fog'
-
         connection = Fog::Compute.new(
           :provider => 'AWS',
           :aws_access_key_id => Chef::Config[:knife][:openstack_access_key_id],
@@ -63,7 +60,14 @@ class Chef
           :region => Chef::Config[:knife][:region] || config[:region]
         )
 
-        flavor_list = [ h.color('ID', :bold), h.color('Name', :bold), h.color('Architecture', :bold), h.color('RAM', :bold), h.color('Disk', :bold) , h.color('Cores', :bold) ]
+        flavor_list = [
+          ui.color('ID', :bold),
+          ui.color('Name', :bold),
+          ui.color('Architecture', :bold),
+          ui.color('RAM', :bold),
+          ui.color('Disk', :bold),
+          ui.color('Cores', :bold)
+        ]
         connection.flavors.sort_by(&:id).each do |flavor|
           flavor_list << flavor.id.to_s
           flavor_list << flavor.name
@@ -72,7 +76,7 @@ class Chef
           flavor_list << "#{flavor.disk.to_s} GB"
           flavor_list << flavor.cores.to_s
         end
-        puts h.list(flavor_list, :columns_across, 6)
+        puts ui.list(flavor_list, :columns_across, 6)
       end
     end
   end

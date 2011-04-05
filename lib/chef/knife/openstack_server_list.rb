@@ -17,11 +17,17 @@
 #
 
 require 'chef/knife'
-require 'chef/json_compat'
 
 class Chef
   class Knife
     class OpenstackServerList < Knife
+
+      deps do
+        require 'fog'
+        require 'net/ssh/multi'
+        require 'readline'
+        require 'chef/json_compat'
+      end
 
       banner "knife openstack server list (options)"
 
@@ -47,15 +53,7 @@ class Chef
         :description => "Your OpenStack region",
         :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
 
-      def h
-        @highline ||= HighLine.new
-      end
-
       def run
-        require 'fog'
-        require 'highline'
-        require 'net/ssh/multi'
-        require 'readline'
 
         $stdout.sync = true
 
@@ -68,13 +66,13 @@ class Chef
         )
 
         server_list = [
-          h.color('Instance ID', :bold),
-          h.color('Public IP', :bold),
-          h.color('Private IP', :bold),
-          h.color('Flavor', :bold),
-          h.color('Image', :bold),
-          h.color('Security Groups', :bold),
-          h.color('State', :bold)
+          ui.color('Instance ID', :bold),
+          ui.color('Public IP', :bold),
+          ui.color('Private IP', :bold),
+          ui.color('Flavor', :bold),
+          ui.color('Image', :bold),
+          ui.color('Security Groups', :bold),
+          ui.color('State', :bold)
         ]
         connection.servers.all.each do |server|
           server_list << server.id.to_s
@@ -85,7 +83,7 @@ class Chef
           server_list << server.groups.join(", ")
           server_list << server.state
         end
-        puts h.list(server_list, :columns_across, 7)
+        puts ui.list(server_list, :columns_across, 7)
 
       end
     end

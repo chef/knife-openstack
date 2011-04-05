@@ -16,15 +16,21 @@
 # limitations under the License.
 #
 
-require 'fog'
-require 'socket'
 require 'chef/knife'
-require 'chef/knife/bootstrap'
-require 'chef/json_compat'
 
 class Chef
   class Knife
     class OpenstackServerCreate < Knife
+
+      deps do
+        require 'chef/knife/bootstrap'
+        Chef::Knife::Bootstrap.load_deps
+        require 'fog'
+        require 'socket'
+        require 'net/ssh/multi'
+        require 'readline'
+        require 'chef/json_compat'
+      end
 
       banner "knife openstack server create (options)"
 
@@ -134,10 +140,6 @@ class Chef
         :boolean => true,
         :default => false
 
-      def h
-        @highline ||= HighLine.new
-      end
-
       def tcp_test_ssh(hostname)
         tcp_socket = TCPSocket.new(hostname, 22)
         readable = IO.select([tcp_socket], nil, nil, 5)
@@ -158,10 +160,6 @@ class Chef
       end
 
       def run
-        require 'fog'
-        require 'highline'
-        require 'net/ssh/multi'
-        require 'readline'
 
         $stdout.sync = true
 
@@ -211,14 +209,14 @@ class Chef
       end
         server = connection.servers.create(server_def)
 
-        puts "#{h.color("Instance ID", :cyan)}: #{server.id}"
-        puts "#{h.color("Flavor", :cyan)}: #{server.flavor_id}"
-        puts "#{h.color("Image", :cyan)}: #{server.image_id}"
-        puts "#{h.color("Availability Zone", :cyan)}: #{server.availability_zone}"
-        puts "#{h.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
-        puts "#{h.color("SSH Key", :cyan)}: #{server.key_name}"
+        puts "#{ui.color("Instance ID", :cyan)}: #{server.id}"
+        puts "#{ui.color("Flavor", :cyan)}: #{server.flavor_id}"
+        puts "#{ui.color("Image", :cyan)}: #{server.image_id}"
+        puts "#{ui.color("Availability Zone", :cyan)}: #{server.availability_zone}"
+        puts "#{ui.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
+        puts "#{ui.color("SSH Key", :cyan)}: #{server.key_name}"
 
-        print "\n#{h.color("Waiting for server", :magenta)}"
+        print "\n#{ui.color("Waiting for server", :magenta)}"
 
         display_name = server.dns_name
 
@@ -227,12 +225,12 @@ class Chef
 
         puts("\n")
 
-        puts "#{h.color("Public DNS Name", :cyan)}: #{server.dns_name}"
-        puts "#{h.color("Public IP Address", :cyan)}: #{server.ip_address}"
-        puts "#{h.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
-        puts "#{h.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
+        puts "#{ui.color("Public DNS Name", :cyan)}: #{server.dns_name}"
+        puts "#{ui.color("Public IP Address", :cyan)}: #{server.ip_address}"
+        puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
+        puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
 
-        print "\n#{h.color("Waiting for sshd", :magenta)}"
+        print "\n#{ui.color("Waiting for sshd", :magenta)}"
 
         print(".") until tcp_test_ssh(display_name) {
           sleep @initial_sleep_delay ||= 10
@@ -242,17 +240,17 @@ class Chef
         bootstrap_for_node(server).run
 
         puts "\n"
-        puts "#{h.color("Instance ID", :cyan)}: #{server.id}"
-        puts "#{h.color("Flavor", :cyan)}: #{server.flavor_id}"
-        puts "#{h.color("Image", :cyan)}: #{server.image_id}"
-        puts "#{h.color("Availability Zone", :cyan)}: #{server.availability_zone}"
-        puts "#{h.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
-        puts "#{h.color("Public DNS Name", :cyan)}: #{server.dns_name}"
-        puts "#{h.color("Public IP Address", :cyan)}: #{server.ip_address}"
-        puts "#{h.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
-        puts "#{h.color("SSH Key", :cyan)}: #{server.key_name}"
-        puts "#{h.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
-        puts "#{h.color("Run List", :cyan)}: #{config[:run_list].join(', ')}"
+        puts "#{ui.color("Instance ID", :cyan)}: #{server.id}"
+        puts "#{ui.color("Flavor", :cyan)}: #{server.flavor_id}"
+        puts "#{ui.color("Image", :cyan)}: #{server.image_id}"
+        puts "#{ui.color("Availability Zone", :cyan)}: #{server.availability_zone}"
+        puts "#{ui.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
+        puts "#{ui.color("Public DNS Name", :cyan)}: #{server.dns_name}"
+        puts "#{ui.color("Public IP Address", :cyan)}: #{server.ip_address}"
+        puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
+        puts "#{ui.color("SSH Key", :cyan)}: #{server.key_name}"
+        puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
+        puts "#{ui.color("Run List", :cyan)}: #{config[:run_list].join(', ')}"
       end
 
       def bootstrap_for_node(server)

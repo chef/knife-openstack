@@ -16,13 +16,16 @@
 # limitations under the License.
 #
 
-require 'fog'
 require 'chef/knife'
-require 'chef/json_compat'
 
 class Chef
   class Knife
     class OpenstackImageList < Knife
+
+      deps do
+        require 'fog'
+        require 'chef/json_compat'
+      end
 
       banner "knife openstack image list (options)"
 
@@ -48,13 +51,7 @@ class Chef
         :description => "Your OpenStack region",
         :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
 
-      def h
-        @highline ||= HighLine.new
-      end
-
       def run
-        require 'fog'
-
         connection = Fog::Compute.new(
           :provider => 'AWS',
           :aws_access_key_id => Chef::Config[:knife][:openstack_access_key_id],
@@ -63,7 +60,14 @@ class Chef
           :region => Chef::Config[:knife][:region] || config[:region]
         )
 
-        image_list = [ h.color('ID', :bold), h.color('Kernel ID', :bold), h.color('Architecture', :bold), h.color('Root Store', :bold), h.color('Name', :bold), h.color('Location', :bold)  ]
+        image_list = [
+          ui.color('ID', :bold),
+          ui.color('Kernel ID', :bold),
+          ui.color('Architecture', :bold),
+          ui.color('Root Store', :bold),
+          ui.color('Name', :bold),
+          ui.color('Location', :bold)
+        ]
         connection.images.sort_by(&:name).each do |image|
           image_list << image.id.to_s
           image_list << image.kernel_id.to_s
@@ -72,7 +76,7 @@ class Chef
           image_list << image.name
           image_list << image.location
         end
-        puts h.list(image_list, :columns_across, 6)
+        puts ui.list(image_list, :columns_across, 6)
       end
     end
   end
