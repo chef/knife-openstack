@@ -19,9 +19,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency "chef", ">= 0.9.14"
   s.add_dependency "fog", "~> 0.6.0"
   s.add_dependency "net-ssh", "~> 2.1.3"
   s.add_dependency "net-ssh-multi", "~> 1.0.1"
-  s.add_dependency "highline", "~> 1.6.1"
 end
