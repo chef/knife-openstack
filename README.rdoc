@@ -28,8 +28,6 @@ In order to communicate with an OpenStack Compute cloud's EC2 API you will have 
 
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables:
 
-The openstack_api_endpoint
-
     knife[:openstack_access_key_id]     = "#{ENV['EC2_ACCESS_KEY']}"
     knife[:openstack_secret_access_key] = "#{ENV['EC2_SECRET_KEY']}"
     knife[:openstack_api_endpoint]      = "#{ENV['EC2_URL']}"
