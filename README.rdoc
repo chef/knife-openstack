@@ -6,25 +6,33 @@ This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plu
 
 = INSTALLATION:
 
+Be sure you are running the beta version of Chef which supports plugins:
+
+    $ gem install chef --version 0.10.0.beta.6
+
 This plugin is distributed as a Ruby Gem. To install it, run:
 
-    gem install knife-openstack
+    $ gem install knife-openstack
 
 Depending on your system's configuration, you may need to run this command with root privileges.
 
 = CONFIGURATION:
 
-In order to communicate with an OpenStack Compute cloud's API you will have to tell Knife about your OpenStack Compute cloud API endpoint, OpenStack Access Key and Secret Access Key.  The easiest way to accomplish this is to create some entries in your <tt>knife.rb</tt> file:
+In order to communicate with an OpenStack Compute cloud's EC2 API you will have to tell Knife about your OpenStack Compute cloud API endpoint, OpenStack Access Key and Secret Access Key.  The easiest way to accomplish this is to create some entries in your <tt>knife.rb</tt> file:
 
+    ### Note: You may need to append the :openstack_access_key_id with ":$PROJECT_NAME", if it differs from your OpenStack Username.
     knife[:openstack_access_key_id]     = "Your OpenStack Access Key ID"
     knife[:openstack_secret_access_key] = "Your OpenStack Secret Access Key"
-    knife[:openstack_api_endpoint]      = "https://cloud.mycompany.com/v1.0"
+    ### Note: If you are not proxying HTTPS to the OpenStack EC2 API port, the scheme should be HTTP, and the PORT is 8773.
+    knife[:openstack_api_endpoint]      = "https://cloud.mycompany.com/service/Cloud"
 
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables:
 
-    knife[:openstack_access_key_id]     = "#{ENV['OPENSTACK_ACCESS_KEY_ID']}"
-    knife[:openstack_secret_access_key] = "#{ENV['OPENSTACK_SECRET_ACCESS_KEY']}"
-    knife[:openstack_api_endpoint]      = "https://cloud.mycompany.com/v1.0"
+The openstack_api_endpoint
+
+    knife[:openstack_access_key_id]     = "#{ENV['EC2_ACCESS_KEY']}"
+    knife[:openstack_secret_access_key] = "#{ENV['EC2_SECRET_KEY']}"
+    knife[:openstack_api_endpoint]      = "#{ENV['EC2_URL']}"
 
 You also have the option of passing your OpenStack API Key/Secret into the individual knife subcommands using the <tt>-A</tt> (or <tt>--openstack-access-key-id</tt>) <tt>-K</tt> (or <tt>--openstack-secret-access-key</tt>) command options
 
