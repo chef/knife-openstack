@@ -76,7 +76,8 @@ class Chef
         ]
         connection.servers.all.each do |server|
           server_list << server.id.to_s
-          server_list << (server.ip_address == nil ? "" : server.public_ip_address)
+          # HACK these should all be server.blah.to_s as nil.to_s == ''
+          server_list << (server.public_ip_address == nil ? "" : server.public_ip_address)
           server_list << (server.private_ip_address == nil ? "" : server.private_ip_address)
           server_list << (server.flavor_id == nil ? "" : server.flavor_id)
           server_list << (server.image_id == nil ? "" : server.image_id)

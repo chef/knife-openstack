@@ -226,7 +226,7 @@ class Chef
         puts("\n")
 
         puts "#{ui.color("Public DNS Name", :cyan)}: #{server.dns_name}"
-        puts "#{ui.color("Public IP Address", :cyan)}: #{server.ip_address}"
+        puts "#{ui.color("Public IP Address", :cyan)}: #{server.public_ip_address}"
         puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
         puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
 
@@ -246,7 +246,7 @@ class Chef
         puts "#{ui.color("Availability Zone", :cyan)}: #{server.availability_zone}"
         puts "#{ui.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
         puts "#{ui.color("Public DNS Name", :cyan)}: #{server.dns_name}"
-        puts "#{ui.color("Public IP Address", :cyan)}: #{server.ip_address}"
+        puts "#{ui.color("Public IP Address", :cyan)}: #{server.public_ip_address}"
         puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
         puts "#{ui.color("SSH Key", :cyan)}: #{server.key_name}"
         puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
