@@ -171,8 +171,6 @@ class Chef
           :region => locate_config_value(:region)
         )
 
-        ami = connection.images.get(locate_config_value(:image))
-
         server_def = {
           :image_id => locate_config_value(:image),
           :groups => config[:security_groups],
@@ -180,33 +178,7 @@ class Chef
           :key_name => Chef::Config[:knife][:openstack_ssh_key_id],
           :availability_zone => Chef::Config[:knife][:availability_zone]
         }
-        server_def[:subnet_id] = config[:subnet_id] if config[:subnet_id]
 
-      if ami.root_device_type == "ebs"
-        ami_map = ami.block_device_mapping.first
-        ebs_size = begin
-                     if config[:ebs_size]
-                       Integer(config[:ebs_size]).to_s
-                     else
-                       ami_map["volumeSize"].to_s
-                     end
-                   rescue ArgumentError
-                     puts "--ebs-size must be an integer"
-                     msg opt_parser
-                     exit 1
-                   end
-        delete_term = if config[:ebs_no_delete_on_term]
-                        "false"
-                      else
-                        ami_map["deleteOnTermination"]
-                      end
-        server_def[:block_device_mapping] =
-          [{
-             'DeviceName' => ami_map["deviceName"],
-             'Ebs.VolumeSize' => ebs_size,
-             'Ebs.DeleteOnTermination' => delete_term
-           }]
-      end
         server = connection.servers.create(server_def)
 
         puts "#{ui.color("Instance ID", :cyan)}: #{server.id}"
