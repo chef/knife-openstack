@@ -68,14 +68,22 @@ class Chef
           ui.color('Name', :bold),
           ui.color('Location', :bold)
         ]
-        connection.images.sort_by(&:name).each do |image|
-          image_list << image.id.to_s
-          image_list << image.kernel_id.to_s
-          image_list << image.architecture.to_s
+
+        connection.images.sort_by do |image|
+          [image.name, image.id].compact
+        end.each do |image|
+          image_list << image.id
+          image_list << image.kernel_id
+          image_list << image.architecture
           image_list << image.root_device_type
           image_list << image.name
           image_list << image.location
         end
+
+        image_list = image_list.map do |item|
+          item.to_s
+        end
+
         puts ui.list(image_list, :columns_across, 6)
       end
     end
