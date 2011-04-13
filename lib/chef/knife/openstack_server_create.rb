@@ -222,6 +222,7 @@ class Chef
         puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
         puts "#{ui.color("SSH Key", :cyan)}: #{server.key_name}"
         puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
+        puts "#{ui.color("Environment", :cyan)}: #{config[:environment]}"
         puts "#{ui.color("Run List", :cyan)}: #{config[:run_list].join(', ')}"
       end
 
