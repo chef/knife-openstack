@@ -6,9 +6,9 @@ This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plu
 
 = INSTALLATION:
 
-Be sure you are running the beta version of Chef which supports plugins:
+Be sure you are running the latest version Chef. Versions earlier than 0.10.0 don't support plugins:
 
-    $ gem install chef --version 0.10.0.beta.6
+    $ gem install chef
 
 This plugin is distributed as a Ruby Gem. To install it, run:
 
