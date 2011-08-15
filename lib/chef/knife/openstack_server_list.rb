@@ -27,8 +27,9 @@ class Chef
       banner "knife openstack server list (options)"
 
       def run
-
         $stdout.sync = true
+
+        validate!
 
         connection = Fog::Compute.new(
           :provider => 'AWS',

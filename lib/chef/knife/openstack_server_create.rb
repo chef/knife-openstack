@@ -148,8 +148,9 @@ class Chef
       end
 
       def run
-
         $stdout.sync = true
+
+        validate!
 
         connection = Fog::Compute.new(
           :provider => 'AWS',
@@ -230,9 +231,18 @@ class Chef
         bootstrap
       end
 
-      def locate_config_value(key)
-        key = key.to_sym
-        Chef::Config[:knife][key] || config[key]
+      def ami
+        @ami ||= connection.images.get(locate_config_value(:image))
+      end
+
+      def validate!
+
+        super([:image, :openstack_ssh_key_id, :openstack_access_key_id, :openstack_secret_access_key, :openstack_api_endpoint])
+
+        if ami.nil?
+          ui.error("You have not provided a valid image (AMI) value.  Please note the short option for this value recently changed from '-i' to '-I'.")
+          exit 1
+        end
       end
 
     end

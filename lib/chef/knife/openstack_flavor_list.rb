@@ -27,6 +27,7 @@ class Chef
       banner "knife openstack flavor list (options)"
 
       def run
+
         validate!
 
         flavor_list = [

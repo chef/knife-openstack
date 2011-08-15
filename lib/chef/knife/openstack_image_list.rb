@@ -27,6 +27,7 @@ class Chef
       banner "knife openstack image list (options)"
 
       def run
+
         validate!
 
         image_list = [
