@@ -24,7 +24,6 @@ class Chef
 
       deps do
         require 'fog'
-        require 'net/ssh/multi'
         require 'readline'
         require 'chef/json_compat'
       end
