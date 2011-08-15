@@ -16,49 +16,18 @@
 # limitations under the License.
 #
 
-require 'chef/knife'
+require 'chef/knife/openstack_base'
 
 class Chef
   class Knife
     class OpenstackImageList < Knife
 
-      deps do
-        require 'fog'
-        require 'chef/json_compat'
-      end
+      include Knife::OpenstackBase
 
       banner "knife openstack image list (options)"
 
-      option :openstack_access_key_id,
-        :short => "-A ID",
-        :long => "--openstack-access-key-id KEY",
-        :description => "Your OpenStack Access Key ID",
-        :proc => Proc.new { |key| Chef::Config[:knife][:openstack_access_key_id] = key }
-
-      option :openstack_secret_access_key,
-        :short => "-K SECRET",
-        :long => "--openstack-secret-access-key SECRET",
-        :description => "Your OpenStack API Secret Access Key",
-        :proc => Proc.new { |key| Chef::Config[:knife][:openstack_secret_access_key] = key }
-
-      option :openstack_api_endpoint,
-        :long => "--openstack-api-endpoint ENDPOINT",
-        :description => "Your OpenStack API endpoint",
-        :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_api_endpoint] = endpoint }
-
-      option :region,
-        :long => "--region REGION",
-        :description => "Your OpenStack region",
-        :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
-
       def run
-        connection = Fog::Compute.new(
-          :provider => 'AWS',
-          :aws_access_key_id => Chef::Config[:knife][:openstack_access_key_id],
-          :aws_secret_access_key => Chef::Config[:knife][:openstack_secret_access_key],
-          :endpoint => Chef::Config[:knife][:openstack_api_endpoint],
-          :region => Chef::Config[:knife][:region] || config[:region]
-        )
+        validate!
 
         image_list = [
           ui.color('ID', :bold),
