@@ -199,8 +199,6 @@ class Chef
 
         print "\n#{ui.color("Waiting for server", :magenta)}"
 
-        display_name = server.dns_name
-
         # wait for it to be ready to do stuff
         server.wait_for { print "."; ready? }
 
@@ -213,7 +211,7 @@ class Chef
 
         print "\n#{ui.color("Waiting for sshd", :magenta)}"
 
-        print(".") until tcp_test_ssh(display_name) {
+        print(".") until tcp_test_ssh(server.dns_name) {
           sleep @initial_sleep_delay ||= 10
           puts("done")
         }
