@@ -170,12 +170,13 @@ class Chef
 
         server = connection.servers.create(server_def)
 
-        puts "#{ui.color("Instance ID", :cyan)}: #{server.id}"
-        puts "#{ui.color("Flavor", :cyan)}: #{server.flavor_id}"
-        puts "#{ui.color("Image", :cyan)}: #{server.image_id}"
-        puts "#{ui.color("Availability Zone", :cyan)}: #{server.availability_zone}"
-        puts "#{ui.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
-        puts "#{ui.color("SSH Key", :cyan)}: #{server.key_name}"
+        msg_pair("Instance ID", server.id)
+        msg_pair("Flavor", server.flavor_id)
+        msg_pair("Image", server.image_id)
+        msg_pair("Region", connection.instance_variable_get(:@region))
+        msg_pair("Availability Zone", server.availability_zone)
+        msg_pair("Security Groups", server.groups.join(", "))
+        msg_pair("SSH Key", server.key_name)
 
         print "\n#{ui.color("Waiting for server", :magenta)}"
 
@@ -184,10 +185,10 @@ class Chef
 
         puts("\n")
 
-        puts "#{ui.color("Public DNS Name", :cyan)}: #{server.dns_name}"
-        puts "#{ui.color("Public IP Address", :cyan)}: #{server.public_ip_address}"
-        puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
-        puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
+        msg_pair("Public DNS Name", server.dns_name)
+        msg_pair("Public IP Address", server.public_ip_address)
+        msg_pair("Private DNS Name", server.private_dns_name)
+        msg_pair("Private IP Address", server.private_ip_address)
 
         print "\n#{ui.color("Waiting for sshd", :magenta)}"
 
@@ -199,18 +200,19 @@ class Chef
         bootstrap_for_node(server).run
 
         puts "\n"
-        puts "#{ui.color("Instance ID", :cyan)}: #{server.id}"
-        puts "#{ui.color("Flavor", :cyan)}: #{server.flavor_id}"
-        puts "#{ui.color("Image", :cyan)}: #{server.image_id}"
-        puts "#{ui.color("Availability Zone", :cyan)}: #{server.availability_zone}"
-        puts "#{ui.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
-        puts "#{ui.color("Public DNS Name", :cyan)}: #{server.dns_name}"
-        puts "#{ui.color("Public IP Address", :cyan)}: #{server.public_ip_address}"
-        puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
-        puts "#{ui.color("SSH Key", :cyan)}: #{server.key_name}"
-        puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
-        puts "#{ui.color("Environment", :cyan)}: #{config[:environment] || '_default'}"
-        puts "#{ui.color("Run List", :cyan)}: #{config[:run_list].join(', ')}"
+        msg_pair("Instance ID", server.id)
+        msg_pair("Flavor", server.flavor_id)
+        msg_pair("Image", server.image_id)
+        msg_pair("Region", connection.instance_variable_get(:@region))
+        msg_pair("Availability Zone", server.availability_zone)
+        msg_pair("Security Groups", server.groups.join(", "))
+        msg_pair("SSH Key", server.key_name)
+        msg_pair("Public DNS Name", server.dns_name)
+        msg_pair("Public IP Address", server.public_ip_address)
+        msg_pair("Private DNS Name", server.private_dns_name)
+        msg_pair("Private IP Address", server.private_ip_address)
+        msg_pair("Environment", config[:environment] || '_default')
+        msg_pair("Run List", config[:run_list].join(', '))
       end
 
       def bootstrap_for_node(server)
