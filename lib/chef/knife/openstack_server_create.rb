@@ -123,6 +123,13 @@ class Chef
         :boolean => true,
         :default => false
 
+      option :environment,
+        :short => "-E ENVIRONMENT",
+        :long => "--environment ENVIRONMENT",
+        :description => "Chef environment for new instances",
+        :default => "_default"
+
+
       def tcp_test_ssh(hostname)
         tcp_socket = TCPSocket.new(hostname, 22)
         readable = IO.select([tcp_socket], nil, nil, 5)
