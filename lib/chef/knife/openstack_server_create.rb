@@ -148,7 +148,7 @@ class Chef
       rescue Errno::ECONNREFUSED
         sleep 2
         false
-      rescue Errno::EHOSTUNREACH
+      rescue Errno::EHOSTUNREACH, Errno::ENETUNREACH
         sleep 2
         false
       rescue Errno::ENETUNREACH
