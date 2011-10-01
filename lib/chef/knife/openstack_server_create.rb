@@ -16,20 +16,20 @@
 # limitations under the License.
 #
 
-require 'chef/knife'
+require 'chef/knife/openstack_base'
 
 class Chef
   class Knife
     class OpenstackServerCreate < Knife
 
+      include Knife::OpenstackBase
+
       deps do
-        require 'chef/knife/bootstrap'
-        Chef::Knife::Bootstrap.load_deps
         require 'fog'
-        require 'socket'
-        require 'net/ssh/multi'
         require 'readline'
         require 'chef/json_compat'
+        require 'chef/knife/bootstrap'
+        Chef::Knife::Bootstrap.load_deps
       end
 
       banner "knife openstack server create (options)"
@@ -88,31 +88,14 @@ class Chef
         :long => "--identity-file IDENTITY_FILE",
         :description => "The SSH identity file used for authentication"
 
-      option :openstack_access_key_id,
-        :short => "-A ID",
-        :long => "--openstack-access-key-id KEY",
-        :description => "Your OpenStack Access Key ID",
-        :proc => Proc.new { |key| Chef::Config[:knife][:openstack_access_key_id] = key }
-
-      option :openstack_secret_access_key,
-        :short => "-K SECRET",
-        :long => "--openstack-secret-access-key SECRET",
-        :description => "Your OpenStack API Secret Access Key",
-        :proc => Proc.new { |key| Chef::Config[:knife][:openstack_secret_access_key] = key }
-
-      option :openstack_api_endpoint,
-        :long => "--openstack-api-endpoint ENDPOINT",
-        :description => "Your OpenStack API endpoint",
-        :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_api_endpoint] = endpoint }
-
       option :prerelease,
         :long => "--prerelease",
         :description => "Install the pre-release chef gems"
 
-      option :region,
-        :long => "--region REGION",
-        :description => "Your OpenStack region",
-        :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
+      option :bootstrap_version,
+        :long => "--bootstrap-version VERSION",
+        :description => "The version of Chef to install",
+        :proc => Proc.new { |v| Chef::Config[:knife][:bootstrap_version] = v }
 
       option :distro,
         :short => "-d DISTRO",
@@ -152,7 +135,12 @@ class Chef
         end
       rescue Errno::ETIMEDOUT
         false
+      rescue Errno::EPERM
+        false
       rescue Errno::ECONNREFUSED
+        sleep 2
+        false
+      rescue Errno::EHOSTUNREACH
         sleep 2
         false
       ensure
@@ -160,8 +148,9 @@ class Chef
       end
 
       def run
-
         $stdout.sync = true
+
+        validate!
 
         connection = Fog::Compute.new(
           :provider => 'AWS',
@@ -171,8 +160,6 @@ class Chef
           :region => locate_config_value(:region)
         )
 
-        ami = connection.images.get(locate_config_value(:image))
-
         server_def = {
           :image_id => locate_config_value(:image),
           :groups => config[:security_groups],
@@ -180,59 +167,32 @@ class Chef
           :key_name => Chef::Config[:knife][:openstack_ssh_key_id],
           :availability_zone => Chef::Config[:knife][:availability_zone]
         }
-        server_def[:subnet_id] = config[:subnet_id] if config[:subnet_id]
 
-      if ami.root_device_type == "ebs"
-        ami_map = ami.block_device_mapping.first
-        ebs_size = begin
-                     if config[:ebs_size]
-                       Integer(config[:ebs_size]).to_s
-                     else
-                       ami_map["volumeSize"].to_s
-                     end
-                   rescue ArgumentError
-                     puts "--ebs-size must be an integer"
-                     msg opt_parser
-                     exit 1
-                   end
-        delete_term = if config[:ebs_no_delete_on_term]
-                        "false"
-                      else
-                        ami_map["deleteOnTermination"]
-                      end
-        server_def[:block_device_mapping] =
-          [{
-             'DeviceName' => ami_map["deviceName"],
-             'Ebs.VolumeSize' => ebs_size,
-             'Ebs.DeleteOnTermination' => delete_term
-           }]
-      end
         server = connection.servers.create(server_def)
 
-        puts "#{ui.color("Instance ID", :cyan)}: #{server.id}"
-        puts "#{ui.color("Flavor", :cyan)}: #{server.flavor_id}"
-        puts "#{ui.color("Image", :cyan)}: #{server.image_id}"
-        puts "#{ui.color("Availability Zone", :cyan)}: #{server.availability_zone}"
-        puts "#{ui.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
-        puts "#{ui.color("SSH Key", :cyan)}: #{server.key_name}"
+        msg_pair("Instance ID", server.id)
+        msg_pair("Flavor", server.flavor_id)
+        msg_pair("Image", server.image_id)
+        msg_pair("Region", connection.instance_variable_get(:@region))
+        msg_pair("Availability Zone", server.availability_zone)
+        msg_pair("Security Groups", server.groups.join(", "))
+        msg_pair("SSH Key", server.key_name)
 
         print "\n#{ui.color("Waiting for server", :magenta)}"
-
-        display_name = server.dns_name
 
         # wait for it to be ready to do stuff
         server.wait_for { print "."; ready? }
 
         puts("\n")
 
-        puts "#{ui.color("Public DNS Name", :cyan)}: #{server.dns_name}"
-        puts "#{ui.color("Public IP Address", :cyan)}: #{server.ip_address}"
-        puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
-        puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
+        msg_pair("Public DNS Name", server.dns_name)
+        msg_pair("Public IP Address", server.public_ip_address)
+        msg_pair("Private DNS Name", server.private_dns_name)
+        msg_pair("Private IP Address", server.private_ip_address)
 
         print "\n#{ui.color("Waiting for sshd", :magenta)}"
 
-        print(".") until tcp_test_ssh(display_name) {
+        print(".") until tcp_test_ssh(server.dns_name) {
           sleep @initial_sleep_delay ||= 10
           puts("done")
         }
@@ -240,17 +200,19 @@ class Chef
         bootstrap_for_node(server).run
 
         puts "\n"
-        puts "#{ui.color("Instance ID", :cyan)}: #{server.id}"
-        puts "#{ui.color("Flavor", :cyan)}: #{server.flavor_id}"
-        puts "#{ui.color("Image", :cyan)}: #{server.image_id}"
-        puts "#{ui.color("Availability Zone", :cyan)}: #{server.availability_zone}"
-        puts "#{ui.color("Security Groups", :cyan)}: #{server.groups.join(", ")}"
-        puts "#{ui.color("Public DNS Name", :cyan)}: #{server.dns_name}"
-        puts "#{ui.color("Public IP Address", :cyan)}: #{server.ip_address}"
-        puts "#{ui.color("Private DNS Name", :cyan)}: #{server.private_dns_name}"
-        puts "#{ui.color("SSH Key", :cyan)}: #{server.key_name}"
-        puts "#{ui.color("Private IP Address", :cyan)}: #{server.private_ip_address}"
-        puts "#{ui.color("Run List", :cyan)}: #{config[:run_list].join(', ')}"
+        msg_pair("Instance ID", server.id)
+        msg_pair("Flavor", server.flavor_id)
+        msg_pair("Image", server.image_id)
+        msg_pair("Region", connection.instance_variable_get(:@region))
+        msg_pair("Availability Zone", server.availability_zone)
+        msg_pair("Security Groups", server.groups.join(", "))
+        msg_pair("SSH Key", server.key_name)
+        msg_pair("Public DNS Name", server.dns_name)
+        msg_pair("Public IP Address", server.public_ip_address)
+        msg_pair("Private DNS Name", server.private_dns_name)
+        msg_pair("Private IP Address", server.private_ip_address)
+        msg_pair("Environment", config[:environment] || '_default')
+        msg_pair("Run List", config[:run_list].join(', '))
       end
 
       def bootstrap_for_node(server)
@@ -261,8 +223,9 @@ class Chef
         bootstrap.config[:identity_file] = config[:identity_file]
         bootstrap.config[:chef_node_name] = config[:chef_node_name] || server.id
         bootstrap.config[:prerelease] = config[:prerelease]
+        bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
         bootstrap.config[:distro] = locate_config_value(:distro)
-        bootstrap.config[:use_sudo] = true
+        bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
         bootstrap.config[:template_file] = locate_config_value(:template_file)
         bootstrap.config[:environment] = config[:environment]
         # may be needed for vpc_mode
@@ -270,9 +233,18 @@ class Chef
         bootstrap
       end
 
-      def locate_config_value(key)
-        key = key.to_sym
-        Chef::Config[:knife][key] || config[key]
+      def ami
+        @ami ||= connection.images.get(locate_config_value(:image))
+      end
+
+      def validate!
+
+        super([:image, :openstack_ssh_key_id, :openstack_access_key_id, :openstack_secret_access_key, :openstack_api_endpoint])
+
+        if ami.nil?
+          ui.error("You have not provided a valid image (AMI) value.  Please note the short option for this value recently changed from '-i' to '-I'.")
+          exit 1
+        end
       end
 
     end

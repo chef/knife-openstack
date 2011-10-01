@@ -16,54 +16,20 @@
 # limitations under the License.
 #
 
-require 'chef/knife'
+require 'chef/knife/openstack_base'
 
 class Chef
   class Knife
     class OpenstackServerList < Knife
 
-      deps do
-        require 'fog'
-        require 'net/ssh/multi'
-        require 'readline'
-        require 'chef/json_compat'
-      end
+      include Knife::OpenstackBase
 
       banner "knife openstack server list (options)"
 
-      option :openstack_access_key_id,
-        :short => "-A ID",
-        :long => "--openstack-access-key-id KEY",
-        :description => "Your OpenStack Access Key ID",
-        :proc => Proc.new { |key| Chef::Config[:knife][:openstack_access_key_id] = key }
-
-      option :openstack_secret_access_key,
-        :short => "-K SECRET",
-        :long => "--openstack-secret-access-key SECRET",
-        :description => "Your OpenStack API Secret Access Key",
-        :proc => Proc.new { |key| Chef::Config[:knife][:openstack_secret_access_key] = key }
-
-      option :openstack_api_endpoint,
-        :long => "--openstack-api-endpoint ENDPOINT",
-        :description => "Your OpenStack API endpoint",
-        :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_api_endpoint] = endpoint }
-
-      option :region,
-        :long => "--region REGION",
-        :description => "Your OpenStack region",
-        :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
-
       def run
-
         $stdout.sync = true
 
-        connection = Fog::Compute.new(
-          :provider => 'AWS',
-          :aws_access_key_id => Chef::Config[:knife][:openstack_access_key_id],
-          :aws_secret_access_key => Chef::Config[:knife][:openstack_secret_access_key],
-          :endpoint => Chef::Config[:knife][:openstack_api_endpoint],
-          :region => Chef::Config[:knife][:region] || config[:region]
-        )
+        validate!
 
         server_list = [
           ui.color('Instance ID', :bold),
@@ -71,19 +37,31 @@ class Chef
           ui.color('Private IP', :bold),
           ui.color('Flavor', :bold),
           ui.color('Image', :bold),
+          ui.color('SSH Key', :bold),
           ui.color('Security Groups', :bold),
           ui.color('State', :bold)
         ]
         connection.servers.all.each do |server|
           server_list << server.id.to_s
-          server_list << (server.ip_address == nil ? "" : server.public_ip_address)
-          server_list << (server.private_ip_address == nil ? "" : server.private_ip_address)
-          server_list << (server.flavor_id == nil ? "" : server.flavor_id)
-          server_list << (server.image_id == nil ? "" : server.image_id)
+          server_list << server.public_ip_address.to_s
+          server_list << server.private_ip_address.to_s
+          server_list << server.flavor_id.to_s
+          server_list << server.image_id.to_s
+          server_list << server.key_name.to_s
           server_list << server.groups.join(", ")
-          server_list << server.state
+          server_list << begin
+            state = server.state.to_s.downcase
+            case state
+            when 'shutting-down','terminated','stopping','stopped'
+              ui.color(state, :red)
+            when 'pending'
+              ui.color(state, :yellow)
+            else
+              ui.color(state, :green)
+            end
+          end
         end
-        puts ui.list(server_list, :columns_across, 7)
+        puts ui.list(server_list, :columns_across, 8)
 
       end
     end
