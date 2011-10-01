@@ -123,6 +123,11 @@ class Chef
         :boolean => true,
         :default => false
 
+      option :user_data,
+        :short => "-f FILE",
+        :long => "--user-data-file FILE",
+        :description => "User data for instances as a filename"
+
       def tcp_test_ssh(hostname)
         tcp_socket = TCPSocket.new(hostname, 22)
         readable = IO.select([tcp_socket], nil, nil, 5)
@@ -165,7 +170,8 @@ class Chef
           :groups => config[:security_groups],
           :flavor_id => locate_config_value(:flavor),
           :key_name => Chef::Config[:knife][:openstack_ssh_key_id],
-          :availability_zone => Chef::Config[:knife][:availability_zone]
+          :availability_zone => Chef::Config[:knife][:availability_zone],
+          :user_data => File.read(config[:user_data])
         }
 
         server = connection.servers.create(server_def)

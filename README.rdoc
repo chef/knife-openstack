@@ -39,13 +39,23 @@ You also have the option of passing your OpenStack API Key/Secret into the indiv
 
 Additionally the following options may be set in your `knife.rb`:
 
+* region
 * flavor
 * image
+* security_groups
 * availability_zone
-* openstack_ssh_key_id
-* region
+* chef_node_name
+* ssh_key_name
+* ssh_user
+* ssh_password,
+* identity_file
+* prerelease
+* bootstrap_version
 * distro
 * template_file
+* run_list
+* no_host_key_verify
+* user_data
 
 = SUBCOMMANDS:
 
