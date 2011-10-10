@@ -55,7 +55,7 @@ class Chef
             :long => "--region REGION",
             :description => "Your OpenStack region",
             :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
-          
+
         end
       end
 
@@ -88,7 +88,7 @@ class Chef
         keys.each do |k|
           pretty_key = k.to_s.gsub(/_/, ' ').gsub(/\w+/){ |w| (w =~ /(ssh)|(aws)/i) ? w.upcase  : w.capitalize }
           if Chef::Config[:knife][k].nil?
-            errors << "You did not provided a valid '#{pretty_key}' value."
+            errors << "You did not provide a valid '#{pretty_key}' value."
           end
         end
 
