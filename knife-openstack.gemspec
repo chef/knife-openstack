@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = Knife::OpenStack::VERSION
   s.platform    = Gem::Platform::RUBY
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README.rdoc", "LICENSE" ]
-  s.authors     = ["Seth Chisamore"]
-  s.email       = ["schisamo@opscode.com"]
+  s.extra_rdoc_files = ["README.md", "LICENSE" ]
+  s.authors     = ["Seth Chisamore", "Matt Ray"]
+  s.email       = ["schisamo@opscode.com", "matt@opscode.com"]
   s.homepage    = "https://github.com/opscode/knife-openstack"
   s.summary     = %q{OpenStack Compute Support for Chef's Knife Command}
   s.description = s.summary
@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency "fog", "~> 0.7.2"
+  s.add_dependency "fog", "~> 1.1"
 end
