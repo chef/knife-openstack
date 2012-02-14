@@ -32,23 +32,23 @@ class Chef
         validate!
 
         server_list = [
+          ui.color('Name', :bold),
           ui.color('Instance ID', :bold),
           ui.color('Public IP', :bold),
           ui.color('Private IP', :bold),
           ui.color('Flavor', :bold),
           ui.color('Image', :bold),
           ui.color('SSH Key', :bold),
-          ui.color('Security Groups', :bold),
           ui.color('State', :bold)
         ]
         connection.servers.all.each do |server|
+          server_list << server.name
           server_list << server.id.to_s
-          server_list << server.public_ip_address.to_s
-          server_list << server.private_ip_address.to_s
-          server_list << server.flavor_id.to_s
-          server_list << server.image_id.to_s
-          server_list << server.key_name.to_s
-          server_list << server.groups.join(", ")
+          server_list << server.public_ip_address['addr'].to_s
+          server_list << server.private_ip_address['addr'].to_s
+          server_list << server.flavor['id'].to_s
+          server_list << server.image['id'].to_s
+          server_list << server.public_key.to_s
           server_list << begin
             state = server.state.to_s.downcase
             case state
