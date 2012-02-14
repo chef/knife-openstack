@@ -1,6 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Author:: Matt Ray (<matt@opscode.com>)
+# Copyright:: Copyright (c) 2011-2012 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,39 +35,32 @@ class Chef
             require 'chef/json_compat'
           end
 
-          option :openstack_access_key_id,
-            :short => "-A ID",
-            :long => "--openstack-access-key-id KEY",
-            :description => "Your OpenStack Access Key ID",
-            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_access_key_id] = key }
+          option :openstack_username,
+            :short => "-A USERNAME",
+            :long => "--openstack-username KEY",
+            :description => "Your OpenStack Username",
+            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_username] = key }
 
-          option :openstack_secret_access_key,
+          option :openstack_password,
             :short => "-K SECRET",
-            :long => "--openstack-secret-access-key SECRET",
-            :description => "Your OpenStack API Secret Access Key",
-            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_secret_access_key] = key }
+            :long => "--openstack-password SECRET",
+            :description => "Your OpenStack Password",
+            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_password] = key }
 
-          option :openstack_api_endpoint,
+          option :openstack_auth_url,
             :long => "--openstack-api-endpoint ENDPOINT",
             :description => "Your OpenStack API endpoint",
-            :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_api_endpoint] = endpoint }
-
-          option :region,
-            :long => "--region REGION",
-            :description => "Your OpenStack region",
-            :proc => Proc.new { |region| Chef::Config[:knife][:region] = region }
-          
+            :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_auth_url] = endpoint }
         end
       end
 
       def connection
         @connection ||= begin
           connection = Fog::Compute.new(
-            :provider => 'AWS',
-            :aws_access_key_id => Chef::Config[:knife][:openstack_access_key_id],
-            :aws_secret_access_key => Chef::Config[:knife][:openstack_secret_access_key],
-            :endpoint => Chef::Config[:knife][:openstack_api_endpoint],
-            :region => Chef::Config[:knife][:region] || config[:region]
+            :provider => 'OpenStack',
+            :openstack_username => Chef::Config[:knife][:openstack_username],
+            :openstack_api_key => Chef::Config[:knife][:openstack_password],
+            :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url]
           )
         end
       end
@@ -82,7 +76,7 @@ class Chef
         end
       end
 
-      def validate!(keys=[:openstack_access_key_id, :openstack_secret_access_key, :openstack_api_endpoint])
+      def validate!(keys=[:openstack_username, :openstack_password, :openstack_auth_url])
         errors = []
 
         keys.each do |k|
