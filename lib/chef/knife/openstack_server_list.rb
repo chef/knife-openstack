@@ -1,6 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Author:: Matt Ray (<matt@opscode.com>)
+# Copyright:: Copyright (c) 2011-2012 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,8 +33,8 @@ class Chef
         validate!
 
         server_list = [
-          ui.color('Name', :bold),
           ui.color('Instance ID', :bold),
+          ui.color('Name', :bold),
           ui.color('Public IP', :bold),
           ui.color('Private IP', :bold),
           ui.color('Flavor', :bold),
@@ -41,25 +42,25 @@ class Chef
           ui.color('SSH Key', :bold),
           ui.color('State', :bold)
         ]
-        connection.servers.all.each do |server|
-          server_list << server.name
+        connection.servers.all.sort_by(&:id).each do |server|
           server_list << server.id.to_s
+          server_list << server.name
           server_list << server.public_ip_address['addr'].to_s
           server_list << server.private_ip_address['addr'].to_s
           server_list << server.flavor['id'].to_s
           server_list << server.image['id'].to_s
           server_list << server.public_key.to_s
           server_list << begin
-            state = server.state.to_s.downcase
-            case state
-            when 'shutting-down','terminated','stopping','stopped'
-              ui.color(state, :red)
-            when 'pending'
-              ui.color(state, :yellow)
-            else
-              ui.color(state, :green)
-            end
-          end
+                           state = server.state.to_s.downcase
+                           case state
+                           when 'shutting-down','terminated','stopping','stopped'
+                             ui.color(state, :red)
+                           when 'pending'
+                             ui.color(state, :yellow)
+                           else
+                             ui.color(state, :green)
+                           end
+                         end
         end
         puts ui.list(server_list, :columns_across, 8)
 
