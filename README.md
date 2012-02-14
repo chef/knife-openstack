@@ -1,7 +1,7 @@
 Knife OpenStack
 ===============
 
-This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap, and manage instances in OpenStack Compute clouds.
+This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap, and manage instances in OpenStack Compute clouds. It has been tested against the `diablo-stable` branch in configurations using Keystone.
 
 # Installation #
 
@@ -9,27 +9,32 @@ Be sure you are running the latest version Chef. Versions earlier than 0.10.0 do
 
     $ gem install chef
 
-This plugin is distributed as a Ruby Gem. To install it, run:
+This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.1.2 from here: https://github.com/mattray/fog and
 
-    $ gem install knife-openstack
+    $ gem build fog.gemspec
+    $ gem install fog-1.1.2.gem
+
+This plugin is distributed as a Ruby Gem, but is not available on Rubygems.org because of the missing Fog dependencies. To install it, run:
+
+    $ gem build knife-openstack.gemspec
+    $ gem install knife-openstack-0.6.0.gem
 
 Depending on your system's configuration, you may need to run this command with root privileges.
 
 # Configuration #
 
-In order to communicate with an OpenStack Compute cloud's EC2 API you will have to tell Knife about your OpenStack Compute cloud API endpoint, OpenStack Access Key and Secret Access Key. The easiest way to accomplish this is to create some entries in your `knife.rb` file:
+In order to communicate with an OpenStack Compute cloud's OpenStack API you will need to tell Knife your OpenStack Compute cloud API endpoint, your Dashboard username and password. The easiest way to accomplish this is to create some entries in your `knife.rb` file:
 
-    ### Note: You may need to append the :openstack_access_key_id with ":$PROJECT_NAME", if it differs from your OpenStack Username.
-    knife[:openstack_access_key_id]     = "Your OpenStack Access Key ID"
-    knife[:openstack_secret_access_key] = "Your OpenStack Secret Access Key"
-    ### Note: If you are not proxying HTTPS to the OpenStack EC2 API port, the scheme should be HTTP, and the PORT is 8773.
-    knife[:openstack_api_endpoint]      = "https://cloud.mycompany.com/service/Cloud"
+    knife[:openstack_username] = "Your OpenStack Dashboard username"
+    knife[:openstack_password] = "Your OpenStack Dashboard password"
+    ### Note: If you are not proxying HTTPS to the OpenStack auth port, the scheme should be HTTP
+    knife[:openstack_auth_url] = "http://cloud.mycompany.com:5000/v2.0/tokens"
 
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables:
 
-    knife[:openstack_access_key_id]     = "#{ENV['EC2_ACCESS_KEY']}"
-    knife[:openstack_secret_access_key] = "#{ENV['EC2_SECRET_KEY']}"
-    knife[:openstack_api_endpoint]      = "#{ENV['EC2_URL']}"
+    knife[:openstack_username] = "#{ENV['OS_USERNAME']}"
+    knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
+    knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}"
 
 You also have the option of passing your OpenStack API Key/Secret into the individual knife subcommands using the `-A` (or `--openstack-access-key-id`) `-K` (or `--openstack-secret-access-key`) command options
 
