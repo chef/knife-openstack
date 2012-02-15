@@ -1,7 +1,7 @@
 Knife OpenStack
 ===============
 
-This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap, and manage instances in OpenStack Compute clouds. It has been tested against the `diablo-stable` branch in configurations using Keystone.
+This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `diablo-stable` branch in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
 # Installation #
 
@@ -9,8 +9,10 @@ Be sure you are running the latest version Chef. Versions earlier than 0.10.0 do
 
     $ gem install chef
 
-This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.1.2 from here: https://github.com/mattray/fog and
+This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.1.2 from here: https://github.com/mattray/fog To install it, run:
 
+    $ git clone git@github.com:mattray/fog.git
+    $ cd fog
     $ gem build fog.gemspec
     $ gem install fog-1.1.2.gem
 
@@ -23,7 +25,7 @@ Depending on your system's configuration, you may need to run this command with 
 
 # Configuration #
 
-In order to communicate with an OpenStack Compute cloud's OpenStack API you will need to tell Knife your OpenStack Compute cloud API endpoint, your Dashboard username and password. The easiest way to accomplish this is to create some entries in your `knife.rb` file:
+In order to communicate with an OpenStack Compute cloud's OpenStack API you will need to tell Knife your OpenStack Compute API endpoint, your Dashboard username and password. The easiest way to accomplish this is to create these entries in your `knife.rb` file:
 
     knife[:openstack_username] = "Your OpenStack Dashboard username"
     knife[:openstack_password] = "Your OpenStack Dashboard password"
@@ -45,10 +47,7 @@ Additionally the following options may be set in your `knife.rb`:
 
 * flavor
 * image
-* availability_zone
 * openstack_ssh_key_id
-* region
-* distro
 * template_file
 
 # Subcommands #
@@ -73,7 +72,7 @@ Outputs a list of all servers in the currently configured OpenStack Compute clou
 knife openstack flavor list
 ---------------------------
 
-Outputs a list of all available flavors (available hardware configuration for a server) available to the currently configured OpenStack Compute cloud account. Each flavor has a unique combination of disk space, memory capacity and priority for CPU time. This data can be useful when choosing a flavor id to pass to the `knife openstack server create` subcommand.
+Outputs a list of all available flavors (available hardware configuration for a server) available to the currently configured OpenStack Compute cloud account. Each flavor has a unique combination of disk space and memory capacity. This data can be useful when choosing a flavor id to pass to the `knife openstack server create` subcommand.
 
 knife openstack image list
 --------------------------
