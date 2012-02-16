@@ -39,6 +39,7 @@ class Chef
           ui.color('Private IP', :bold),
           ui.color('Flavor', :bold),
           ui.color('Image', :bold),
+          ui.color('Keypair', :bold),
           ui.color('State', :bold)
         ]
         connection.servers.all.sort_by(&:id).each do |server|
@@ -48,6 +49,7 @@ class Chef
           server_list << server.private_ip_address['addr'].to_s
           server_list << server.flavor['id'].to_s
           server_list << server.image['id'].to_s
+          server_list << server.key_name
           server_list << begin
                            state = server.state.to_s.downcase
                            case state
@@ -60,7 +62,7 @@ class Chef
                            end
                          end
         end
-        puts ui.list(server_list, :columns_across, 7)
+        puts ui.list(server_list, :columns_across, 8)
 
       end
     end
