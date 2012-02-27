@@ -11,13 +11,15 @@ Be sure you are running the latest version Chef. Versions earlier than 0.10.0 do
 
 This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.1.2 from here: https://github.com/mattray/fog To install it, run:
 
-    $ git clone git@github.com:mattray/fog.git
+    $ git clone -b knife-openstack git@github.com:mattray/fog.git
     $ cd fog
     $ gem build fog.gemspec
     $ gem install fog-1.1.2.gem
 
 This plugin is distributed as a Ruby Gem, but is not available on Rubygems.org because of the missing Fog dependencies. To install it, run:
 
+    $ git clone -b 0.6.0 git@github.com:mattray/knife-openstack.git
+    $ cd knife-openstack
     $ gem build knife-openstack.gemspec
     $ gem install knife-openstack-0.6.0.gem
 
@@ -72,7 +74,7 @@ Outputs a list of all servers in the currently configured OpenStack Compute clou
 knife openstack flavor list
 ---------------------------
 
-Outputs a list of all available flavors (available hardware configuration for a server) available to the currently configured OpenStack Compute cloud account. Each flavor has a unique combination of disk space and memory capacity. This data can be useful when choosing a flavor id to pass to the `knife openstack server create` subcommand.
+Outputs a list of all available flavors (available hardware configuration for a server) available to the currently configured OpenStack Compute cloud account. Each flavor has a unique combination of virtual cpus, disk space and memory capacity. This data can be useful when choosing a flavor id to pass to the `knife openstack server create` subcommand.
 
 knife openstack image list
 --------------------------
