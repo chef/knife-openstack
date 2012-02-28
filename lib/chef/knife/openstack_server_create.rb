@@ -183,12 +183,12 @@ class Chef
 
       puts("\n")
 
-      msg_pair("Public IP Address", server.public_ip_address)
-      msg_pair("Private IP Address", server.private_ip_address)
+      msg_pair("Public IP Address", server.public_ip_address['addr'])
+      msg_pair("Private IP Address", server.private_ip_address['addr'])
 
       print "\n#{ui.color("Waiting for sshd", :magenta)}"
 
-      print(".") until tcp_test_ssh(server.dns_name) {
+      print(".") until tcp_test_ssh(server.public_ip_address['addr']) {
         sleep @initial_sleep_delay ||= 10
         puts("done")
       }
@@ -210,7 +210,7 @@ class Chef
 
     def bootstrap_for_node(server)
       bootstrap = Chef::Knife::Bootstrap.new
-      bootstrap.name_args = [server.dns_name]
+      bootstrap.name_args = [server.public_ip_address['addr']]
       bootstrap.config[:run_list] = config[:run_list]
       bootstrap.config[:ssh_user] = config[:ssh_user]
       bootstrap.config[:identity_file] = config[:identity_file]
