@@ -11,14 +11,16 @@ Be sure you are running the latest version Chef. Versions earlier than 0.10.0 do
 
 This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.1.2 from here: https://github.com/mattray/fog To install it, run:
 
-    $ git clone -b knife-openstack git@github.com:mattray/fog.git
+    $ cd /tmp
+    $ git clone -b knife-openstack git://github.com/mattray/fog.git
     $ cd fog
     $ gem build fog.gemspec
     $ gem install fog-1.1.2.gem
 
 This plugin is distributed as a Ruby Gem, but is not available on Rubygems.org because of the missing Fog dependencies. To install it, run:
 
-    $ git clone -b 0.6.0 git@github.com:mattray/knife-openstack.git
+    $ cd /tmp
+    $ git clone -b 0.6.0 git://github.com/mattray/knife-openstack.git
     $ cd knife-openstack
     $ gem build knife-openstack.gemspec
     $ gem install knife-openstack-0.6.0.gem
@@ -40,10 +42,10 @@ If your knife.rb file will be checked into a SCM system (ie readable by others) 
     knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
     knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}"
 
-You also have the option of passing your OpenStack API Key/Secret into the individual knife subcommands using the `-A` (or `--openstack-access-key-id`) `-K` (or `--openstack-secret-access-key`) command options
+You also have the option of passing your OpenStack API Username/Password into the individual knife subcommands using the `-A` (or `--openstack-username`) `-K` (or `--openstack-password`) command options
 
-    # provision a new m1.small Ubuntu 10.04 webserver
-    knife openstack server create 'role[webserver]' -I ami-7000f019 -f m1.small -A 'Your OpenStack Access Key ID' -K 'Your OpenStack Secret Access Key' --openstack-api-endpoint 'https://cloud.mycompany.com/v1.0'
+    # provision a new image named kb01
+    knife openstack server create -A 'MyUsername' -K 'MyPassword' --openstack-api-endpoint 'http://cloud.mycompany.com:5000/v2.0/tokens' --node-name kb01 -f 1 -I 13 -S trystack -i ~/.ssh/trystack.pem -r 'role[webserver]'
 
 Additionally the following options may be set in your `knife.rb`:
 
@@ -80,6 +82,23 @@ knife openstack image list
 --------------------------
 
 Outputs a list of all available images available to the currently configured OpenStack Compute cloud account. An image is a collection of files used to create or rebuild a server. This data can be useful when choosing an image id to pass to the `knife openstack server create` subcommand.
+
+# TODO #
+
+This is a list of features currently lacking and (eventually) under development:
+
+* need an ohai plugin to populate `cloud` and `openstack` attributes
+* default flavor of '1'
+* fix support for not using `-S`, by listing it in the knife.rb instead
+* automate naming of nodes if `--node-name` is not passed
+* take either the flavor ID or the flavor name
+* take either the image ID or the image name
+* add `-G` support for security groups other than 'default'
+* add support for floating IPs
+* more information in `knife openstack image list`
+* get DNS names working
+* availability zones
+* test with Essex
 
 # License #
 
