@@ -55,7 +55,7 @@ class Chef
           item.to_s
         end
 
-        puts ui.list(image_list, :columns_across, 2)
+        puts ui.list(image_list, :uneven_columns_across, 2)
       end
     end
   end
