@@ -37,12 +37,14 @@ In order to communicate with an OpenStack Compute cloud's OpenStack API you will
     knife[:openstack_password] = "Your OpenStack Dashboard password"
     ### Note: If you are not proxying HTTPS to the OpenStack auth port, the scheme should be HTTP
     knife[:openstack_auth_url] = "http://cloud.mycompany.com:5000/v2.0/tokens"
+    knife[:openstack_tenant] = "Your OpenStack tenant name"
 
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables:
 
     knife[:openstack_username] = "#{ENV['OS_USERNAME']}"
     knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
     knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}"
+    knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
 
 You also have the option of passing your OpenStack API Username/Password into the individual knife subcommands using the `-A` (or `--openstack-username`) `-K` (or `--openstack-password`) command options
 
