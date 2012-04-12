@@ -20,6 +20,5 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "fog", "~> 1.1.2"
-  s.add_dependency "highline", ">= 1.6.9"
   s.add_dependency "chef", "~> 0.10"
 end
