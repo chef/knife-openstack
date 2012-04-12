@@ -172,8 +172,6 @@ class Chef
 
       msg_pair("Instance ID", server.id)
       msg_pair("Instance Name", server.name)
-      msg_pair("Flavor", server.flavor['id'])
-      msg_pair("Image", server.image['id'])
       #msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
 
@@ -184,6 +182,8 @@ class Chef
 
       puts("\n")
 
+      msg_pair("Flavor", server.flavor['id'])
+      msg_pair("Image", server.image['id'])
       msg_pair("Public IP Address", server.public_ip_address['addr'])
       msg_pair("Private IP Address", server.private_ip_address['addr'])
 
