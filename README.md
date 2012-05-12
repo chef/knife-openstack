@@ -14,10 +14,10 @@ Be sure you are running the latest version Chef. Versions earlier than 0.10.0 do
 This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.1.2 from here: https://github.com/mattray/fog To install it, run:
 
     $ cd /tmp
-    $ git clone -b knife-openstack git://github.com/mattray/fog.git
+    $ git clone https://github.com/fog/fog.git
     $ cd fog
     $ gem build fog.gemspec
-    $ gem install fog-1.1.2.gem
+    $ gem install fog-1.3.1.gem
 
 This plugin is distributed as a Ruby Gem, but is not available on Rubygems.org because of the missing Fog dependencies. To install it, run:
 
