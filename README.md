@@ -3,6 +3,8 @@ Knife OpenStack
 
 This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `diablo-stable` branch in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
+Please refer to the CHANGELOG.md for version history.
+
 # Installation #
 
 Be sure you are running the latest version Chef. Versions earlier than 0.10.0 don't support plugins:
