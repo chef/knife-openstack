@@ -47,6 +47,12 @@ class Chef
             :description => "Your OpenStack Password",
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_password] = key }
 
+          option :openstack_tenant,
+            :short => "-T ID",
+            :long => "--openstack-tenant ID",
+            :description => "Your OpenStack Tenant ID",
+            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_tenant] = key }
+
           option :openstack_auth_url,
             :long => "--openstack-api-endpoint ENDPOINT",
             :description => "Your OpenStack API endpoint",
@@ -60,7 +66,8 @@ class Chef
             :provider => 'OpenStack',
             :openstack_username => Chef::Config[:knife][:openstack_username],
             :openstack_api_key => Chef::Config[:knife][:openstack_password],
-            :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url]
+            :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
+            :openstack_tenant => Chef::Config[:knife][:openstack_tenant]
           )
         end
       end
@@ -76,7 +83,7 @@ class Chef
         end
       end
 
-      def validate!(keys=[:openstack_username, :openstack_password, :openstack_auth_url])
+      def validate!(keys=[:openstack_username, :openstack_password, :openstack_auth_url, :openstack_tenant])
         errors = []
 
         keys.each do |k|
