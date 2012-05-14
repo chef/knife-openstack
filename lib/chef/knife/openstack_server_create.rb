@@ -233,7 +233,7 @@ class Chef
 
     def validate!
 
-      super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url])
+      super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url, :openstack_tenant])
 
       if ami.nil?
         ui.error("You have not provided a valid image ID. Please note the short option for this value recently changed from '-i' to '-I'.")
