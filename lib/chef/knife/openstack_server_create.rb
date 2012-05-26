@@ -147,6 +147,10 @@ class Chef
 
         validate!
 
+        Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
+        Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
+        Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
+
         connection = Fog::Compute.new(
           :provider => 'OpenStack',
           :openstack_username => Chef::Config[:knife][:openstack_username],
@@ -233,7 +237,7 @@ class Chef
 
     def validate!
 
-      super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url, :openstack_tenant])
+      super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url])
 
       if ami.nil?
         ui.error("You have not provided a valid image ID. Please note the short option for this value recently changed from '-i' to '-I'.")
