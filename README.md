@@ -11,10 +11,10 @@ Be sure you are running the latest version Chef. Versions earlier than 0.10.0 do
 
     $ gem install chef
 
-This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.1.2 from here: https://github.com/mattray/fog To install it, run:
+This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.3.1 from here: https://github.com/mattray/fog To install it, run:
 
     $ cd /tmp
-    $ git clone https://github.com/fog/fog.git
+    $ git clone https://github.com/mattray/fog.git
     $ cd fog
     $ gem build fog.gemspec
     $ gem install fog-1.3.1.gem
