@@ -48,9 +48,9 @@ class Chef
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_password] = key }
 
           option :openstack_tenant,
-            :short => "-T ID",
-            :long => "--openstack-tenant ID",
-            :description => "Your OpenStack Tenant ID",
+            :short => "-T NAME",
+            :long => "--openstack-tenant NAME",
+            :description => "Your OpenStack Tenant NAME",
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_tenant] = key }
 
           option :openstack_auth_url,
@@ -61,6 +61,10 @@ class Chef
       end
 
       def connection
+        Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
+        #Chef::Log.debug("openstack_password #{Chef::Config[:knife][:openstack_password]}")
+        Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
+        Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
         @connection ||= begin
           connection = Fog::Compute.new(
             :provider => 'OpenStack',
@@ -83,7 +87,7 @@ class Chef
         end
       end
 
-      def validate!(keys=[:openstack_username, :openstack_password, :openstack_auth_url, :openstack_tenant])
+      def validate!(keys=[:openstack_username, :openstack_password, :openstack_auth_url])
         errors = []
 
         keys.each do |k|
