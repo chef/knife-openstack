@@ -31,7 +31,7 @@ Depending on your system's configuration, you may need to run this command with 
 
 # Configuration #
 
-In order to communicate with an OpenStack Compute cloud's OpenStack API you will need to tell Knife your OpenStack Compute API endpoint, your Dashboard username and password. The easiest way to accomplish this is to create these entries in your `knife.rb` file:
+In order to communicate with an OpenStack Compute cloud's OpenStack API you will need to tell Knife your OpenStack Compute API endpoint, your Dashboard username and password (tenant is optional). The easiest way to accomplish this is to create these entries in your `knife.rb` file:
 
     knife[:openstack_username] = "Your OpenStack Dashboard username"
     knife[:openstack_password] = "Your OpenStack Dashboard password"
@@ -53,7 +53,6 @@ You also have the option of passing your OpenStack API Username/Password into th
 
 Additionally the following options may be set in your `knife.rb`:
 
-* openstack_tenant
 * flavor
 * image
 * openstack_ssh_key_id
