@@ -7,6 +7,8 @@
 * Added chef gem dependency (KNIFE_OPENSTACK-6)
 * Added virtual cpus to 'knife openstack flavor list'
 * Removed unsupported features to match current state of plugin (public_key, kernel, architecture, cores, location)
+* Added support for openstack_tenant (Rob Hirschfeld)
+* testing with Diablo & Essex
 
 ## v0.5.2
 * initial Cactus release using EC2 API

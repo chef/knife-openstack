@@ -51,6 +51,7 @@ You also have the option of passing your OpenStack API Username/Password into th
 
 Additionally the following options may be set in your `knife.rb`:
 
+* openstack_tenant
 * flavor
 * image
 * openstack_ssh_key_id
@@ -100,7 +101,6 @@ This is a list of features currently lacking and (eventually) under development:
 * more information in `knife openstack image list`
 * get DNS names working
 * availability zones
-* test with Essex
 
 # License #
 
