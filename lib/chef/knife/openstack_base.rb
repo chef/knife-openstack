@@ -62,7 +62,6 @@ class Chef
 
       def connection
         Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
-        #Chef::Log.debug("openstack_password #{Chef::Config[:knife][:openstack_password]}")
         Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
         Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
         @connection ||= begin
