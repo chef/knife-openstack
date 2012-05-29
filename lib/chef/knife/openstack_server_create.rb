@@ -147,10 +147,6 @@ class Chef
 
         validate!
 
-        Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
-        Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
-        Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
-
         connection = Fog::Compute.new(
           :provider => 'OpenStack',
           :openstack_username => Chef::Config[:knife][:openstack_username],
