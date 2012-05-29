@@ -45,17 +45,25 @@ class Chef
         connection.servers.all.sort_by(&:id).each do |server|
           server_list << server.id.to_s
           server_list << server.name
-          server_list << server.public_ip_address['addr'].to_s
-          server_list << server.private_ip_address['addr'].to_s
+          if server.public_ip_address.nil?
+            server_list << ''
+          else
+            server_list << server.public_ip_address['addr'].to_s
+          end
+          if server.private_ip_address.nil?
+            server_list << ''
+          else
+            server_list << server.private_ip_address['addr'].to_s
+          end
           server_list << server.flavor['id'].to_s
           server_list << server.image['id'].to_s
           server_list << server.key_name
           server_list << begin
                            state = server.state.to_s.downcase
                            case state
-                           when 'shutting-down','terminated','stopping','stopped'
+                           when 'shutting-down','terminated','stopping','stopped','error'
                              ui.color(state, :red)
-                           when 'pending'
+                           when 'pending','build','paused','suspended','hard_reboot'
                              ui.color(state, :yellow)
                            else
                              ui.color(state, :green)
