@@ -61,6 +61,13 @@ class Chef
       :long => "--node-name NAME",
       :description => "The Chef node name for your new node"
 
+      option :floating_ip,
+      :short => "-a",
+      :long => "--floating-ip",
+      :boolean => true,
+      :default => false,
+      :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project."
+
       option :ssh_key_name,
       :short => "-S KEY",
       :long => "--ssh-key KEY",
@@ -113,10 +120,10 @@ class Chef
       :default => []
 
       # option :no_host_key_verify,
-      #   :long => "--no-host-key-verify",
-      #   :description => "Disable host key verification",
-      #   :boolean => true,
-      #   :default => false
+      # :long => "--no-host-key-verify",
+      # :description => "Disable host key verification",
+      # :boolean => true,
+      # :default => false
 
       def tcp_test_ssh(hostname)
         tcp_socket = TCPSocket.new(hostname, 22)
@@ -136,6 +143,9 @@ class Chef
         sleep 2
         false
       rescue Errno::EHOSTUNREACH
+        sleep 2
+        false
+      rescue Errno::ENETUNREACH
         sleep 2
         false
       ensure
@@ -185,6 +195,26 @@ class Chef
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
       msg_pair("Public IP Address", server.public_ip_address['addr'])
+
+      if config[:floating_ip]
+        associated = false
+        connection.addresses.each do |address|
+          if address.instance_id.nil?
+            server.associate_address(address.ip)
+            #feels like a hack, perhaps refresh the server
+            server.addresses['public'].push({"version"=>4,"addr"=>address.ip})
+            associated = true
+            msg_pair("Floating IP Address", address.ip)
+            break
+          end
+        end
+        unless associated
+          ui.error("Unable to associate floating IP.")
+          exit 1
+        end
+      end
+      Chef::Log.debug("Public IP Address actual #{server.public_ip_address['addr']}")
+
       msg_pair("Private IP Address", server.private_ip_address['addr'])
 
       print "\n#{ui.color("Waiting for sshd", :magenta)}"
@@ -215,6 +245,7 @@ class Chef
       bootstrap.config[:run_list] = config[:run_list]
       bootstrap.config[:ssh_user] = config[:ssh_user]
       bootstrap.config[:identity_file] = config[:identity_file]
+      # bootstrap.config[:no_host_key_verify] = config[:no_host_key_verify]
       bootstrap.config[:chef_node_name] = config[:chef_node_name] || server.id
       bootstrap.config[:prerelease] = config[:prerelease]
       bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
@@ -222,8 +253,6 @@ class Chef
       bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
       bootstrap.config[:template_file] = locate_config_value(:template_file)
       bootstrap.config[:environment] = config[:environment]
-      # may be needed for vpc_mode
-      #bootstrap.config[:no_host_key_verify] = config[:no_host_key_verify]
       bootstrap
     end
 
