@@ -1,9 +1,9 @@
 Knife OpenStack
 ===============
 
-This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `diablo-stable` branch in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
+This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` and `Essex` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
-Please refer to the CHANGELOG.md for version history.
+Please refer to the CHANGELOG.md for version history and known limitations.
 
 # Installation #
 
@@ -65,12 +65,12 @@ This plugin provides the following Knife subcommands. Specific command options c
 knife openstack server create
 -----------------------------
 
-Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [ubuntu10.04-gems](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/ubuntu10.04-gems.erb) template. This can be overridden using the `-d` or `--template-file` command options.
+Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [chef-full](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/chef-full.erb) template (default after the 10.10 release). This may be overridden using the `-d` or `--template-file` command options. If the OpenStack server uses floating IP addresses, they will need to be allocated to the project through the Dashboard and may be associated with the new node with the `-F` flag.
 
 knife openstack server delete
 -----------------------------
 
-Deletes an existing server in the currently configured OpenStack Compute cloud account. <b>PLEASE NOTE</b> - this does not delete the associated node and client objects from the Chef server.
+Deletes an existing server in the currently configured OpenStack Compute cloud account. If a floating IP address has been assigned to the node, it is disassociated automatically by the OpenStack server. <b>PLEASE NOTE</b> - this does not delete the associated node and client objects from the Chef server without using the `-P` option to purge the client.
 
 knife openstack server list
 ---------------------------
@@ -86,22 +86,6 @@ knife openstack image list
 --------------------------
 
 Outputs a list of all available images available to the currently configured OpenStack Compute cloud account. An image is a collection of files used to create or rebuild a server. This data can be useful when choosing an image id to pass to the `knife openstack server create` subcommand.
-
-# TODO #
-
-This is a list of features currently lacking and (eventually) under development:
-
-* need an ohai plugin to populate `cloud` and `openstack` attributes
-* default flavor of '1'
-* fix support for not using `-S`, by listing it in the knife.rb instead
-* automate naming of nodes if `--node-name` is not passed
-* take either the flavor ID or the flavor name
-* take either the image ID or the image name
-* add `-G` support for security groups other than 'default'
-* add support for floating IPs
-* more information in `knife openstack image list`
-* get DNS names working
-* availability zones
 
 # License #
 
