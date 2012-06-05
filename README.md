@@ -3,7 +3,7 @@ Knife OpenStack
 
 This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` and `Essex` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
-Please refer to the CHANGELOG.md for version history and known limitations.
+Please refer to the CHANGELOG.md for version history and known limitations. If you are using Floating IP addresses, please refer to the "Working with Floating IPs" section below.
 
 # Installation #
 
@@ -57,6 +57,23 @@ Additionally the following options may be set in your `knife.rb`:
 * image
 * openstack_ssh_key_id
 * template_file
+
+# Working with Floating IPs #
+
+Floating IP address support requires a pair of new Chef features not yet released. The first is the creation of the `/etc/chef/ohai/hints/openstack.json` file which contains the networking information inaccessible from the OpenStack node itself. To create this file when new OpenStack nodes are bootstrapped, please add the follow `ERB` block to your preferred bootstrap template (ie. chef-full.erb).
+
+```ruby
+<% @config[:hints].each do |name, hash| -%>
+(
+cat <<'EOP'
+<%= hash.to_json %>
+EOP
+) > /etc/chef/ohai/hints/<%= name %>.json
+<% end -%>
+<% end -%>
+```
+
+To take advantage of this file, you will need the new `openstack.rb` Ohai plugin. Instructions to follow.
 
 # Subcommands #
 
