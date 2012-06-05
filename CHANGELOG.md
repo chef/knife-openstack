@@ -1,6 +1,7 @@
 ## v0.6.0
 * Switched to OpenStack API from OpenStack EC2 API.
 * Updated to point to master branch of Fog for latest `OpenStack` provider
+* testing with Diablo & Essex
 * knife openstack server create (KNIFE_OPENSTACK-1)
 * knife openstack server delete (KNIFE_OPENSTACK-2)
 * Support for unenven_columns for prettier output (KNIFE_OPENSTACK-5)
@@ -10,7 +11,7 @@
 * Added support for openstack_tenant (Rob Hirschfeld & Alexander Gordeev)
 * Server list supports many more states
 * Added support for associating floating IPs on server create and verified they are automatically disassociated on server delete
-* testing with Diablo & Essex
+* Added /etc/chef/ohai/hints/openstack.json file with server.addresses since floating IPs are not available from the node. Bootstrap templates are geting updated and Ohai plugin will read it.
 
 ## v0.5.2
 * initial Cactus release using EC2 API

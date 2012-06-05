@@ -201,7 +201,7 @@ class Chef
         connection.addresses.each do |address|
           if address.instance_id.nil?
             server.associate_address(address.ip)
-            #feels like a hack, perhaps refresh the server
+            #a bit of a hack, but server.reload takes a long time
             server.addresses['public'].push({"version"=>4,"addr"=>address.ip})
             associated = true
             msg_pair("Floating IP Address", address.ip)
@@ -253,6 +253,9 @@ class Chef
       bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
       bootstrap.config[:template_file] = locate_config_value(:template_file)
       bootstrap.config[:environment] = config[:environment]
+      #eventually this should be using the knife-set version as well
+      #used by ohai to get the floating IP which is not accessible from the node
+      bootstrap.config[:hints] = {'openstack' => { 'addresses' => server.addresses}}
       bootstrap
     end
 
