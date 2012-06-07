@@ -60,20 +60,8 @@ Additionally the following options may be set in your `knife.rb`:
 
 # Working with Floating IPs #
 
-Floating IP address support requires a pair of new Chef features not yet released. The first is the creation of the `/etc/chef/ohai/hints/openstack.json` file which contains the networking information inaccessible from the OpenStack node itself. To create this file when new OpenStack nodes are bootstrapped, please add the follow `ERB` block to your preferred bootstrap template (ie. chef-full.erb).
-
-```ruby
-<% @config[:hints].each do |name, hash| -%>
-(
-cat <<'EOP'
-<%= hash.to_json %>
-EOP
-) > /etc/chef/ohai/hints/<%= name %>.json
-<% end -%>
-<% end -%>
-```
-
-To take advantage of this file, you will need the new `openstack.rb` Ohai plugin. Instructions to follow.
+Floating IP address support requires the new `openstack.rb` Ohai plugin, waiting for the next Ohai release or installed using the [ohai cookbook](https://github.com/opscode-cookbooks/ohai).
+https://github.com/mattray/ohai/tree/OHAI-381
 
 # Subcommands #
 
