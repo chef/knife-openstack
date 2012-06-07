@@ -15,8 +15,7 @@
 * Automated naming of nodes if `--node-name` is not passed
 * Added support for `--no-host-key-verify` (Lamont Granquist)
 REMAINING
-* not blow up when it gets an empty public ip address on server create
-* add `-G` support for security groups other than 'default'
+* not blow up when it gets an empty public ip address on server create by adding support for private network bootstrapping
 
 ## v0.5.2
 * initial Cactus release using EC2 API
@@ -24,9 +23,9 @@ REMAINING
 # BACKLOG/ISSUES #
 This is a list of features currently lacking and (eventually) under development:
 
+* security groups are still broken, appear to be broken in Fog. Add `-G` support for security groups other than 'default'
 * purge only works when names match up with clients
 * `knife openstack floating list|associate|disassociate ip|node`
-* fix support for not using `-S`, by listing it in the knife.rb instead
 * take either the flavor ID or the flavor name
 * take either the image ID or the image name
 * more information in `knife openstack image list`

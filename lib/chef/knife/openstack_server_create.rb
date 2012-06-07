@@ -172,7 +172,7 @@ class Chef
         :name => node_name,
         :image_ref => locate_config_value(:image),
         :flavor_ref => locate_config_value(:flavor),
-        #:groups => config[:security_groups],
+        # :security_group => locate_config_value(:security_groups),
         :key_name => Chef::Config[:knife][:openstack_ssh_key_id],
         :personality => [{
             "path" => "/etc/chef/ohai/hints/openstack.json",
@@ -183,13 +183,13 @@ class Chef
       Chef::Log.debug("Name #{node_name}")
       Chef::Log.debug("Image #{locate_config_value(:image)}")
       Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
-      #Chef::Log.debug("Groups #{config[:security_groups]}")
+      # Chef::Log.debug("Groups #{locate_config_value(:security_groups)}")
       Chef::Log.debug("Creating server #{server_def}")
       server = connection.servers.create(server_def)
 
       msg_pair("Instance Name", server.name)
       msg_pair("Instance ID", server.id)
-      #msg_pair("Security Groups", server.groups.join(", "))
+      # msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
 
       print "\n#{ui.color("Waiting for server", :magenta)}"
@@ -238,7 +238,7 @@ class Chef
       msg_pair("Instance ID", server.id)
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
-      #msg_pair("Security Groups", server.groups.join(", "))
+      # msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
       msg_pair("Public IP Address", server.public_ip_address['addr'])
       msg_pair("Private IP Address", server.private_ip_address['addr'])
