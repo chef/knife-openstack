@@ -13,7 +13,7 @@
 * Added support for associating floating IPs on server create and verified they are automatically disassociated on server delete
 * Added /etc/chef/ohai/hints/openstack.json, the `openstack` Ohai plugin keys off of it and pulls from the meta-data service.
 * Automated naming of nodes if `--node-name` is not passed
-
+* Added support for `--no-host-key-verify` (Lamont Granquist)
 REMAINING
 * not blow up when it gets an empty public ip address on server create
 * add `-G` support for security groups other than 'default'
@@ -22,7 +22,6 @@ REMAINING
 * initial Cactus release using EC2 API
 
 # BACKLOG/ISSUES #
-
 This is a list of features currently lacking and (eventually) under development:
 
 * purge only works when names match up with clients
