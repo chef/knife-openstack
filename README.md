@@ -49,7 +49,7 @@ If your knife.rb file will be checked into a SCM system (ie readable by others) 
 You also have the option of passing your OpenStack API Username/Password into the individual knife subcommands using the `-A` (or `--openstack-username`) `-K` (or `--openstack-password`) command options
 
     # provision a new image named kb01
-    knife openstack server create -A 'MyUsername' -K 'MyPassword' --openstack-api-endpoint 'http://cloud.mycompany.com:5000/v2.0/tokens' --node-name kb01 -f 1 -I 13 -S trystack -i ~/.ssh/trystack.pem -r 'role[webserver]'
+    knife openstack server create -A 'MyUsername' -K 'MyPassword' --openstack-api-endpoint 'http://cloud.mycompany.com:5000/v2.0/tokens' -f 1 -I 13 -S trystack -i ~/.ssh/trystack.pem -r 'role[webserver]'
 
 Additionally the following options may be set in your `knife.rb`:
 

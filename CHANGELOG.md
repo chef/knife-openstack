@@ -11,7 +11,12 @@
 * Added support for openstack_tenant (Rob Hirschfeld & Alexander Gordeev)
 * Server list supports many more states
 * Added support for associating floating IPs on server create and verified they are automatically disassociated on server delete
-* Added /etc/chef/ohai/hints/openstack.json file with server.addresses since floating IPs are not available from the node. Bootstrap templates are geting updated and Ohai plugin will read it.
+* Added /etc/chef/ohai/hints/openstack.json, the `openstack` Ohai plugin keys off of it and pulls from the meta-data service.
+* Automated naming of nodes if `--node-name` is not passed
+
+REMAINING
+* not blow up when it gets an empty public ip address on server create
+* add `-G` support for security groups other than 'default'
 
 ## v0.5.2
 * initial Cactus release using EC2 API
@@ -20,16 +25,11 @@
 
 This is a list of features currently lacking and (eventually) under development:
 
-* node still has wrong public ip address with associated floating IPs
 * purge only works when names match up with clients
-* not blow up when it gets an empty public ip address on server create
 * `knife openstack floating list|associate|disassociate ip|node`
-* need an ohai plugin to populate `cloud` and `openstack` attributes
 * fix support for not using `-S`, by listing it in the knife.rb instead
-* automate naming of nodes if `--node-name` is not passed
 * take either the flavor ID or the flavor name
 * take either the image ID or the image name
-* add `-G` support for security groups other than 'default'
 * more information in `knife openstack image list`
 * get DNS names working
 * availability zones

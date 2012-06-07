@@ -165,8 +165,11 @@ class Chef
           :openstack_tenant => Chef::Config[:knife][:openstack_tenant]
           )
 
+        #servers require a name, generate one if not passed
+        node_name = get_node_name(config[:chef_node_name])
+
         server_def = {
-        :name => config[:chef_node_name],
+        :name => node_name,
         :image_ref => locate_config_value(:image),
         :flavor_ref => locate_config_value(:flavor),
         #:groups => config[:security_groups],
@@ -177,15 +180,15 @@ class Chef
           }]
       }
 
-      Chef::Log.debug("Name #{config[:chef_node_name]}")
+      Chef::Log.debug("Name #{node_name}")
       Chef::Log.debug("Image #{locate_config_value(:image)}")
       Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
       #Chef::Log.debug("Groups #{config[:security_groups]}")
       Chef::Log.debug("Creating server #{server_def}")
       server = connection.servers.create(server_def)
 
-      msg_pair("Instance ID", server.id)
       msg_pair("Instance Name", server.name)
+      msg_pair("Instance ID", server.id)
       #msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
 
@@ -231,8 +234,8 @@ class Chef
       bootstrap_for_node(server).run
 
       puts "\n"
-      msg_pair("Instance ID", server.id)
       msg_pair("Instance Name", server.name)
+      msg_pair("Instance ID", server.id)
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
       #msg_pair("Security Groups", server.groups.join(", "))
@@ -250,7 +253,7 @@ class Chef
       bootstrap.config[:ssh_user] = config[:ssh_user]
       bootstrap.config[:identity_file] = config[:identity_file]
       # bootstrap.config[:no_host_key_verify] = config[:no_host_key_verify]
-      bootstrap.config[:chef_node_name] = config[:chef_node_name] || server.id
+      bootstrap.config[:chef_node_name] = server.name
       bootstrap.config[:prerelease] = config[:prerelease]
       bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
       bootstrap.config[:distro] = locate_config_value(:distro)
@@ -274,6 +277,12 @@ class Chef
       end
     end
 
+    #generate a random name if chef_node_name is empty
+    def get_node_name(chef_node_name)
+      return chef_node_name unless chef_node_name.nil?
+      #lazy uuids
+      chef_node_name = "os-"+rand.to_s.split('.')[1]
+    end
   end
 end
 end
