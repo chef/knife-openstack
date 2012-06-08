@@ -60,17 +60,17 @@ Additionally the following options may be set in your `knife.rb`:
 
 # Working with Floating IPs #
 
-Floating IP address support requires the new `openstack.rb` Ohai plugin, waiting for the next Ohai release or installed using the [ohai cookbook](https://github.com/opscode-cookbooks/ohai).
+To use a floating IP address while bootstrapping nodes, use the `-a` or `--floating-ip` option. For the node to have the floating IP address after bootstrapping, it is required to use the new `openstack.rb` Ohai plugin, waiting for the next Ohai release or installed using the [ohai cookbook](https://github.com/opscode-cookbooks/ohai).
 https://github.com/mattray/ohai/tree/OHAI-381
 
 # Subcommands #
 
-This plugin provides the following Knife subcommands. Specific command options can be found by invoking the subcommand with a `--help` flag
+This plugin provides the following Knife subcommands. Specific command options can be found by invoking the subcommand with a `--help` option.
 
 knife openstack server create
 -----------------------------
 
-Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [chef-full](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/chef-full.erb) template (default after the 10.10 release). This may be overridden using the `-d` or `--template-file` command options. If the OpenStack server uses floating IP addresses, they will need to be allocated to the project through the Dashboard and may be associated with the new node with the `-F` flag.
+Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [chef-full](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/chef-full.erb) template (default after the 10.10 release). This may be overridden using the `-d` or `--template-file` command options. If you do not have public IP addresses, use the `--private-network` option to use the private IP address for bootstrapping.
 
 knife openstack server delete
 -----------------------------
