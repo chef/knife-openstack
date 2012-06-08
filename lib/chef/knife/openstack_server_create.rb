@@ -68,6 +68,12 @@ class Chef
       :default => false,
       :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project."
 
+      option :private_network,
+      :long => "--private-network",
+      :description => "Use the private IP for bootstrapping rather than the public IP",
+      :boolean => true,
+      :default => false
+
       option :ssh_key_name,
       :short => "-S KEY",
       :long => "--ssh-key KEY",
@@ -201,7 +207,7 @@ class Chef
 
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
-      msg_pair("Public IP Address", server.public_ip_address['addr'])
+      msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
 
       if config[:floating_ip]
         associated = false
@@ -220,18 +226,29 @@ class Chef
           exit 1
         end
       end
-      Chef::Log.debug("Public IP Address actual #{server.public_ip_address['addr']}")
+      Chef::Log.debug("Public IP Address actual #{server.public_ip_address['addr']}") if server.public_ip_address
 
       msg_pair("Private IP Address", server.private_ip_address['addr'])
 
+      #which IP address to bootstrap
+      bootstrap_ip_address = server.public_ip_address['addr'] if server.public_ip_address
+      if config[:private_network]
+        bootstrap_ip_address = server.private_ip_address['addr']
+      end
+      Chef::Log.debug("Bootstrap IP Address #{bootstrap_ip_address}")
+      if bootstrap_ip_address.nil?
+        ui.error("No IP address available for bootstrapping.")
+        exit 1
+      end
+
       print "\n#{ui.color("Waiting for sshd", :magenta)}"
 
-      print(".") until tcp_test_ssh(server.public_ip_address['addr']) {
+      print(".") until tcp_test_ssh(bootstrap_ip_address) {
         sleep @initial_sleep_delay ||= 10
         puts("done")
       }
 
-      bootstrap_for_node(server).run
+      bootstrap_for_node(server, bootstrap_ip_address).run
 
       puts "\n"
       msg_pair("Instance Name", server.name)
@@ -240,15 +257,15 @@ class Chef
       msg_pair("Image", server.image['id'])
       # msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
-      msg_pair("Public IP Address", server.public_ip_address['addr'])
+      msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
       msg_pair("Private IP Address", server.private_ip_address['addr'])
       msg_pair("Environment", config[:environment] || '_default')
       msg_pair("Run List", config[:run_list].join(', '))
     end
 
-    def bootstrap_for_node(server)
+    def bootstrap_for_node(server, bootstrap_ip_address)
       bootstrap = Chef::Knife::Bootstrap.new
-      bootstrap.name_args = [server.public_ip_address['addr']]
+      bootstrap.name_args = [bootstrap_ip_address]
       bootstrap.config[:run_list] = config[:run_list]
       bootstrap.config[:ssh_user] = config[:ssh_user]
       bootstrap.config[:identity_file] = config[:identity_file]

@@ -14,8 +14,7 @@
 * Added /etc/chef/ohai/hints/openstack.json, the `openstack` Ohai plugin keys off of it and pulls from the meta-data service.
 * Automated naming of nodes if `--node-name` is not passed
 * Added support for `--no-host-key-verify` (Lamont Granquist)
-REMAINING
-* not blow up when it gets an empty public ip address on server create by adding support for private network bootstrapping
+* Added support for `--private-network` for bootstrapping private network
 
 ## v0.5.2
 * initial Cactus release using EC2 API
@@ -33,3 +32,4 @@ This is a list of features currently lacking and (eventually) under development:
 * availability zones
 * filter out the *-initrd and *-kernel from 'openstack image list'. Fog -> container_format={aki|ari} or disk_format on the same params
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
+* probably other places public network is assumed that could cause issues
