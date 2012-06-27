@@ -1,6 +1,6 @@
 ## v0.6.0
 * Switched to OpenStack API from OpenStack EC2 API.
-* Updated to point to master branch of Fog for latest `OpenStack` provider
+* Updated to point to Fog 1.4.0 for latest `OpenStack` provider
 * testing with Diablo & Essex
 * knife openstack server create (KNIFE_OPENSTACK-1)
 * knife openstack server delete (KNIFE_OPENSTACK-2)

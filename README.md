@@ -11,21 +11,9 @@ Be sure you are running the latest version Chef. Versions earlier than 0.10.0 do
 
     $ gem install chef
 
-This plugin currently depends on a patches waiting to be incorporated into Fog. You will need to use Fog 1.3.1 from here: https://github.com/mattray/fog To install it, run:
+This plugin is distributed as a Ruby Gem. To install it, run:
 
-    $ cd /tmp
-    $ git clone https://github.com/mattray/fog.git
-    $ cd fog
-    $ gem build fog.gemspec
-    $ gem install fog-1.3.1.gem
-
-This plugin is distributed as a Ruby Gem, but is not available on Rubygems.org because of the missing Fog dependencies. To install it, run:
-
-    $ cd /tmp
-    $ git clone -b 0.6.0 git://github.com/mattray/knife-openstack.git
-    $ cd knife-openstack
-    $ gem build knife-openstack.gemspec
-    $ gem install knife-openstack-0.6.0.gem
+    $ gem install knife-openstack
 
 Depending on your system's configuration, you may need to run this command with root privileges.
 
@@ -60,8 +48,7 @@ Additionally the following options may be set in your `knife.rb`:
 
 # Working with Floating IPs #
 
-To use a floating IP address while bootstrapping nodes, use the `-a` or `--floating-ip` option. For the node to have the floating IP address after bootstrapping, it is required to use the new `openstack.rb` Ohai plugin, waiting for the next Ohai release or installed using the [ohai cookbook](https://github.com/opscode-cookbooks/ohai).
-https://github.com/mattray/ohai/tree/OHAI-381
+To use a floating IP address while bootstrapping nodes, use the `-a` or `--floating-ip` option. For the node to have the floating IP address after bootstrapping, it is required to use the new `openstack.rb` Ohai plugin, waiting for the next Ohai release or installed using the [ohai cookbook](https://github.com/opscode-cookbooks/ohai). https://github.com/mattray/ohai/tree/OHAI-381 is the ticket for this.
 
 # Subcommands #
 
