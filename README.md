@@ -1,7 +1,9 @@
 Knife OpenStack
 ===============
 
-This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap, and manage instances in OpenStack Compute clouds.
+This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` and `Essex` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
+
+Please refer to the CHANGELOG.md for version history and known limitations. If you are using Floating IP addresses, please refer to the "Working with Floating IPs" section below.
 
 # Installation #
 
@@ -17,48 +19,50 @@ Depending on your system's configuration, you may need to run this command with 
 
 # Configuration #
 
-In order to communicate with an OpenStack Compute cloud's EC2 API you will have to tell Knife about your OpenStack Compute cloud API endpoint, OpenStack Access Key and Secret Access Key. The easiest way to accomplish this is to create some entries in your `knife.rb` file:
+In order to communicate with an OpenStack Compute cloud's OpenStack API you will need to tell Knife your OpenStack Compute API endpoint, your Dashboard username and password (tenant is optional). The easiest way to accomplish this is to create these entries in your `knife.rb` file:
 
-    ### Note: You may need to append the :openstack_access_key_id with ":$PROJECT_NAME", if it differs from your OpenStack Username.
-    knife[:openstack_access_key_id]     = "Your OpenStack Access Key ID"
-    knife[:openstack_secret_access_key] = "Your OpenStack Secret Access Key"
-    ### Note: If you are not proxying HTTPS to the OpenStack EC2 API port, the scheme should be HTTP, and the PORT is 8773.
-    knife[:openstack_api_endpoint]      = "https://cloud.mycompany.com/service/Cloud"
+    knife[:openstack_username] = "Your OpenStack Dashboard username"
+    knife[:openstack_password] = "Your OpenStack Dashboard password"
+    ### Note: If you are not proxying HTTPS to the OpenStack auth port, the scheme should be HTTP
+    knife[:openstack_auth_url] = "http://cloud.mycompany.com:5000/v2.0/tokens"
+    knife[:openstack_tenant] = "Your OpenStack tenant name"
 
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables:
 
-    knife[:openstack_access_key_id]     = "#{ENV['EC2_ACCESS_KEY']}"
-    knife[:openstack_secret_access_key] = "#{ENV['EC2_SECRET_KEY']}"
-    knife[:openstack_api_endpoint]      = "#{ENV['EC2_URL']}"
+    knife[:openstack_username] = "#{ENV['OS_USERNAME']}"
+    knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
+    knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}"
+    knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
 
-You also have the option of passing your OpenStack API Key/Secret into the individual knife subcommands using the `-A` (or `--openstack-access-key-id`) `-K` (or `--openstack-secret-access-key`) command options
+You also have the option of passing your OpenStack API Username/Password into the individual knife subcommands using the `-A` (or `--openstack-username`) `-K` (or `--openstack-password`) command options
 
-    # provision a new m1.small Ubuntu 10.04 webserver
-    knife openstack server create 'role[webserver]' -I ami-7000f019 -f m1.small -A 'Your OpenStack Access Key ID' -K 'Your OpenStack Secret Access Key' --openstack-api-endpoint 'https://cloud.mycompany.com/v1.0'
+    # provision a new image named kb01
+    knife openstack server create -A 'MyUsername' -K 'MyPassword' --openstack-api-endpoint 'http://cloud.mycompany.com:5000/v2.0/tokens' -f 1 -I 13 -S trystack -i ~/.ssh/trystack.pem -r 'role[webserver]'
 
 Additionally the following options may be set in your `knife.rb`:
 
 * flavor
 * image
-* availability_zone
 * openstack_ssh_key_id
-* region
-* distro
 * template_file
+
+# Working with Floating IPs #
+
+To use a floating IP address while bootstrapping nodes, use the `-a` or `--floating-ip` option. For the node to have the floating IP address after bootstrapping, it is required to use the new `openstack.rb` Ohai plugin, waiting for the next Ohai release or installed using the [ohai cookbook](https://github.com/opscode-cookbooks/ohai). https://github.com/mattray/ohai/tree/OHAI-381 is the ticket for this.
 
 # Subcommands #
 
-This plugin provides the following Knife subcommands. Specific command options can be found by invoking the subcommand with a `--help` flag
+This plugin provides the following Knife subcommands. Specific command options can be found by invoking the subcommand with a `--help` option.
 
 knife openstack server create
 -----------------------------
 
-Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [ubuntu10.04-gems](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/ubuntu10.04-gems.erb) template. This can be overridden using the `-d` or `--template-file` command options.
+Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [chef-full](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/chef-full.erb) template (default after the 10.10 release). This may be overridden using the `-d` or `--template-file` command options. If you do not have public IP addresses, use the `--private-network` option to use the private IP address for bootstrapping.
 
 knife openstack server delete
 -----------------------------
 
-Deletes an existing server in the currently configured OpenStack Compute cloud account. <b>PLEASE NOTE</b> - this does not delete the associated node and client objects from the Chef server.
+Deletes an existing server in the currently configured OpenStack Compute cloud account. If a floating IP address has been assigned to the node, it is disassociated automatically by the OpenStack server. <b>PLEASE NOTE</b> - this does not delete the associated node and client objects from the Chef server without using the `-P` option to purge the client.
 
 knife openstack server list
 ---------------------------
@@ -68,7 +72,7 @@ Outputs a list of all servers in the currently configured OpenStack Compute clou
 knife openstack flavor list
 ---------------------------
 
-Outputs a list of all available flavors (available hardware configuration for a server) available to the currently configured OpenStack Compute cloud account. Each flavor has a unique combination of disk space, memory capacity and priority for CPU time. This data can be useful when choosing a flavor id to pass to the `knife openstack server create` subcommand.
+Outputs a list of all available flavors (available hardware configuration for a server) available to the currently configured OpenStack Compute cloud account. Each flavor has a unique combination of virtual cpus, disk space and memory capacity. This data can be useful when choosing a flavor id to pass to the `knife openstack server create` subcommand.
 
 knife openstack image list
 --------------------------
