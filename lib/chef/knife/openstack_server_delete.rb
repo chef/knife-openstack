@@ -73,8 +73,8 @@ class Chef
             # msg_pair("Availability Zone", server.availability_zone)
             # msg_pair("Security Groups", server.groups.join(", "))
             # msg_pair("SSH Key", server.key_name)
-            msg_pair("Public IP Address", server.public_ip_address['addr'])
-            msg_pair("Private IP Address", server.private_ip_address['addr'])
+            msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
+            msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
 
             puts "\n"
             confirm("Do you really want to delete this server")
