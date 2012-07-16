@@ -228,7 +228,7 @@ class Chef
       end
       Chef::Log.debug("Public IP Address actual #{server.public_ip_address['addr']}") if server.public_ip_address
 
-      msg_pair("Private IP Address", server.private_ip_address['addr'])
+      msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
 
       #which IP address to bootstrap
       bootstrap_ip_address = server.public_ip_address['addr'] if server.public_ip_address
@@ -258,7 +258,7 @@ class Chef
       # msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
-      msg_pair("Private IP Address", server.private_ip_address['addr'])
+      msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
       msg_pair("Environment", config[:environment] || '_default')
       msg_pair("Run List", config[:run_list].join(', '))
     end
