@@ -271,6 +271,7 @@ class Chef
       bootstrap.name_args = [bootstrap_ip_address]
       bootstrap.config[:run_list] = config[:run_list]
       bootstrap.config[:ssh_user] = config[:ssh_user]
+      bootstrap.config[:ssh_password] = config[:ssh_password]
       bootstrap.config[:identity_file] = config[:identity_file]
       bootstrap.config[:host_key_verify] = config[:host_key_verify]
       bootstrap.config[:chef_node_name] = server.name
