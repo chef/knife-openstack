@@ -35,6 +35,7 @@ class Chef
         server_list = [
           ui.color('Instance ID', :bold),
           ui.color('Name', :bold),
+          ui.color('Zone', :bold),
           ui.color('Public IP', :bold),
           ui.color('Private IP', :bold),
           ui.color('Flavor', :bold),
@@ -45,6 +46,7 @@ class Chef
         connection.servers.all.sort_by(&:id).each do |server|
           server_list << server.id.to_s
           server_list << server.name
+          server_list << server.availability_zone
           if server.public_ip_address.nil?
             server_list << ''
           else
@@ -70,7 +72,7 @@ class Chef
                            end
                          end
         end
-        puts ui.list(server_list, :uneven_columns_across, 8)
+        puts ui.list(server_list, :uneven_columns_across, 9)
 
       end
     end
