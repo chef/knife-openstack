@@ -57,11 +57,11 @@ class Chef
       # :proc => Proc.new { |groups| groups.split(',') }
 
       option :availability_zone,
-      :short => "-A zone_name",
-      :long => "--availability_zone zone_name",
+      :short => "-Z ZONE_NAME",
+      :long => "--availability_zone ZONE_NAME",
       :description => "The availability zone for this server",
-      :default => ["default"],
       :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
+
 
       option :chef_node_name,
       :short => "-N NAME",
