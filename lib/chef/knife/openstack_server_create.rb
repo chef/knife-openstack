@@ -132,6 +132,12 @@ class Chef
       :proc => lambda { |o| o.split(/[\s,]+/) },
       :default => []
 
+      option :environment,
+      :short => "-e CHEF_ENVIRONMENT",
+      :long => "--environment CHEF_ENVIRONMENT",
+      :description => "Chef environment for the bootstrapped node",
+      :default => "_default"
+
       option :host_key_verify,
       :long => "--[no-]host-key-verify",
       :description => "Verify host key, enabled by default",
@@ -187,6 +193,7 @@ class Chef
         :flavor_ref => locate_config_value(:flavor),
         # :security_group => locate_config_value(:security_groups),
         :availability_zone => locate_config_value(:availability_zone),
+        :environment => locate_config_value(:environment),
         :key_name => Chef::Config[:knife][:openstack_ssh_key_id],
         :personality => [{
             "path" => "/etc/chef/ohai/hints/openstack.json",
