@@ -1,3 +1,7 @@
+## v0.6.2
+* Use less pessimistic fog version constraint.
+* Add guards to protect against nil values for private_ip_address
+
 ## v0.6.0
 * Switched to OpenStack API from OpenStack EC2 API.
 * Updated to point to Fog 1.4.0 for latest `OpenStack` provider
