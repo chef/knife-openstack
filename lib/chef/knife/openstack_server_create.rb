@@ -284,6 +284,10 @@ class Chef
       end
     end
 
+    def flavor
+      @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+    end
+
     def validate!
 
       super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url])
@@ -295,6 +299,11 @@ class Chef
 
       if address.nil?
         ui.error("You have either not provided a valid floating-ip addressor have reached floating-ip address quota limit.")
+      end
+
+      if flavor.nil?
+        ui.error("You have not provided a validate flavor ID. Please note the options for this value are -f, --flavor.")
+        exit 1
       end
 
     end
