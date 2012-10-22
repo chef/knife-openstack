@@ -208,9 +208,8 @@ class Chef
       else
         # Use floating_ip for bootstraping
         bootstrap_ip_address = address.ip
+        address.server = server
       end
-
-      address.server = server
 
       # wait for it to be ready to do stuff
       server.wait_for { print "."; ready? }
@@ -297,8 +296,10 @@ class Chef
         exit 1
       end
 
-      if address.nil?
-        ui.error("You have either not provided a valid floating-ip addressor have reached floating-ip address quota limit.")
+      if not config[:private_network]
+        if address.nil?
+          ui.error("You have either not provided a valid floating-ip addressor have reached floating-ip address quota limit.")
+        end
       end
 
       if flavor.nil?
