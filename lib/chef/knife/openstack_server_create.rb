@@ -163,14 +163,6 @@ class Chef
 
         validate!
 
-        connection = Fog::Compute.new(
-          :provider => 'OpenStack',
-          :openstack_username => Chef::Config[:knife][:openstack_username],
-          :openstack_api_key => Chef::Config[:knife][:openstack_password],
-          :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
-          :openstack_tenant => Chef::Config[:knife][:openstack_tenant]
-          )
-
         #servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
