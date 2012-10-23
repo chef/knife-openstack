@@ -93,6 +93,10 @@ class Chef
 
           rescue NoMethodError
             ui.error("Could not locate server '#{instance_id}'.")
+          rescue Excon::Errors::BadRequest => e
+            response = Chef::JSONCompat.from_json(e.response.body)
+            ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+            raise e
           end
         end
       end
