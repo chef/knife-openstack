@@ -40,15 +40,21 @@ class Chef
           # ui.color('Location', :bold)
         ]
 
-        connection.images.sort_by do |image|
-          [image.name.downcase, image.id].compact
-        end.each do |image|
-          image_list << image.id
-          image_list << image.name
-          # image_list << image.kernel_id
-          # image_list << image.architecture
-          # image_list << image.root_device_type
-          # image_list << image.location
+        begin
+          connection.images.sort_by do |image|
+            [image.name.downcase, image.id].compact
+          end.each do |image|
+            image_list << image.id
+            image_list << image.name
+            # image_list << image.kernel_id
+            # image_list << image.architecture
+            # image_list << image.root_device_type
+            # image_list << image.location
+          end
+        rescue Excon::Errors::BadRequest => e
+          response = Chef::JSONCompat.from_json(e.response.body)
+          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          raise e
         end
 
         image_list = image_list.map do |item|
