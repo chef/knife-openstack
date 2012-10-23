@@ -163,14 +163,6 @@ class Chef
 
         validate!
 
-        connection = Fog::Compute.new(
-          :provider => 'OpenStack',
-          :openstack_username => Chef::Config[:knife][:openstack_username],
-          :openstack_api_key => Chef::Config[:knife][:openstack_password],
-          :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
-          :openstack_tenant => Chef::Config[:knife][:openstack_tenant]
-          )
-
         #servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
@@ -191,7 +183,23 @@ class Chef
       Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
       # Chef::Log.debug("Groups #{locate_config_value(:security_groups)}")
       Chef::Log.debug("Creating server #{server_def}")
-      server = connection.servers.create(server_def)
+      begin
+        server = connection.servers.create(server_def)
+      rescue Excon::Errors::BadRequest => e
+        response = Chef::JSONCompat.from_json(e.response.body)
+        if response['badRequest']['code'] == 400
+          if response['badRequest']['message'] =~ /Invalid flavorRef/
+            ui.fatal("Bad request (400): Invalid flavor specified: #{server_def[:flavor_ref]}")
+            exit 1
+          else
+            ui.fatal("Bad request (400): #{response['badRequest']['message']}")
+            exit 1
+          end
+        else
+          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          raise e
+        end
+      end
 
       msg_pair("Instance Name", server.name)
       msg_pair("Instance ID", server.id)
