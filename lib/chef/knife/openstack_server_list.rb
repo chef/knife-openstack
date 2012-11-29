@@ -61,7 +61,7 @@ class Chef
           server_list << begin
                            state = server.state.to_s.downcase
                            case state
-                           when 'shutting-down','terminated','stopping','stopped','error'
+                           when 'shutting-down','terminated','stopping','stopped','error','shutoff'
                              ui.color(state, :red)
                            when 'pending','build','paused','suspended','hard_reboot'
                              ui.color(state, :yellow)
