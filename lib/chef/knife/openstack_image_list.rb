@@ -41,7 +41,7 @@ class Chef
         ]
 
         connection.images.sort_by do |image|
-          [image.name.downcase, image.id].compact
+          [image.name.to_s.downcase, image.id].compact
         end.each do |image|
           image_list << image.id
           image_list << image.name
