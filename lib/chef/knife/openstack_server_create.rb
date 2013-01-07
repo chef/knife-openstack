@@ -214,8 +214,17 @@ class Chef
         connection.addresses.each do |address|
           if address.instance_id.nil?
             server.associate_address(address.ip)
-            #a bit of a hack, but server.reload takes a long time
+
+            # Private clouds won't have a 'public' network. Due to quirks in
+            # Nova as of Folsom, floating IPs are always listed as being
+            # associated with the fixed address.  For a public cloud, this
+            # network is called 'public'. For private clouds it probably
+            # isn't.
+            if server.addresses['public'].nil?
+                server.addresses['public'] = []
+            end
             server.addresses['public'].push({"version"=>4,"addr"=>address.ip})
+
             associated = true
             msg_pair("Floating IP Address", address.ip)
             break
