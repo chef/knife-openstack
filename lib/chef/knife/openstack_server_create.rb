@@ -74,6 +74,10 @@ class Chef
       :boolean => true,
       :default => false
 
+      option :network_id,
+      :long => "--network-id NETWORK_ID",
+      :description => "Use the given network ID for bootstrapping rather than the public IP"
+
       option :ssh_key_name,
       :short => "-S KEY",
       :long => "--ssh-key KEY",
@@ -235,6 +239,10 @@ class Chef
       if config[:private_network]
         bootstrap_ip_address = server.private_ip_address['addr']
       end
+      if config[:network_id]
+        bootstrap_ip_address = server.addresses[locate_config_value(:network_id)].first['addr']
+      end
+        
       Chef::Log.debug("Bootstrap IP Address #{bootstrap_ip_address}")
       if bootstrap_ip_address.nil?
         ui.error("No IP address available for bootstrapping.")
@@ -255,7 +263,7 @@ class Chef
       msg_pair("Instance ID", server.id)
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
-      msg_pair("Security Groups", server.groups.join(", "))
+#      msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
