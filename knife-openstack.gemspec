@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "fog", "> 1.9.0"
   s.add_dependency "chef", ">= 0.10.10"
+  s.add_dependency "knife-windows"
 end
