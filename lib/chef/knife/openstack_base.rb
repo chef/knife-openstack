@@ -73,7 +73,7 @@ class Chef
         Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
         Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
         Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
-        Chef::Log.debug("openstack_insecure #{(!Chef::Config[:knife][:openstack_insecure]).to_s}")
+        Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure].to_s}")
         @connection ||= begin
           connection = Fog::Compute.new(
             :provider => 'OpenStack',
