@@ -197,6 +197,7 @@ class Chef
       msg_pair("Instance ID", server.id)
       # msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
+      msg_pair("Password", server.password)
 
       print "\n#{ui.color("Waiting for server", :magenta)}"
 
@@ -257,6 +258,7 @@ class Chef
       msg_pair("Image", server.image['id'])
       # msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
+      msg_pair("Password", server.password)
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
       msg_pair("Environment", config[:environment] || '_default')
@@ -268,6 +270,7 @@ class Chef
       bootstrap.name_args = [bootstrap_ip_address]
       bootstrap.config[:run_list] = config[:run_list]
       bootstrap.config[:ssh_user] = config[:ssh_user]
+      bootstrap.config[:ssh_password] = server.password
       bootstrap.config[:identity_file] = config[:identity_file]
       bootstrap.config[:host_key_verify] = config[:host_key_verify]
       bootstrap.config[:chef_node_name] = server.name
@@ -286,7 +289,7 @@ class Chef
 
     def validate!
 
-      super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url])
+      super([:image, :openstack_username, :openstack_password, :openstack_auth_url])
 
       if ami.nil?
         ui.error("You have not provided a valid image ID. Please note the short option for this value recently changed from '-i' to '-I'.")
