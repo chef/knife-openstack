@@ -34,6 +34,10 @@ If your knife.rb file will be checked into a SCM system (ie readable by others) 
     knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}"
     knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
 
+If your Openstack deployment is over SSL, but does not have a valid certificate, you can add the following option to bypass SSL check:
+
+    knife[:openstack_insecure] = true
+
 You also have the option of passing your OpenStack API Username/Password into the individual knife subcommands using the `-A` (or `--openstack-username`) `-K` (or `--openstack-password`) command options
 
     # provision a new image named kb01
