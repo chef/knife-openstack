@@ -57,6 +57,15 @@ class Chef
             :long => "--openstack-api-endpoint ENDPOINT",
             :description => "Your OpenStack API endpoint",
             :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_auth_url] = endpoint }
+
+          Chef::Config[:knife][:openstack_insecure] = Chef::Config[:knife][:openstack_insecure] || false
+
+          option :openstack_insecure,
+            :long => "--insecure",
+            :description => "Ignore SSL certificate on the Auth URL",
+            :boolean => true,
+            :default => false,
+            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_insecure] = key }
         end
       end
 
@@ -64,13 +73,17 @@ class Chef
         Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
         Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
         Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
+        Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure].to_s}")
         @connection ||= begin
           connection = Fog::Compute.new(
             :provider => 'OpenStack',
             :openstack_username => Chef::Config[:knife][:openstack_username],
             :openstack_api_key => Chef::Config[:knife][:openstack_password],
             :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
-            :openstack_tenant => Chef::Config[:knife][:openstack_tenant]
+            :openstack_tenant => Chef::Config[:knife][:openstack_tenant],
+            :connection_options => {
+              :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
+            }
           )
         end
       end
