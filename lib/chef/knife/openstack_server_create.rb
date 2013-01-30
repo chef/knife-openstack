@@ -215,6 +215,11 @@ class Chef
           if address.instance_id.nil?
             server.associate_address(address.ip)
             #a bit of a hack, but server.reload takes a long time
+
+            unless server.addresses.has_key?('public')
+              server.addresses['public'] = []
+            end
+
             server.addresses['public'].push({"version"=>4,"addr"=>address.ip})
             associated = true
             msg_pair("Floating IP Address", address.ip)
