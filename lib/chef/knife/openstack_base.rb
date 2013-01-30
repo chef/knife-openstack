@@ -1,7 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
 # Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2011-2012 Opscode, Inc.
+# Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require 'chef/knife'
+require 'fog'
 
 class Chef
   class Knife
@@ -30,9 +30,10 @@ class Chef
         includer.class_eval do
 
           deps do
-            require 'fog'
-            require 'readline'
             require 'chef/json_compat'
+            require 'chef/knife'
+            require 'readline'
+            Chef::Knife.load_deps
           end
 
           option :openstack_username,
