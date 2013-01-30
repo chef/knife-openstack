@@ -79,13 +79,18 @@ knife openstack image list
 
 Outputs a list of all available images available to the currently configured OpenStack Compute cloud account. An image is a collection of files used to create or rebuild a server. This data can be useful when choosing an image id to pass to the `knife openstack server create` subcommand.
 
+knife openstack group list
+--------------------
+
+Outputs a list of the security groups available to the currently configured Openstack Compute cloud account. Each group may have multiple rules. This data may be useful when choosing your security group(s) to pass to the `knife openstack server create` subcommand.
+
 # License #
 
 Author:: Seth Chisamore (<schisamo@opscode.com>)
 
 Author:: Matt Ray (<matt@opscode.com>)
 
-Copyright:: Copyright (c) 2011-2012 Opscode, Inc.
+Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
 
 License:: Apache License, Version 2.0
 
