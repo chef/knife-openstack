@@ -1,7 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
 # Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2011-2012 Opscode, Inc.
+# Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,12 @@ class Chef
 
       banner "knife openstack image list (options)"
 
+      option :disable_filter,
+      :long => "--disable-filter",
+      :description => "Disable filtering of the image list. Currently filters names ending with 'initrd' or 'kernel'",
+      :boolean => true,
+      :default => false
+
       def run
 
         validate!
@@ -34,21 +40,16 @@ class Chef
         image_list = [
           ui.color('ID', :bold),
           ui.color('Name', :bold),
-          # ui.color('Kernel ID', :bold),
-          # ui.color('Architecture', :bold),
-          # ui.color('Root Store', :bold),
-          # ui.color('Location', :bold)
         ]
 
         connection.images.sort_by do |image|
           [image.name.downcase, image.id].compact
         end.each do |image|
-          image_list << image.id
-          image_list << image.name
-          # image_list << image.kernel_id
-          # image_list << image.architecture
-          # image_list << image.root_device_type
-          # image_list << image.location
+          unless ((image.name =~ /kernel$|initrd$/) &&
+              !config[:disable_filter])
+            image_list << image.id
+            image_list << image.name
+          end
         end
 
         image_list = image_list.map do |item|

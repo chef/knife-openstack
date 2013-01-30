@@ -72,12 +72,12 @@ Outputs a list of all servers in the currently configured OpenStack Compute clou
 knife openstack flavor list
 ---------------------------
 
-Outputs a list of all available flavors (available hardware configuration for a server) available to the currently configured OpenStack Compute cloud account. Each flavor has a unique combination of virtual cpus, disk space and memory capacity. This data can be useful when choosing a flavor id to pass to the `knife openstack server create` subcommand.
+Outputs a list of all available flavors (available hardware configuration for a server) available to the currently configured OpenStack Compute cloud account. Each flavor has a unique combination of virtual cpus, disk space and memory capacity. This data may be useful when choosing a flavor id to pass to the `knife openstack server create` subcommand.
 
 knife openstack image list
 --------------------------
 
-Outputs a list of all available images available to the currently configured OpenStack Compute cloud account. An image is a collection of files used to create or rebuild a server. This data can be useful when choosing an image id to pass to the `knife openstack server create` subcommand.
+Outputs a list of all available images available to the currently configured OpenStack Compute cloud account. An image is a collection of files used to create or rebuild a server. The retuned list filters out image names ending in 'kernel' and 'initrd' (this may be disabled with `--disable-filter`). This data may be useful when choosing an image id to pass to the `knife openstack server create` subcommand.
 
 knife openstack group list
 --------------------
