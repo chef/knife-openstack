@@ -1,3 +1,10 @@
+## v0.7.0
+* update dependency on to Fog 1.9.X
+* 'delay-loading' changes to reduce load-time (Mohit Sethi)
+* use the hint with the bootstrap method instead of assuming the :personality works with the server.create method (KNIFE-201)
+* added 'knife openstack group list' for listing security groups and their rules (KNIFE-227)
+* filter out extraneous images from knife openstack image list
+
 ## v0.6.2
 * Use less pessimistic fog version constraint.
 * Add guards to protect against nil values for private_ip_address
