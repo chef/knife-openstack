@@ -163,14 +163,6 @@ class Chef
 
         validate!
 
-        connection = Fog::Compute.new(
-          :provider => 'OpenStack',
-          :openstack_username => Chef::Config[:knife][:openstack_username],
-          :openstack_api_key => Chef::Config[:knife][:openstack_password],
-          :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
-          :openstack_tenant => Chef::Config[:knife][:openstack_tenant]
-          )
-
         #servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
@@ -279,16 +271,25 @@ class Chef
       bootstrap
     end
 
-    def ami
-      @ami ||= connection.images.get(locate_config_value(:image))
+    def flavor
+      @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+    end
+
+    def image
+      @image ||= connection.images.get(locate_config_value(:image))
     end
 
     def validate!
 
       super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url])
 
-      if ami.nil?
-        ui.error("You have not provided a valid image ID. Please note the short option for this value recently changed from '-i' to '-I'.")
+      if flavor.nil?
+        ui.error("You have not provided a valid flavor ID. Please note the options for this value are -f or --flavor.")
+        exit 1
+      end
+
+      if image.nil?
+        ui.error("You have not provided a valid image ID. Please note the options for this value are -I or --image.")
         exit 1
       end
     end
