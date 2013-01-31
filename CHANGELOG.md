@@ -1,9 +1,29 @@
 ## v0.7.0
-* update dependency on to Fog 1.9.X
+* Update dependency on to Fog 1.9.X
 * 'delay-loading' changes to reduce load-time (Mohit Sethi)
-* use the hint with the bootstrap method instead of assuming the :personality works with the server.create method (KNIFE-201)
-* added 'knife openstack group list' for listing security groups and their rules (KNIFE-227)
-* filter out extraneous images from knife openstack image list
+* Use the hint with the bootstrap method instead of assuming the :personality works with the server.create method (KNIFE-201)
+* Added 'knife openstack group list' for listing security groups and their rules (KNIFE-227)
+* Filter out extraneous images from knife openstack image list and added '--disable-filter' to disable
+* Fixed minor issue for public ip addresses (Edmund Haselwanter)
+
+TODO:
+* Change "--[no-]host-key-verify" to "--no-host-key-verification" (James Scott)
+* "knife openstack image list" fails with empty image name (KNIFE-83)
+* excon / fog errors are a JSON blob, Rescue fog errors (KNIFE-87) (Bryan McLellan)
+* Guard against NoMethodError for image.name in image list (Simon Belluzzo)
+* Attach to floating IPs (Mohit Sethi)
+* Allow an option to ignore the SSL cert (KNIFE-225
+* Key pair is not required (KNIFE-226
+* Pass ssh_password to bootstrap (David Petzel)
+* Catch Net Unreachable error (E.J. Finneran)
+* Basic availability zones support (Jarek Zmudzinski, waiting on CLA)
+* Chef Environment config for bootstrapped nodes (Jarek Zmudzinski, waiting on CLA)
+* Syntax error fix during stale hostname check (anark, waiting on CLA)
+* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221
+* server create with expired password hangs (KNIFE-86)
+* knife openstack server delete fails on folsom (KNIFE-79)
+* 'Invalid flavorRef provided' error with non-numeric flavor (KNIFE-76)
+* knife openstack server create doesn't pass along SSH Password (KNIFE-88)
 
 ## v0.6.2
 * Use less pessimistic fog version constraint.
