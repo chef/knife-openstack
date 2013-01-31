@@ -62,11 +62,10 @@ class Chef
       :description => "The Chef node name for your new node"
 
       option :floating_ip,
-      :short => "-a",
-      :long => "--floating-ip",
-      :boolean => true,
-      :default => false,
-      :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project."
+      :short => "-a IP",
+      :long => "--floating-ip IP",
+      :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project.",
+      :proc => Proc.new { |key| Chef::Config[:knife][:floating_ip] = key }
 
       option :private_network,
       :long => "--private-network",
@@ -203,38 +202,28 @@ class Chef
       # wait for it to be ready to do stuff
       server.wait_for { print "."; ready? }
 
+      # Bootstrap node using private network.
+      if config[:private_network]
+        bootstrap_ip_address = server.private_ip_address['addr']
+      else
+        # Use floating_ip for bootstraping
+        bootstrap_ip_address = address.ip
+        address.server = server
+      end
+
+      # wait for it to be ready to do stuff
+      server.wait_for { print "."; ready? }
+
       puts("\n")
 
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
 
-      if config[:floating_ip]
-        associated = false
-        connection.addresses.each do |address|
-          if address.instance_id.nil?
-            server.associate_address(address.ip)
-            #a bit of a hack, but server.reload takes a long time
-            server.addresses['public'].push({"version"=>4,"addr"=>address.ip})
-            associated = true
-            msg_pair("Floating IP Address", address.ip)
-            break
-          end
-        end
-        unless associated
-          ui.error("Unable to associate floating IP.")
-          exit 1
-        end
-      end
       Chef::Log.debug("Public IP Address actual #{server.public_ip_address['addr']}") if server.public_ip_address
 
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
 
-      #which IP address to bootstrap
-      bootstrap_ip_address = server.public_ip_address['addr'] if server.public_ip_address
-      if config[:private_network]
-        bootstrap_ip_address = server.private_ip_address['addr']
-      end
       Chef::Log.debug("Bootstrap IP Address #{bootstrap_ip_address}")
       if bootstrap_ip_address.nil?
         ui.error("No IP address available for bootstrapping.")
@@ -284,6 +273,20 @@ class Chef
       @ami ||= connection.images.get(locate_config_value(:image))
     end
 
+    def address
+      # Check if floating_ip is provided as CLI param, 
+      # otherwise select a floating-ip not associated to any server else create a floating-ip.
+      if config[:floating_ip].nil?
+        @address ||= connection.addresses.find { |addr| addr.instance_id.nil? } || connection.addresses.create()
+      else
+        @address ||= connection.addresses.find { |addr| addr.ip == config[:floating_ip] } && addr.instance_id.nil?
+      end
+    end
+
+    def flavor
+      @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+    end
+
     def validate!
 
       super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url])
@@ -292,6 +295,18 @@ class Chef
         ui.error("You have not provided a valid image ID. Please note the short option for this value recently changed from '-i' to '-I'.")
         exit 1
       end
+
+      if not config[:private_network]
+        if address.nil?
+          ui.error("You have either not provided a valid floating-ip addressor have reached floating-ip address quota limit.")
+        end
+      end
+
+      if flavor.nil?
+        ui.error("You have not provided a validate flavor ID. Please note the options for this value are -f, --flavor.")
+        exit 1
+      end
+
     end
 
     #generate a random name if chef_node_name is empty
