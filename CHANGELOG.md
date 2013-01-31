@@ -5,9 +5,9 @@
 * Added 'knife openstack group list' for listing security groups and their rules (KNIFE-227)
 * Filter out extraneous images from knife openstack image list and added '--disable-filter' to disable
 * Fixed minor issue for public ip addresses (Edmund Haselwanter)
+* Change "--[no-]host-key-verify" to "--no-host-key-verification" (James Scott)
 
 TODO:
-* Change "--[no-]host-key-verify" to "--no-host-key-verification" (James Scott)
 * "knife openstack image list" fails with empty image name (KNIFE-83)
 * excon / fog errors are a JSON blob, Rescue fog errors (KNIFE-87) (Bryan McLellan)
 * Guard against NoMethodError for image.name in image list (Simon Belluzzo)
@@ -16,8 +16,8 @@ TODO:
 * Key pair is not required (KNIFE-226
 * Pass ssh_password to bootstrap (David Petzel)
 * Catch Net Unreachable error (E.J. Finneran)
-* Basic availability zones support (Jarek Zmudzinski, waiting on CLA)
-* Chef Environment config for bootstrapped nodes (Jarek Zmudzinski, waiting on CLA)
+* Basic availability zones support (Jarek Zmudzinski)
+* Chef Environment config for bootstrapped nodes (Jarek Zmudzinski)
 * Syntax error fix during stale hostname check (anark, waiting on CLA)
 * Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221
 * server create with expired password hangs (KNIFE-86)
