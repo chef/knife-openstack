@@ -56,6 +56,13 @@ class Chef
       # :default => ["default"],
       # :proc => Proc.new { |groups| groups.split(',') }
 
+      option :availability_zone,
+      :short => "-Z ZONE_NAME",
+      :long => "--availability_zone ZONE_NAME",
+      :description => "The availability zone for this server",
+      :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
+
+
       option :chef_node_name,
       :short => "-N NAME",
       :long => "--node-name NAME",
@@ -125,6 +132,12 @@ class Chef
       :proc => lambda { |o| o.split(/[\s,]+/) },
       :default => []
 
+      option :environment,
+      :short => "-e CHEF_ENVIRONMENT",
+      :long => "--environment CHEF_ENVIRONMENT",
+      :description => "Chef environment for the bootstrapped node",
+      :default => "_default"
+
       option :host_key_verify,
       :long => "--[no-]host-key-verify",
       :description => "Verify host key, enabled by default",
@@ -179,6 +192,8 @@ class Chef
         :image_ref => locate_config_value(:image),
         :flavor_ref => locate_config_value(:flavor),
         # :security_group => locate_config_value(:security_groups),
+        :availability_zone => locate_config_value(:availability_zone),
+        :environment => locate_config_value(:environment),
         :key_name => Chef::Config[:knife][:openstack_ssh_key_id],
         :personality => [{
             "path" => "/etc/chef/ohai/hints/openstack.json",
@@ -190,12 +205,14 @@ class Chef
       Chef::Log.debug("Image #{locate_config_value(:image)}")
       Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
       # Chef::Log.debug("Groups #{locate_config_value(:security_groups)}")
+      Chef::Log.debug("Availability zone #{locate_config_value(:availability_zone)}")
       Chef::Log.debug("Creating server #{server_def}")
       server = connection.servers.create(server_def)
 
       msg_pair("Instance Name", server.name)
       msg_pair("Instance ID", server.id)
       # msg_pair("Security Groups", server.groups.join(", "))
+      msg_pair("Availability zone", server.availability_zone)
       msg_pair("SSH Keypair", server.key_name)
 
       print "\n#{ui.color("Waiting for server", :magenta)}"
@@ -211,8 +228,9 @@ class Chef
 
       if config[:floating_ip]
         associated = false
+        pool = server.availability_zone
         connection.addresses.each do |address|
-          if address.instance_id.nil?
+          if address.instance_id.nil? && address.pool == pool
             server.associate_address(address.ip)
             #a bit of a hack, but server.reload takes a long time
             server.addresses['public'].push({"version"=>4,"addr"=>address.ip})
@@ -256,6 +274,7 @@ class Chef
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
       # msg_pair("Security Groups", server.groups.join(", "))
+      msg_pair("Availability zone", server.availability_zone)
       msg_pair("SSH Keypair", server.key_name)
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
