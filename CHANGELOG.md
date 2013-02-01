@@ -48,7 +48,7 @@ TODO:
 * initial Cactus release using EC2 API
 
 # BACKLOG/ISSUES #
-This is a list of features currently lacking and (eventually) under development:
+This is a list of missing(?) features and open questions currently under development consideration:
 
 * purge only works when names match up with clients
 * `knife openstack floating list|associate|disassociate NODE` with --floating-ip-pool also
@@ -58,3 +58,4 @@ This is a list of features currently lacking and (eventually) under development:
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
 * probably other places public network is assumed that could cause issues
 * Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221)
+* should snapshots show up in knife openstack image list? or should there be knife openstack snapshot list?
