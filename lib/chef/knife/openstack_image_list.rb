@@ -45,7 +45,7 @@ class Chef
         connection.images.sort_by do |image|
           [image.name.downcase, image.id].compact
         end.each do |image|
-          unless ((image.name =~ /kernel$|initrd$/) &&
+          unless ((image.name =~ /initrd$|kernel$|loader$|virtual$|vmlinuz$/) &&
               !config[:disable_filter])
             image_list << image.id
             image_list << image.name
