@@ -77,7 +77,7 @@ Outputs a list of all available flavors (available hardware configuration for a 
 knife openstack image list
 --------------------------
 
-Outputs a list of all available images available to the currently configured OpenStack Compute cloud account. An image is a collection of files used to create or rebuild a server. The retuned list filters out image names ending in 'initrd', 'kernel', 'loader', 'virtual' or 'vmlinuz' (this may be disabled with `--disable-filter`). This data may be useful when choosing an image id to pass to the `knife openstack server create` subcommand.
+Outputs a list of all available images and snapshots available to the currently configured OpenStack Compute cloud account. An image is a collection of files used to create or rebuild a server. The retuned list filters out image names ending in 'initrd', 'kernel', 'loader', 'virtual' or 'vmlinuz' (this may be disabled with `--disable-filter`). This data may be useful when choosing an image id to pass to the `knife openstack server create` subcommand.
 
 knife openstack group list
 --------------------

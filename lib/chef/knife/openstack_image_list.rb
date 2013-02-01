@@ -40,6 +40,7 @@ class Chef
         image_list = [
           ui.color('ID', :bold),
           ui.color('Name', :bold),
+          ui.color('Snapshot', :bold),
         ]
 
         connection.images.sort_by do |image|
@@ -49,14 +50,16 @@ class Chef
               !config[:disable_filter])
             image_list << image.id
             image_list << image.name
+            snapshot = 'no'
+            image.metadata.each do |datum|
+              if (datum.key == 'image_type') && (datum.value == 'snapshot')
+                snapshot = 'yes'
+              end
+            end
+            image_list << snapshot
           end
         end
-
-        image_list = image_list.map do |item|
-          item.to_s
-        end
-
-        puts ui.list(image_list, :uneven_columns_across, 2)
+        puts ui.list(image_list, :uneven_columns_across, 3)
       end
     end
   end
