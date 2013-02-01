@@ -38,12 +38,18 @@ class Chef
           ui.color('RAM', :bold),
           ui.color('Disk', :bold),
         ]
-        connection.flavors.sort_by(&:id).each do |flavor|
-          flavor_list << flavor.id.to_s
-          flavor_list << flavor.name
-          flavor_list << flavor.vcpus.to_s
-          flavor_list << "#{flavor.ram.to_s} MB"
-          flavor_list << "#{flavor.disk.to_s} GB"
+        begin
+          connection.flavors.sort_by(&:id).each do |flavor|
+            flavor_list << flavor.id.to_s
+            flavor_list << flavor.name
+            flavor_list << flavor.vcpus.to_s
+            flavor_list << "#{flavor.ram.to_s} MB"
+            flavor_list << "#{flavor.disk.to_s} GB"
+          end
+        rescue Excon::Errors::BadRequest => e
+          response = Chef::JSONCompat.from_json(e.response.body)
+          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          raise e
         end
         puts ui.list(flavor_list, :uneven_columns_across, 5)
       end

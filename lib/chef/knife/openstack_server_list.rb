@@ -1,7 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
 # Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2011-2012 Opscode, Inc.
+# Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,33 +42,40 @@ class Chef
           ui.color('Keypair', :bold),
           ui.color('State', :bold)
         ]
-        connection.servers.all.sort_by(&:id).each do |server|
-          server_list << server.id.to_s
-          server_list << server.name
-          if server.public_ip_address.nil?
-            server_list << ''
-          else
-            server_list << server.public_ip_address['addr'].to_s
-          end
-          if server.private_ip_address.nil?
-            server_list << ''
-          else
-            server_list << server.private_ip_address['addr'].to_s
-          end
-          server_list << server.flavor['id'].to_s
-          server_list << server.image['id'].to_s
-          server_list << server.key_name
-          server_list << begin
-                           state = server.state.to_s.downcase
-                           case state
-                           when 'shutting-down','terminated','stopping','stopped','error','shutoff'
-                             ui.color(state, :red)
-                           when 'pending','build','paused','suspended','hard_reboot'
-                             ui.color(state, :yellow)
-                           else
-                             ui.color(state, :green)
+
+        begin
+          connection.servers.all.sort_by(&:id).each do |server|
+            server_list << server.id.to_s
+            server_list << server.name
+            if server.public_ip_address.nil?
+              server_list << ''
+            else
+              server_list << server.public_ip_address['addr'].to_s
+            end
+            if server.private_ip_address.nil?
+              server_list << ''
+            else
+              server_list << server.private_ip_address['addr'].to_s
+            end
+            server_list << server.flavor['id'].to_s
+            server_list << server.image['id'].to_s
+            server_list << server.key_name
+            server_list << begin
+                             state = server.state.to_s.downcase
+                             case state
+                             when 'shutting-down','terminated','stopping','stopped','error','shutoff'
+                               ui.color(state, :red)
+                             when 'pending','build','paused','suspended','hard_reboot'
+                               ui.color(state, :yellow)
+                             else
+                               ui.color(state, :green)
+                             end
                            end
-                         end
+          end
+        rescue Excon::Errors::BadRequest => e
+          response = Chef::JSONCompat.from_json(e.response.body)
+          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          raise e
         end
         puts ui.list(server_list, :uneven_columns_across, 8)
 
@@ -76,5 +83,3 @@ class Chef
     end
   end
 end
-
-
