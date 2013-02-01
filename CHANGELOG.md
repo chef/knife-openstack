@@ -7,10 +7,9 @@
 * Fixed minor issue for public ip addresses (Edmund Haselwanter)
 * Fixed security groups, adding `-G` support
 * Added snapshots as a new column in image list
+* "knife openstack image list" fails with empty image name (KNIFE-83) (Simon Belluzzo)
 
 TODO:
-* Guard against NoMethodError for image.name in image list (Simon Belluzzo) "knife openstack image list" fails with empty image name (KNIFE-83)
-* server create with expired password hangs (KNIFE-86)
 * excon / fog errors are a JSON blob, Rescue fog errors (KNIFE-87) (Bryan McLellan)
 * Pass ssh_password to bootstrap (David Petzel) knife openstack server create doesn't pass along SSH Password (KNIFE-88)
 * Attach to floating IPs (Mohit Sethi)
@@ -54,6 +53,7 @@ This is a list of missing(?) features and open questions currently under develop
 * `knife openstack floating list|associate|release NODE` with --floating-ip-pool also
 * take either the flavor ID or the flavor name (KNIFE-76)
 * take either the image ID or the image name (similar for KNIFE-76)
+* server create with expired password hangs (KNIFE-86)
+* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221)
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
 * probably other places public network is assumed that could cause issues
-* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221)
