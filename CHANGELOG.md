@@ -12,10 +12,10 @@
 * Better error handling for connection errors.
 * Pass ssh_password to bootstrap (KNIFE-88)(David Petzel)
 * Catch Net Unreachable error (E.J. Finneran)
+* Allow an option to ignore the SSL cert (KNIFE-225)(BK Box)
 
 TODO:
 * Attach to floating IPs (Mohit Sethi)
-* Allow an option to ignore the SSL cert (KNIFE-225)(BK Box)
 * Key pair is not required (KNIFE-226)(BK Box)
 * Basic availability zones support (Jarek Zmudzinski)
 * Chef Environment config for bootstrapped nodes (Jarek Zmudzinski)
