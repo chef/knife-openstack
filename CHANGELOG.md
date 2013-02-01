@@ -18,7 +18,6 @@
 TODO:
 * Attach to floating IPs (Mohit Sethi)
 * Basic availability zones support (Jarek Zmudzinski)
-* Chef Environment config for bootstrapped nodes (Jarek Zmudzinski)
 * knife openstack server delete fails on folsom (KNIFE-79)
 * Syntax error fix during stale hostname check (anark, waiting on CLA)
 
