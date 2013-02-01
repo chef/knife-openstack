@@ -5,10 +5,10 @@
 * Added 'knife openstack group list' for listing security groups and their rules (KNIFE-227)
 * Filter out extraneous images from knife openstack image list and added '--disable-filter' to disable
 * Fixed minor issue for public ip addresses (Edmund Haselwanter)
-* Change "--[no-]host-key-verify" to "--no-host-key-verification" (James Scott)
+* Fixed security groups, adding `-G` support
 
 TODO:
-* security groups are still broken, appear to be broken in Fog. Add `-G` support for security groups other than 'default'
+* snapshots get a new column in image list
 * Guard against NoMethodError for image.name in image list (Simon Belluzzo) "knife openstack image list" fails with empty image name (KNIFE-83)
 * server create with expired password hangs (KNIFE-86)
 * excon / fog errors are a JSON blob, Rescue fog errors (KNIFE-87) (Bryan McLellan)
@@ -51,10 +51,9 @@ TODO:
 This is a list of missing(?) features and open questions currently under development consideration:
 
 * purge only works when names match up with clients
-* `knife openstack floating list|associate|disassociate NODE` with --floating-ip-pool also
+* `knife openstack floating list|associate|release NODE` with --floating-ip-pool also
 * take either the flavor ID or the flavor name (KNIFE-76)
 * take either the image ID or the image name (similar for KNIFE-76)
-* availability zones
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
 * probably other places public network is assumed that could cause issues
 * Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221)

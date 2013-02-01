@@ -49,12 +49,12 @@ class Chef
       :description => "The image ID for the server",
       :proc => Proc.new { |i| Chef::Config[:knife][:image] = i }
 
-      # option :security_groups,
-      # :short => "-G X,Y,Z",
-      # :long => "--groups X,Y,Z",
-      # :description => "The security groups for this server",
-      # :default => ["default"],
-      # :proc => Proc.new { |groups| groups.split(',') }
+      option :security_groups,
+      :short => "-G X,Y,Z",
+      :long => "--groups X,Y,Z",
+      :description => "The security groups for this server",
+      :default => ["default"],
+      :proc => Proc.new { |groups| groups.split(',') }
 
       option :chef_node_name,
       :short => "-N NAME",
@@ -170,20 +170,19 @@ class Chef
         :name => node_name,
         :image_ref => locate_config_value(:image),
         :flavor_ref => locate_config_value(:flavor),
-        # :security_group => locate_config_value(:security_groups),
+        :security_groups => locate_config_value(:security_groups),
         :key_name => Chef::Config[:knife][:openstack_ssh_key_id]
       }
 
       Chef::Log.debug("Name #{node_name}")
       Chef::Log.debug("Image #{locate_config_value(:image)}")
       Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
-      # Chef::Log.debug("Groups #{locate_config_value(:security_groups)}")
+      Chef::Log.debug("Groups #{locate_config_value(:security_groups)}")
       Chef::Log.debug("Creating server #{server_def}")
       server = connection.servers.create(server_def)
 
       msg_pair("Instance Name", server.name)
       msg_pair("Instance ID", server.id)
-      # msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
 
       print "\n#{ui.color("Waiting for server", :magenta)}"
