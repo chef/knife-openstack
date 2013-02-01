@@ -7,16 +7,16 @@
 * Fixed minor issue for public ip addresses (Edmund Haselwanter)
 * Fixed security groups, adding `-G` support
 * Added snapshots as a new column in image list
-* "knife openstack image list" fails with empty image name (KNIFE-83) (Simon Belluzzo)
-* excon / fog errors are a JSON blob, Rescue fog errors (KNIFE-87) (Bryan McLellan)
+* "knife openstack image list" fails with empty image name (KNIFE-83)(Simon Belluzzo)
+* excon / fog errors are a JSON blob, Rescue fog errors (KNIFE-87)(Bryan McLellan)
 * Better error handling for connection errors.
+* Pass ssh_password to bootstrap (KNIFE-88)(David Petzel)
+* Catch Net Unreachable error (E.J. Finneran)
 
 TODO:
-* Pass ssh_password to bootstrap (David Petzel) knife openstack server create doesn't pass along SSH Password (KNIFE-88)
 * Attach to floating IPs (Mohit Sethi)
-* Allow an option to ignore the SSL cert (KNIFE-225
-* Key pair is not required (KNIFE-226
-* Catch Net Unreachable error (E.J. Finneran)
+* Allow an option to ignore the SSL cert (KNIFE-225)(BK Box)
+* Key pair is not required (KNIFE-226)(BK Box)
 * Basic availability zones support (Jarek Zmudzinski)
 * Chef Environment config for bootstrapped nodes (Jarek Zmudzinski)
 * knife openstack server delete fails on folsom (KNIFE-79)
