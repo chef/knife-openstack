@@ -73,7 +73,14 @@ class Chef
             :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
             :openstack_tenant => Chef::Config[:knife][:openstack_tenant]
           )
-        end
+
+                        rescue Excon::Errors::Unauthorized => e
+                          ui.fatal("Connection failure, please check your OpenStack username and password.")
+                          exit 1
+                        rescue Excon::Errors::SocketError => e
+                          ui.fatal("Connection failure, please check your OpenStack authentication URL.")
+                          exit 1
+                        end
       end
 
       def locate_config_value(key)
