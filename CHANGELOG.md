@@ -8,22 +8,19 @@
 * Change "--[no-]host-key-verify" to "--no-host-key-verification" (James Scott)
 
 TODO:
-* "knife openstack image list" fails with empty image name (KNIFE-83)
+* security groups are still broken, appear to be broken in Fog. Add `-G` support for security groups other than 'default'
+* Guard against NoMethodError for image.name in image list (Simon Belluzzo) "knife openstack image list" fails with empty image name (KNIFE-83)
+* server create with expired password hangs (KNIFE-86)
 * excon / fog errors are a JSON blob, Rescue fog errors (KNIFE-87) (Bryan McLellan)
-* Guard against NoMethodError for image.name in image list (Simon Belluzzo)
+* Pass ssh_password to bootstrap (David Petzel) knife openstack server create doesn't pass along SSH Password (KNIFE-88)
 * Attach to floating IPs (Mohit Sethi)
 * Allow an option to ignore the SSL cert (KNIFE-225
 * Key pair is not required (KNIFE-226
-* Pass ssh_password to bootstrap (David Petzel)
 * Catch Net Unreachable error (E.J. Finneran)
 * Basic availability zones support (Jarek Zmudzinski)
 * Chef Environment config for bootstrapped nodes (Jarek Zmudzinski)
-* Syntax error fix during stale hostname check (anark, waiting on CLA)
-* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221
-* server create with expired password hangs (KNIFE-86)
 * knife openstack server delete fails on folsom (KNIFE-79)
-* 'Invalid flavorRef provided' error with non-numeric flavor (KNIFE-76)
-* knife openstack server create doesn't pass along SSH Password (KNIFE-88)
+* Syntax error fix during stale hostname check (anark, waiting on CLA)
 
 ## v0.6.2
 * Use less pessimistic fog version constraint.
@@ -53,14 +50,11 @@ TODO:
 # BACKLOG/ISSUES #
 This is a list of features currently lacking and (eventually) under development:
 
-* security groups are still broken, appear to be broken in Fog. Add `-G` support for security groups other than 'default'
 * purge only works when names match up with clients
-* `knife openstack floating list|associate|disassociate ip|node`
-* take either the flavor ID or the flavor name
-* take either the image ID or the image name
-* more information in `knife openstack image list`
-* get DNS names working
+* `knife openstack floating list|associate|disassociate NODE` with --floating-ip-pool also
+* take either the flavor ID or the flavor name (KNIFE-76)
+* take either the image ID or the image name (similar for KNIFE-76)
 * availability zones
-* filter out the *-initrd and *-kernel from 'openstack image list'. Fog -> container_format={aki|ari} or disk_format on the same params
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
 * probably other places public network is assumed that could cause issues
+* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221)
