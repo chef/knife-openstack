@@ -258,7 +258,6 @@ class Chef
       msg_pair("Instance ID", server.id)
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
-      # msg_pair("Security Groups", server.groups.join(", "))
       msg_pair("SSH Keypair", server.key_name)
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
@@ -297,7 +296,7 @@ class Chef
 
     def validate!
 
-      super([:image, :openstack_ssh_key_id, :openstack_username, :openstack_password, :openstack_auth_url])
+      super([:image, :openstack_username, :openstack_password, :openstack_auth_url])
 
       if flavor.nil?
         ui.error("You have not provided a valid flavor ID. Please note the options for this value are -f or --flavor.")
