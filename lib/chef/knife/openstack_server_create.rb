@@ -140,19 +140,19 @@ class Chef
       :default => true
 
       option :bootstrap_protocol,
-        :long => "--bootstrap-protocol protocol",
-        :description => "Protocol to bootstrap windows servers. options: winrm",
-        :default => nil
+      :long => "--bootstrap-protocol protocol",
+      :description => "Protocol to bootstrap windows servers. options: winrm",
+      :default => nil
 
-    option :bootstrap_proxy,
+      option :bootstrap_proxy,
       :long => "--bootstrap-proxy PROXY_URL",
       :description => "The proxy server for the node being bootstrapped",
       :proc => Proc.new { |v| Chef::Config[:knife][:bootstrap_proxy] = v }
 
       option :server_create_timeout,
       :long => "--server-create-timeout timeout",
-      :description => "How long to wait until the server is ready",
-      :default => 600, #secs
+      :description => "How long to wait until the server is ready; default is 600 seconds",
+      :default => 600,
       :proc => Proc.new { |v| Chef::Config[:knife][:server_create_timeouts] = v}
 
       def tcp_test_ssh(hostname)
@@ -182,9 +182,9 @@ class Chef
         tcp_socket && tcp_socket.close
       end
 
-   def tcp_test_winrm(hostname, port)
-      TCPSocket.new(hostname, port)
-      return true
+      def tcp_test_winrm(hostname, port)
+        TCPSocket.new(hostname, port)
+        return true
       rescue SocketError
         sleep 2
         false
@@ -201,7 +201,7 @@ class Chef
       rescue Errno::ENETUNREACH
         sleep 2
         false
-    end
+      end
       def run
         $stdout.sync = true
 
@@ -310,7 +310,7 @@ class Chef
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
       msg_pair("Environment", config[:environment] || '_default')
       msg_pair("Run List", config[:run_list].join(', '))
-      end
+    end
 
     def bootstrap_for_windows_node(server, bootstrap_ip_address)
       bootstrap = Chef::Knife::BootstrapWindowsWinrm.new
@@ -318,7 +318,6 @@ class Chef
       bootstrap.config[:winrm_user] = locate_config_value(:winrm_user) || 'Administrator'
       bootstrap.config[:winrm_password] = locate_config_value(:winrm_password)
       bootstrap.config[:winrm_transport] = locate_config_value(:winrm_transport)
-
       bootstrap.config[:winrm_port] = locate_config_value(:winrm_port)
       bootstrap.config[:chef_node_name] = config[:chef_node_name] || server['id']
       bootstrap.config[:encrypted_data_bag_secret] = config[:encrypted_data_bag_secret]
@@ -340,14 +339,6 @@ class Chef
       bootstrap
     end
 
-    def flavor
-      @flavor ||= connection.flavors.get(locate_config_value(:flavor))
-    end
-
-    def image
-      @image ||= connection.images.get(locate_config_value(:image))
-    end
-
     def bootstrap_for_node(server, bootstrap_ip_address)
       bootstrap = Chef::Knife::Bootstrap.new
       bootstrap.name_args = [bootstrap_ip_address]
@@ -358,8 +349,12 @@ class Chef
       bootstrap_common_params(bootstrap, server.name)
     end
 
-    def ami
-      @ami ||= connection.images.get(locate_config_value(:image))
+    def flavor
+      @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+    end
+
+    def image
+      @image ||= connection.images.get(locate_config_value(:image))
     end
 
     def validate!
