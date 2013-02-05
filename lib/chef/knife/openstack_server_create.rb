@@ -319,13 +319,11 @@ class Chef
       bootstrap.config[:winrm_password] = locate_config_value(:winrm_password)
       bootstrap.config[:winrm_transport] = locate_config_value(:winrm_transport)
       bootstrap.config[:winrm_port] = locate_config_value(:winrm_port)
-      bootstrap.config[:chef_node_name] = config[:chef_node_name] || server['id']
-      bootstrap.config[:encrypted_data_bag_secret] = config[:encrypted_data_bag_secret]
-      bootstrap.config[:encrypted_data_bag_secret_file] = config[:encrypted_data_bag_secret_file]
       bootstrap_common_params(bootstrap, server.name)
     end
 
     def bootstrap_common_params(bootstrap, server_name)
+      bootstrap.config[:chef_node_name] = config[:chef_node_name] || server['id']
       bootstrap.config[:run_list] = config[:run_list]
       bootstrap.config[:prerelease] = config[:prerelease]
       bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
@@ -333,6 +331,8 @@ class Chef
       bootstrap.config[:template_file] = locate_config_value(:template_file)
       bootstrap.config[:bootstrap_proxy] = locate_config_value(:bootstrap_proxy)
       bootstrap.config[:environment] = config[:environment]
+      bootstrap.config[:encrypted_data_bag_secret] = config[:encrypted_data_bag_secret]
+      bootstrap.config[:encrypted_data_bag_secret_file] = config[:encrypted_data_bag_secret_file]
       # let ohai know we're using OpenStack
       Chef::Config[:knife][:hints] ||= {}
       Chef::Config[:knife][:hints]['openstack'] ||= {}
