@@ -55,11 +55,12 @@ Additionally the following options may be set in your `knife.rb`:
 To use a floating IP address while bootstrapping nodes, use the `-a` or `--floating-ip` option. For the node to have the floating IP address after bootstrapping, it is required to use the new `openstack.rb` Ohai plugin, waiting for the next Ohai release or installed using the [ohai cookbook](https://github.com/opscode-cookbooks/ohai). https://github.com/mattray/ohai/tree/OHAI-381 is the ticket for this.
 
 # Working with Windows Images #
+
 Provisioning and Bootstrapping for Windows 2003/2008 Images is now supported. The Windows Images need to have WinRM enabled with Basic Authentication configured. Current support does not support Kerberos Authentication.
 
 Example:
 
-knife openstack server create -I <Image_ID> -f <Flavor_ID> -S <keypair_name> --bootstrap-protocol winrm -P <Administrator_Password> -x Administrator -N <chef_node_name> --template windows-chef-client-msi.erb
+    knife openstack server create -I <Image_ID> -f <Flavor_ID> -S <keypair_name> --bootstrap-protocol winrm -P <Administrator_Password> -x Administrator -N <chef_node_name> --template windows-chef-client-msi.erb
 
 NOTE:
 * Bootstrap Protocol needs to be compulsorily set to winrm.
