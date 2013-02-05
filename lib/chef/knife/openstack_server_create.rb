@@ -323,7 +323,7 @@ class Chef
     end
 
     def bootstrap_common_params(bootstrap, server_name)
-      bootstrap.config[:chef_node_name] = config[:chef_node_name] || server['id']
+      bootstrap.config[:chef_node_name] = config[:chef_node_name] || server_name
       bootstrap.config[:run_list] = config[:run_list]
       bootstrap.config[:prerelease] = config[:prerelease]
       bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
