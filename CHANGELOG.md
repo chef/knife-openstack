@@ -13,13 +13,10 @@
 * Pass ssh_password to bootstrap (KNIFE-88)(David Petzel)
 * Catch Net Unreachable error (E.J. Finneran)
 * Allow an option to ignore the SSL cert (KNIFE-225)(BK Box)
-* Key pair is not required (KNIFE-226)(BK Box)
 
 TODO:
 * Attach to floating IPs (Mohit Sethi)
-* Basic availability zones support (Jarek Zmudzinski)
 * knife openstack server delete fails on folsom (KNIFE-79)
-* Syntax error fix during stale hostname check (anark, waiting on CLA)
 
 ## v0.6.2
 * Use less pessimistic fog version constraint.
@@ -49,11 +46,13 @@ TODO:
 # BACKLOG/ISSUES #
 This is a list of missing(?) features and open questions currently under development consideration:
 
+* Basic availability zones support (Jarek Zmudzinski) NEED TESTING ACCESS FOR AVAILABILITY ZONES
+* Key pair is not required (KNIFE-226)(BK Box) NEEDS TESTING
+* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221) winrm branch, UGLY WARNINGS NEED RESOLUTION
 * purge only works when names match up with clients
 * `knife openstack floating list|associate|release NODE` with --floating-ip-pool also
 * take either the flavor ID or the flavor name (KNIFE-76)
 * take either the image ID or the image name (similar for KNIFE-76)
 * server create with expired password hangs (KNIFE-86)
-* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221)
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
 * probably other places public network is assumed that could cause issues
