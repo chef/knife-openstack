@@ -32,21 +32,21 @@ class Chef
 
         group_list = [
           ui.color('Name', :bold),
-          ui.color('Description', :bold),
           ui.color('Protocol', :bold),
           ui.color('From', :bold),
           ui.color('To', :bold),
           ui.color('CIDR', :bold),
+          ui.color('Description', :bold),
         ]
         connection.security_groups.sort_by(&:name).each do |group|
           group.rules.each do |rule|
             unless rule['ip_protocol'].nil?
               group_list << group.name
-              group_list << group.description
               group_list << rule['ip_protocol']
               group_list << rule['from_port'].to_s
               group_list << rule['to_port'].to_s
               group_list << rule['ip_range']['cidr']
+              group_list << group.description
             end
           end
         end
