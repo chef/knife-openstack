@@ -1,7 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
 # Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2011-2012 Opscode, Inc.
+# Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -307,7 +307,7 @@ class Chef
       return false if addresses.empty? #no floating IPs
       #floating requested without value
       if address.nil?
-        if addresses.find_index {|a| !a.fixed_ip.nil?}
+        if addresses.find_index {|a| a.fixed_ip.nil?}
           return true
         else
           return false #no floating IPs available
