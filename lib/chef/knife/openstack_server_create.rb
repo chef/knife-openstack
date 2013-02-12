@@ -170,7 +170,7 @@ class Chef
         :image_ref => locate_config_value(:image),
         :flavor_ref => locate_config_value(:flavor),
         :security_groups => locate_config_value(:security_groups),
-        :key_name => Chef::Config[:knife][:openstack_ssh_key_id]
+        :key_name => locate_config_value(:openstack_ssh_key_id)
       }
 
       Chef::Log.debug("Name #{node_name}")
@@ -200,7 +200,8 @@ class Chef
 
       msg_pair("Instance Name", server.name)
       msg_pair("Instance ID", server.id)
-      msg_pair("SSH Keypair", server.key_name)
+      msg_pair("SSH Keypair", server.key_name) if server.key_name
+      msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
 
       print "\n#{ui.color("Waiting for server", :magenta)}"
 
@@ -262,7 +263,8 @@ class Chef
       msg_pair("Instance ID", server.id)
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
-      msg_pair("SSH Keypair", server.key_name)
+      msg_pair("SSH Keypair", server.key_name) if server.key_name
+      msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
       msg_pair("Environment", config[:environment] || '_default')
