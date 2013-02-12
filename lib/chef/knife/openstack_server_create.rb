@@ -62,11 +62,10 @@ class Chef
       :description => "The Chef node name for your new node"
 
       option :floating_ip,
-      :short => "-a",
-      :long => "--floating-ip",
-      :boolean => true,
-      :default => false,
-      :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project."
+      :short => "-a [IP]",
+      :long => "--floating-ip [IP]",
+      :default => "-1",
+      :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project. Specific IP is optional."
 
       option :private_network,
       :long => "--private-network",
@@ -177,8 +176,10 @@ class Chef
       Chef::Log.debug("Name #{node_name}")
       Chef::Log.debug("Image #{locate_config_value(:image)}")
       Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
-      Chef::Log.debug("Groups #{locate_config_value(:security_groups)}")
+      Chef::Log.debug("Requested Floating IP #{locate_config_value(:floating_ip)}")
+      Chef::Log.debug("Security Groups #{locate_config_value(:security_groups)}")
       Chef::Log.debug("Creating server #{server_def}")
+
       begin
         server = connection.servers.create(server_def)
       rescue Excon::Errors::BadRequest => e
@@ -212,23 +213,26 @@ class Chef
       msg_pair("Image", server.image['id'])
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
 
-      if config[:floating_ip]
-        associated = false
-        connection.addresses.each do |address|
-          if address.instance_id.nil?
-            server.associate_address(address.ip)
-            #a bit of a hack, but server.reload takes a long time
-            (server.addresses['public'] ||= []) << {"version"=>4,"addr"=>address.ip}
-            associated = true
-            msg_pair("Floating IP Address", address.ip)
-            break
+      floating_address = locate_config_value(:floating_ip)
+      Chef::Log.debug("Floating IP Address requested #{floating_address}")
+      unless (floating_address == '-1') #no floating IP requested
+        addresses = connection.addresses
+        #floating requested without value
+        if floating_address.nil?
+          free_floating = addresses.find_index {|a| a.fixed_ip.nil?}
+          if free_floating.nil? #no free floating IP found
+            ui.error("Unable to assign a Floating IP from allocated IPs.")
+            exit 1
+          else
+            floating_address = addresses[free_floating].ip
           end
         end
-        unless associated
-          ui.error("Unable to associate floating IP.")
-          exit 1
-        end
+        server.associate_address(floating_address)
+        #a bit of a hack, but server.reload takes a long time
+        (server.addresses['public'] ||= []) << {"version"=>4,"addr"=>floating_address}
+        msg_pair("Floating IP Address assigned:", floating_address)
       end
+
       Chef::Log.debug("Public IP Address actual #{server.public_ip_address['addr']}") if server.public_ip_address
 
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
@@ -294,8 +298,30 @@ class Chef
       @image ||= connection.images.get(locate_config_value(:image))
     end
 
-    def validate!
+    def is_floating_ip_valid
+      address = locate_config_value(:floating_ip)
+      if address == '-1' #no floating IP requested
+        return true
+      end
+      addresses = connection.addresses
+      return false if addresses.empty? #no floating IPs
+      #floating requested without value
+      if address.nil?
+        if addresses.find_index {|a| !a.fixed_ip.nil?}
+          return true
+        else
+          return false #no floating IPs available
+        end
+      end
+      #floating requested with value
+      if addresses.find_index {|a| a.ip == address}
+        return true
+      else
+        return false #requested floating IP does not exist
+      end
+    end
 
+    def validate!
       super([:image, :openstack_username, :openstack_password, :openstack_auth_url])
 
       if flavor.nil?
@@ -305,6 +331,11 @@ class Chef
 
       if image.nil?
         ui.error("You have not provided a valid image ID. Please note the options for this value are -I or --image.")
+        exit 1
+      end
+
+      if !is_floating_ip_valid
+        ui.error("You have either requested an invalid floating IP address or none are available.")
         exit 1
       end
     end
