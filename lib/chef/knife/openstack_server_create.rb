@@ -170,7 +170,7 @@ class Chef
         :image_ref => locate_config_value(:image),
         :flavor_ref => locate_config_value(:flavor),
         :security_groups => locate_config_value(:security_groups),
-        :key_name => Chef::Config[:knife][:openstack_ssh_key_id]
+        :key_name => locate_config_value(:openstack_ssh_key_id)
       }
 
       Chef::Log.debug("Name #{node_name}")
@@ -200,7 +200,6 @@ class Chef
 
       msg_pair("Instance Name", server.name)
       msg_pair("Instance ID", server.id)
-      msg_pair("SSH Keypair", server.key_name)
 
       print "\n#{ui.color("Waiting for server", :magenta)}"
 
@@ -211,6 +210,9 @@ class Chef
 
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
+      msg_pair("SSH Identity File", config[:identity_file])
+      msg_pair("SSH Keypair", server.key_name) if server.key_name
+      msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
 
       floating_address = locate_config_value(:floating_ip)
@@ -230,10 +232,10 @@ class Chef
         server.associate_address(floating_address)
         #a bit of a hack, but server.reload takes a long time
         (server.addresses['public'] ||= []) << {"version"=>4,"addr"=>floating_address}
-        msg_pair("Floating IP Address assigned:", floating_address)
+        msg_pair("Floating IP Address", floating_address)
       end
 
-      Chef::Log.debug("Public IP Address actual #{server.public_ip_address['addr']}") if server.public_ip_address
+      Chef::Log.debug("Public IP Address actual: #{server.public_ip_address['addr']}") if server.public_ip_address
 
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
 
@@ -242,7 +244,7 @@ class Chef
       if config[:private_network]
         bootstrap_ip_address = server.private_ip_address['addr']
       end
-      Chef::Log.debug("Bootstrap IP Address #{bootstrap_ip_address}")
+      Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
       if bootstrap_ip_address.nil?
         ui.error("No IP address available for bootstrapping.")
         exit 1
@@ -262,7 +264,8 @@ class Chef
       msg_pair("Instance ID", server.id)
       msg_pair("Flavor", server.flavor['id'])
       msg_pair("Image", server.image['id'])
-      msg_pair("SSH Keypair", server.key_name)
+      msg_pair("SSH Keypair", server.key_name) if server.key_name
+      msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
       msg_pair("Public IP Address", server.public_ip_address['addr']) if server.public_ip_address
       msg_pair("Private IP Address", server.private_ip_address['addr']) if server.private_ip_address
       msg_pair("Environment", config[:environment] || '_default')
@@ -274,7 +277,7 @@ class Chef
       bootstrap.name_args = [bootstrap_ip_address]
       bootstrap.config[:run_list] = config[:run_list]
       bootstrap.config[:ssh_user] = config[:ssh_user]
-      bootstrap.config[:ssh_password] = config[:ssh_password]
+      bootstrap.config[:ssh_password] = server.password
       bootstrap.config[:identity_file] = config[:identity_file]
       bootstrap.config[:host_key_verify] = config[:host_key_verify]
       bootstrap.config[:chef_node_name] = server.name
