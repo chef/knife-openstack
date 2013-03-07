@@ -1,9 +1,9 @@
 Knife OpenStack
 ===============
 
-This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` and `Essex` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
+This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through pre-`Grizzly` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
-Please refer to the CHANGELOG.md for version history and known limitations. If you are using Floating IP addresses, please refer to the "Working with Floating IPs" section below.
+Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issues.
 
 # Installation #
 
@@ -34,7 +34,7 @@ If your knife.rb file will be checked into a SCM system (ie readable by others) 
     knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}"
     knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
 
-If your Openstack deployment is over SSL, but does not have a valid certificate, you can add the following option to bypass SSL check:
+If your OpenStack deployment is over SSL, but does not have a valid certificate, you can add the following option to bypass SSL check:
 
     knife[:openstack_insecure] = true
 
@@ -86,7 +86,7 @@ Outputs a list of all available images and snapshots available to the currently 
 knife openstack group list
 --------------------
 
-Outputs a list of the security groups available to the currently configured Openstack Compute cloud account. Each group may have multiple rules. This data may be useful when choosing your security group(s) to pass to the `knife openstack server create` subcommand.
+Outputs a list of the security groups available to the currently configured OpenStack Compute cloud account. Each group may have multiple rules. This data may be useful when choosing your security group(s) to pass to the `knife openstack server create` subcommand.
 
 # License #
 
