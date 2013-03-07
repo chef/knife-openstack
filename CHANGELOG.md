@@ -1,5 +1,5 @@
-## v0.8.0
-* Update dependency on to Fog 1.9.X
+## v0.7.0
+* Update dependency on to Fog 1.10.0
 * 'delay-loading' changes to reduce load-time (Mohit Sethi)
 * Use the hint with the bootstrap method instead of assuming the :personality works with the server.create method (KNIFE-201)
 * Added 'knife openstack group list' for listing security groups and their rules (KNIFE-227)
@@ -14,10 +14,7 @@
 * Catch Net Unreachable error (E.J. Finneran)
 * Allow an option to ignore the SSL cert (KNIFE-225)(BK Box)
 * Attach to floating IPs (Mohit Sethi)
-
-TODO:
-* knife openstack server delete fails on folsom (KNIFE-79)
-* Key pair is not required (KNIFE-226)(BK Box) NEEDS TESTING
+* Key pair is not required (KNIFE-226)(BK Box)
 
 ## v0.6.2
 * Use less pessimistic fog version constraint.
@@ -47,6 +44,7 @@ TODO:
 # BACKLOG/ISSUES #
 This is a list of missing(?) features and open questions currently under development consideration:
 
+* knife openstack server delete fails on folsom (KNIFE-79)
 * Basic availability zones support (Jarek Zmudzinski) NEED TESTING ACCESS FOR AVAILABILITY ZONES
 * Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221) winrm branch, UGLY WARNINGS NEED RESOLUTION
 * purge only works when names match up with clients
