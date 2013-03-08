@@ -15,6 +15,7 @@
 * Allow an option to ignore the SSL cert (KNIFE-225)(BK Box)
 * Attach to floating IPs (Mohit Sethi)
 * Key pair is not required (KNIFE-226)(BK Box)
+* Fog 1.10.0 changes API for OpenStack IP addresses (KNIFE-248)
 
 ## v0.6.2
 * Use less pessimistic fog version constraint.
@@ -57,3 +58,4 @@ This is a list of missing(?) features and open questions currently under develop
 * added ability to specify arbitrary network ID (KNIFE-231)
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
 * probably other places public network is assumed that could cause issues
+* fog is putting the original public IP address into the private_ip_address method when you get a floating_ip, this is wrong.
