@@ -47,15 +47,15 @@ class Chef
           connection.servers.all.sort_by(&:id).each do |server|
             server_list << server.id.to_s
             server_list << server.name
-            if server.public_ip_address.nil?
-              server_list << ''
+            if primary_public_ip_address(server.addresses)
+              server_list << primary_public_ip_address(server.addresses)
             else
-              server_list << server.public_ip_address['addr'].to_s
+              server_list << ''
             end
-            if server.private_ip_address.nil?
-              server_list << ''
+            if primary_private_ip_address(server.addresses)
+              server_list << primary_private_ip_address(server.addresses)
             else
-              server_list << server.private_ip_address['addr'].to_s
+              server_list << ''
             end
             server_list << server.flavor['id'].to_s
             server_list << server.image['id'].to_s
