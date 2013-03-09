@@ -45,7 +45,6 @@
 # BACKLOG/ISSUES #
 This is a list of missing(?) features and open questions currently under development consideration:
 
-* knife openstack server delete fails on folsom (KNIFE-79)
 * Basic availability zones support (Jarek Zmudzinski) NEED TESTING ACCESS FOR AVAILABILITY ZONES
 * Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221) winrm branch, UGLY WARNINGS NEED RESOLUTION
 * purge only works when names match up with clients
@@ -58,4 +57,4 @@ This is a list of missing(?) features and open questions currently under develop
 * added ability to specify arbitrary network ID (KNIFE-231)
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
 * probably other places public network is assumed that could cause issues
-* fog is putting the original public IP address into the private_ip_address method when you get a floating_ip, this is wrong.
+* fog is putting the original public IP address into the private_ip_address method when you get a floating_ip, this is wrong. Remove KNIFE-248 code once fixed.
