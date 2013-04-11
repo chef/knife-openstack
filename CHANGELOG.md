@@ -1,3 +1,7 @@
+## v0.7.1
+
+* file permissions fixed (KNIFE-261)
+
 ## v0.7.0
 * Update dependency on to Fog 1.10.0
 * 'delay-loading' changes to reduce load-time (Mohit Sethi)
