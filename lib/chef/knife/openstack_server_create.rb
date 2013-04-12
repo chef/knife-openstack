@@ -19,9 +19,6 @@
 #
 
 require 'chef/knife/openstack_base'
-require 'chef/knife/winrm_base'
-require 'winrm'
-require 'em-winrm'
 
 class Chef
   class Knife
@@ -35,9 +32,6 @@ class Chef
         require 'readline'
         require 'chef/json_compat'
         require 'chef/knife/bootstrap'
-        require 'chef/knife/bootstrap_windows_winrm'
-        require 'chef/knife/core/windows_bootstrap_context'
-        require 'chef/knife/winrm'
         Chef::Knife::Bootstrap.load_deps
       end
 
@@ -202,11 +196,22 @@ class Chef
         sleep 2
         false
       end
+
+      def load_winrm_deps
+        require 'chef/knife/winrm_base'
+        require 'winrm'
+        require 'em-winrm'
+        require 'chef/knife/bootstrap_windows_winrm'
+        require 'chef/knife/core/windows_bootstrap_context'
+        require 'chef/knife/winrm'
+      end
       def run
         $stdout.sync = true
 
         validate!
-
+        if locate_config_value(:bootstrap_protocol) == 'winrm'
+          load_winrm_deps
+        end
         #servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
