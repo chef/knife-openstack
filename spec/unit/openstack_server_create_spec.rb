@@ -13,11 +13,11 @@ describe Chef::Knife::OpenstackServerCreate do
     @openstack_connection = mock(Fog::Compute::OpenStack)
     @openstack_connection.stub_chain(:flavors, :get).and_return ('flavor_id')
     @openstack_connection.stub_chain(:images, :get).and_return mock('image_id')
-    @openstack_connection.stub_chain(:addresses).and_return [mock('addresses', {            
+    @openstack_connection.stub_chain(:addresses).and_return [mock('addresses', {
             :instance_id => nil,
             :ip => '111.111.111.111'
             })]
-        
+
     @knife_openstack_create = Chef::Knife::OpenstackServerCreate.new
     @knife_openstack_create.initial_sleep_delay = 0
     @knife_openstack_create.stub(:tcp_test_ssh).and_return(true)
@@ -52,12 +52,9 @@ describe Chef::Knife::OpenstackServerCreate do
                                 }
 
 
-      @openstack_server_attribs.each_pair do |attrib, value|
-        @new_openstack_server.stub(attrib).and_return(value)
-      end
-
-
-      #@new_openstack_server.stub(config[:run_list].join(', ')).and_return('')
+    @openstack_server_attribs.each_pair do |attrib, value|
+      @new_openstack_server.stub(attrib).and_return(value)
+    end
   end
 
   describe "run" do
@@ -73,7 +70,6 @@ describe Chef::Knife::OpenstackServerCreate do
 
     it "Creates an OpenStack instance and bootstraps it" do
       @new_openstack_server.should_receive(:wait_for).and_return(true)
-      #@bootstrap.should_receive(:run)
       @knife_openstack_create.run
     end
 
@@ -82,7 +78,6 @@ describe Chef::Knife::OpenstackServerCreate do
       Chef::Knife::BootstrapWindowsWinrm.stub(:new).and_return(@bootstrap_win)
       Chef::Config[:knife][:bootstrap_protocol] = 'winrm'
       @new_openstack_server.should_receive(:wait_for).and_return(true)
-      #@bootstrap_win.should_receive(:run)
       @knife_openstack_create.run
     end
 
