@@ -15,7 +15,8 @@ describe Chef::Knife::OpenstackServerCreate do
     @openstack_connection.stub_chain(:images, :get).and_return mock('image_id')
     @openstack_connection.stub_chain(:addresses).and_return [mock('addresses', {
             :instance_id => nil,
-            :ip => '111.111.111.111'
+            :ip => '111.111.111.111',
+            :fixed_ip => true
             })]
 
     @knife_openstack_create = Chef::Knife::OpenstackServerCreate.new
@@ -44,11 +45,13 @@ describe Chef::Knife::OpenstackServerCreate do
     @openstack_server_attribs = { :name => 'Mock Server',
                                   :id => 'id-123456',
                                   :key_name => 'key_name',
-                                  :public_ip_address => { 'addr' => '75.101.253.10'},
-                                  :private_ip_address => '10.251.75.20',
                                   :flavor => 'flavor_id',
                                   :image => 'image_id',
-                                  :addresses => {'public' => []}
+                                  :addresses => {
+                                    'public' => [{'addr' => '75.101.253.10'}],
+                                    'private' => [{'addr' => '10.251.75.20'}]
+                                    },
+                                  :password => 'password'
                                 }
 
 
@@ -66,6 +69,7 @@ describe Chef::Knife::OpenstackServerCreate do
       Chef::Knife::Bootstrap.stub(:new).and_return(@bootstrap)
       @bootstrap.should_receive(:run)
       @knife_openstack_create.config[:run_list] = []
+      @knife_openstack_create.config[:floating_ip] = '-1'
     end
 
     it "Creates an OpenStack instance and bootstraps it" do
@@ -82,7 +86,7 @@ describe Chef::Knife::OpenstackServerCreate do
     end
 
     it "creates an OpenStack instance, assigns existing floating ip and bootstraps it" do
-      @knife_openstack_create.config[:floating_ip] = true
+      @knife_openstack_create.config[:floating_ip] = "111.111.111.111"
       @new_openstack_server.should_receive(:wait_for).and_return(true)
       @new_openstack_server.should_receive(:associate_address).with('111.111.111.111')
       @knife_openstack_create.run
@@ -98,7 +102,8 @@ describe Chef::Knife::OpenstackServerCreate do
       @knife_openstack_create.config[:distro] = 'ubuntu-10.04-magic-sparkles'
       @knife_openstack_create.config[:run_list] = ['role[base]']
 
-      @bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server, @new_openstack_server.public_ip_address['addr'])
+      @bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
+        @new_openstack_server.addresses['public'].last['addr'])
     end
 
     it "should set the bootstrap 'name argument' to the hostname of the OpenStack server" do
@@ -124,7 +129,8 @@ describe Chef::Knife::OpenstackServerCreate do
     it "configures the bootstrap to use the OpenStack server id if no explicit node name is set" do
       @knife_openstack_create.config[:chef_node_name] = nil
 
-      bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server, @new_openstack_server.public_ip_address['addr'])
+      bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
+        @new_openstack_server.addresses['public'].last['addr'])
       bootstrap.config[:chef_node_name].should == @new_openstack_server.name
     end
 
@@ -133,7 +139,8 @@ describe Chef::Knife::OpenstackServerCreate do
 
       @knife_openstack_create.config[:prerelease] = true
 
-      bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server, @new_openstack_server.public_ip_address['addr'])
+      bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
+        @new_openstack_server.addresses['public'].last['addr'])
       bootstrap.config[:prerelease].should be_true
     end
 
