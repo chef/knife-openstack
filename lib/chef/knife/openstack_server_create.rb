@@ -19,6 +19,7 @@
 #
 
 require 'chef/knife/openstack_base'
+require 'chef/knife/winrm_base'
 
 class Chef
   class Knife
@@ -197,7 +198,6 @@ class Chef
       end
 
       def load_winrm_deps
-        require 'chef/knife/winrm_base'
         require 'winrm'
         require 'em-winrm'
         require 'chef/knife/bootstrap_windows_winrm'
