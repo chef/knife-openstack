@@ -1,3 +1,7 @@
+## v0.8.0
+
+* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221)(Chirag Jog)
+
 ## v0.7.1
 
 * file permissions fixed (KNIFE-261)
