@@ -135,7 +135,7 @@ class Chef
 
       option :bootstrap_protocol,
       :long => "--bootstrap-protocol protocol",
-      :description => "Protocol to bootstrap windows servers. options: winrm",
+      :description => "Protocol to bootstrap Windows servers. options: winrm",
       :default => nil
 
       option :bootstrap_proxy,
