@@ -1,7 +1,7 @@
 Knife OpenStack
 ===============
 
-This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through pre-`Grizzly` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
+This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Grizzly` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
 Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issues.
 
@@ -56,16 +56,16 @@ To use a floating IP address while bootstrapping nodes, use the `-a` or `--float
 
 # Working with Windows Images #
 
-Provisioning and Bootstrapping for Windows 2003/2008 Images is now supported. The Windows Images need to have WinRM enabled with Basic Authentication configured. Current support does not support Kerberos Authentication.
+Provisioning and bootstrapping for Windows 2003/2008 images is now supported. The Windows images need to have WinRM enabled with Basic Authentication configured. Current support does not support Kerberos Authentication.
 
 Example:
 
     knife openstack server create -I <Image_ID> -f <Flavor_ID> -S <keypair_name> --bootstrap-protocol winrm -P <Administrator_Password> -x Administrator -N <chef_node_name> --template windows-chef-client-msi.erb
 
 NOTE:
-* Bootstrap Protocol needs to be compulsorily set to winrm.
-* Administrator Username/Password are compulsory parameters.
-* If the Template File is not specified it defaults to a Linux distro(most likely Ubuntu).
+* Bootstrap Protocol (`--bootstrap-protocol`) is required to be set to `winrm`.
+* Administrator Username (`--winrm-user` or `-x`) and Password (`-P`) are required parameters.
+* If the Template File (`--template`) is not specified it defaults to a Linux distro (most likely Ubuntu).
 
 # Subcommands #
 
