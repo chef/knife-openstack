@@ -1,6 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
 # Author:: Matt Ray (<matt@opscode.com>)
+# Author:: Chirag Jog (<chirag@clogeny.com>)
 # Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -18,12 +19,14 @@
 #
 
 require 'chef/knife/openstack_base'
+require 'chef/knife/winrm_base'
 
 class Chef
   class Knife
     class OpenstackServerCreate < Knife
 
       include Knife::OpenstackBase
+      include Chef::Knife::WinrmBase
 
       deps do
         require 'fog'
@@ -130,6 +133,22 @@ class Chef
       :boolean => true,
       :default => true
 
+      option :bootstrap_protocol,
+      :long => "--bootstrap-protocol protocol",
+      :description => "Protocol to bootstrap Windows servers. options: winrm",
+      :default => nil
+
+      option :bootstrap_proxy,
+      :long => "--bootstrap-proxy PROXY_URL",
+      :description => "The proxy server for the node being bootstrapped",
+      :proc => Proc.new { |v| Chef::Config[:knife][:bootstrap_proxy] = v }
+
+      option :server_create_timeout,
+      :long => "--server-create-timeout timeout",
+      :description => "How long to wait until the server is ready; default is 600 seconds",
+      :default => 600,
+      :proc => Proc.new { |v| Chef::Config[:knife][:server_create_timeouts] = v}
+
       def tcp_test_ssh(hostname)
         tcp_socket = TCPSocket.new(hostname, 22)
         readable = IO.select([tcp_socket], nil, nil, 5)
@@ -157,11 +176,41 @@ class Chef
         tcp_socket && tcp_socket.close
       end
 
+      def tcp_test_winrm(hostname, port)
+        TCPSocket.new(hostname, port)
+        return true
+      rescue SocketError
+        sleep 2
+        false
+      rescue Errno::ETIMEDOUT
+        false
+      rescue Errno::EPERM
+        false
+      rescue Errno::ECONNREFUSED
+        sleep 2
+        false
+      rescue Errno::EHOSTUNREACH
+        sleep 2
+        false
+      rescue Errno::ENETUNREACH
+        sleep 2
+        false
+      end
+
+      def load_winrm_deps
+        require 'winrm'
+        require 'em-winrm'
+        require 'chef/knife/bootstrap_windows_winrm'
+        require 'chef/knife/core/windows_bootstrap_context'
+        require 'chef/knife/winrm'
+      end
       def run
         $stdout.sync = true
 
         validate!
-
+        if locate_config_value(:bootstrap_protocol) == 'winrm'
+          load_winrm_deps
+        end
         #servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
@@ -204,7 +253,7 @@ class Chef
       print "\n#{ui.color("Waiting for server", :magenta)}"
 
       # wait for it to be ready to do stuff
-      server.wait_for { print "."; ready? }
+      server.wait_for(Integer(locate_config_value(:server_create_timeout))) { print "."; ready? }
 
       puts("\n")
 
@@ -253,15 +302,18 @@ class Chef
         exit 1
       end
 
-      print "\n#{ui.color("Waiting for sshd", :magenta)}"
-
-      print(".") until tcp_test_ssh(bootstrap_ip_address) {
-        sleep @initial_sleep_delay ||= 10
-        puts("done")
-      }
-
-      bootstrap_for_node(server, bootstrap_ip_address).run
-
+      if locate_config_value(:bootstrap_protocol) == 'winrm'
+        print "\n#{ui.color("Waiting for winrm", :magenta)}"
+        print(".") until tcp_test_winrm(bootstrap_ip_address, locate_config_value(:winrm_port))
+        bootstrap_for_windows_node(server, bootstrap_ip_address).run
+      else
+        print "\n#{ui.color("Waiting for sshd", :magenta)}"
+        print(".") until tcp_test_ssh(bootstrap_ip_address) {
+          sleep @initial_sleep_delay ||= 10
+          puts("done")
+        }
+        bootstrap_for_node(server, bootstrap_ip_address).run
+      end
       puts "\n"
       msg_pair("Instance Name", server.name)
       msg_pair("Instance ID", server.id)
@@ -275,25 +327,41 @@ class Chef
       msg_pair("Run List", config[:run_list].join(', '))
     end
 
-    def bootstrap_for_node(server, bootstrap_ip_address)
-      bootstrap = Chef::Knife::Bootstrap.new
+    def bootstrap_for_windows_node(server, bootstrap_ip_address)
+      bootstrap = Chef::Knife::BootstrapWindowsWinrm.new
       bootstrap.name_args = [bootstrap_ip_address]
+      bootstrap.config[:winrm_user] = locate_config_value(:winrm_user) || 'Administrator'
+      bootstrap.config[:winrm_password] = locate_config_value(:winrm_password)
+      bootstrap.config[:winrm_transport] = locate_config_value(:winrm_transport)
+      bootstrap.config[:winrm_port] = locate_config_value(:winrm_port)
+      bootstrap_common_params(bootstrap, server.name)
+    end
+
+    def bootstrap_common_params(bootstrap, server_name)
+      bootstrap.config[:chef_node_name] = config[:chef_node_name] || server_name
       bootstrap.config[:run_list] = config[:run_list]
-      bootstrap.config[:ssh_user] = config[:ssh_user]
-      bootstrap.config[:ssh_password] = server.password
-      bootstrap.config[:identity_file] = config[:identity_file]
-      bootstrap.config[:host_key_verify] = config[:host_key_verify]
-      bootstrap.config[:chef_node_name] = server.name
       bootstrap.config[:prerelease] = config[:prerelease]
       bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
       bootstrap.config[:distro] = locate_config_value(:distro)
-      bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
       bootstrap.config[:template_file] = locate_config_value(:template_file)
+      bootstrap.config[:bootstrap_proxy] = locate_config_value(:bootstrap_proxy)
       bootstrap.config[:environment] = config[:environment]
+      bootstrap.config[:encrypted_data_bag_secret] = config[:encrypted_data_bag_secret]
+      bootstrap.config[:encrypted_data_bag_secret_file] = config[:encrypted_data_bag_secret_file]
       # let ohai know we're using OpenStack
       Chef::Config[:knife][:hints] ||= {}
       Chef::Config[:knife][:hints]['openstack'] ||= {}
       bootstrap
+    end
+
+    def bootstrap_for_node(server, bootstrap_ip_address)
+      bootstrap = Chef::Knife::Bootstrap.new
+      bootstrap.name_args = [bootstrap_ip_address]
+      bootstrap.config[:ssh_user] = config[:ssh_user]
+      bootstrap.config[:identity_file] = config[:identity_file]
+      bootstrap.config[:host_key_verify] = config[:host_key_verify]
+      bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
+      bootstrap_common_params(bootstrap, server.name)
     end
 
     def flavor
