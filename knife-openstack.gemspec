@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
   s.add_dependency "fog", ">= 1.10.0"
   s.add_dependency "chef", ">= 0.10.10"
   s.add_dependency "knife-windows"
-  
+  s.add_dependency "knife-cloud"
+
   %w(rspec-core rspec-expectations rspec-mocks rspec_junit_formatter).each { |gem| s.add_development_dependency gem }
   s.require_paths = ["lib"]
 end

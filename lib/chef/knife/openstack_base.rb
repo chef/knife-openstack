@@ -18,10 +18,13 @@
 #
 
 require 'fog'
+require 'chef/knife/openstack_helpers'
 
 class Chef
   class Knife
     module OpenstackBase
+
+      include OpenstackHelpers
 
       # :nodoc:
       # Would prefer to do this in a rational way, but can't be done b/c of
@@ -68,32 +71,6 @@ class Chef
         end
       end
 
-      def connection
-        Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
-        Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
-        Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
-        Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure].to_s}")
-
-        @connection ||= begin
-          connection = Fog::Compute.new(
-            :provider => 'OpenStack',
-            :openstack_username => Chef::Config[:knife][:openstack_username],
-            :openstack_api_key => Chef::Config[:knife][:openstack_password],
-            :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
-            :openstack_tenant => Chef::Config[:knife][:openstack_tenant],
-            :connection_options => {
-              :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
-            }
-            )
-                        rescue Excon::Errors::Unauthorized => e
-                          ui.fatal("Connection failure, please check your OpenStack username and password.")
-                          exit 1
-                        rescue Excon::Errors::SocketError => e
-                          ui.fatal("Connection failure, please check your OpenStack authentication URL.")
-                          exit 1
-                        end
-      end
-
       def locate_config_value(key)
         key = key.to_sym
         Chef::Config[:knife][key] || config[key]
@@ -102,35 +79,6 @@ class Chef
       def msg_pair(label, value, color=:cyan)
         if value && !value.to_s.empty?
           puts "#{ui.color(label, color)}: #{value}"
-        end
-      end
-
-      def validate!(keys=[:openstack_username, :openstack_password, :openstack_auth_url])
-        errors = []
-
-        keys.each do |k|
-          pretty_key = k.to_s.gsub(/_/, ' ').gsub(/\w+/){ |w| (w =~ /(ssh)|(aws)/i) ? w.upcase  : w.capitalize }
-          if Chef::Config[:knife][k].nil?
-            errors << "You did not provided a valid '#{pretty_key}' value."
-          end
-        end
-
-        if errors.each{|e| ui.error(e)}.any?
-          exit 1
-        end
-      end
-
-      # http://tickets.opscode.com/browse/KNIFE-248
-      def primary_private_ip_address(addresses)
-        if addresses['private']
-          return addresses['private'].last['addr']
-        end
-      end
-
-      #we use last since the floating IP goes there
-      def primary_public_ip_address(addresses)
-        if addresses['public']
-          return addresses['public'].last['addr']
         end
       end
 
