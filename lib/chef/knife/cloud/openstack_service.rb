@@ -1,5 +1,5 @@
 
-
+# require 'mixlib/cli'
 require 'chef/knife/cloud/fog/service'
 require 'chef/knife/cloud/openstack_server_list_command'
 

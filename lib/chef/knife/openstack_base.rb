@@ -19,6 +19,7 @@
 
 require 'fog'
 require 'chef/knife/openstack_helpers'
+require 'chef/knife/cloud/openstack_service_options'
 
 class Chef
   class Knife
@@ -26,48 +27,9 @@ class Chef
 
       include OpenstackHelpers
 
-      # :nodoc:
-      # Would prefer to do this in a rational way, but can't be done b/c of
-      # Mixlib::CLI's design :(
       def self.included(includer)
         includer.class_eval do
-
-          deps do
-            require 'chef/json_compat'
-            require 'chef/knife'
-            require 'readline'
-            Chef::Knife.load_deps
-          end
-
-          option :openstack_username,
-            :short => "-A USERNAME",
-            :long => "--openstack-username KEY",
-            :description => "Your OpenStack Username",
-            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_username] = key }
-
-          option :openstack_password,
-            :short => "-K SECRET",
-            :long => "--openstack-password SECRET",
-            :description => "Your OpenStack Password",
-            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_password] = key }
-
-          option :openstack_tenant,
-            :short => "-T NAME",
-            :long => "--openstack-tenant NAME",
-            :description => "Your OpenStack Tenant NAME",
-            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_tenant] = key }
-
-          option :openstack_auth_url,
-            :long => "--openstack-api-endpoint ENDPOINT",
-            :description => "Your OpenStack API endpoint",
-            :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_auth_url] = endpoint }
-
-          option :openstack_insecure,
-            :long => "--insecure",
-            :description => "Ignore SSL certificate on the Auth URL",
-            :boolean => true,
-            :default => false,
-            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_insecure] = key }
+          include Cloud::OpenstackServiceOptions
         end
       end
 
