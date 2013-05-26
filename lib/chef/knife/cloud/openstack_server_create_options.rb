@@ -30,6 +30,13 @@ class Chef
             :default => ["default"],
             :proc => Proc.new { |groups| groups.split(',') }
 
+            # TODO -KD- can be moved to chef/knife/cloud/create_command_options
+            option :ssh_key_name,
+            :short => "-S KEY",
+            :long => "--ssh-key KEY",
+            :description => "The OpenStack SSH keypair id",
+            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
+
           end
         end
       end

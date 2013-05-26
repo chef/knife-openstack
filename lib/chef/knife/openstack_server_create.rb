@@ -308,7 +308,7 @@ class Chef
         $stdout.sync = true
 
         @cloud_service = Cloud::OpenstackService.new(self)
-        # @cloud_service.server_create()
+        @cloud_service.server_create()
     end
   end
 end

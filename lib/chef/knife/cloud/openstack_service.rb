@@ -1,7 +1,7 @@
 
-# require 'mixlib/cli'
 require 'chef/knife/cloud/fog/service'
 require 'chef/knife/cloud/openstack_server_list_command'
+require 'chef/knife/cloud/openstack_server_create_command'
 
 class Chef
   class Knife
@@ -31,6 +31,8 @@ class Chef
           case type
           when 'server-list'
             Cloud::OpenstackServerListCommand.new(@app, self)
+          when 'server-create'
+            Cloud::OpenstackServerCreateCommand.new(@app, self)
           else
             super(type)
           end
