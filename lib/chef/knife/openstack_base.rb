@@ -33,6 +33,11 @@ class Chef
         end
       end
 
+      def is_image_windows?
+        # TODO -KD- implement
+        false
+      end
+
       def locate_config_value(key)
         key = key.to_sym
         Chef::Config[:knife][key] || config[key]

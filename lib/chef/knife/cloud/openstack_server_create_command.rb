@@ -62,6 +62,27 @@ class Chef
           Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
           msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+
+          # let ohai know we're using OpenStack
+          # TODO -KD- moved here from bootstrap. remove comment after verification.
+          Chef::Config[:knife][:hints] ||= {}
+          Chef::Config[:knife][:hints]['openstack'] ||= {}
+
+        end
+
+        def before_bootstrap
+          # Which IP address to bootstrap
+          bootstrap_ip_address = primary_public_ip_address(server.addresses) if primary_public_ip_address(server.addresses)
+          if @app.config[:private_network]
+            bootstrap_ip_address = primary_private_ip_address(server.addresses)
+          end
+
+          Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
+          if bootstrap_ip_address.nil?
+            ui.error("No IP address available for bootstrapping.")
+            raise "No IP address available for bootstrapping."
+          end
+          @app.config[:bootstrap_ip_address] = bootstrap_ip_address
         end
 
       end
