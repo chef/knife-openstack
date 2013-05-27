@@ -34,8 +34,12 @@ class Chef
       end
 
       def is_image_windows?
-        # TODO -KD- implement
-        false
+        # Openstack image info does not have os type, so we use windows_bootstrap_protocol to interpret if we are creating windows server.
+        if not config[:windows_bootstrap_protocol].nil?
+          true
+        else
+          false
+        end
       end
 
       def locate_config_value(key)
