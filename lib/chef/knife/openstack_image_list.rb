@@ -18,6 +18,7 @@
 #
 
 require 'chef/knife/openstack_base'
+require 'chef/knife/cloud/openstack_service'
 
 class Chef
   class Knife
@@ -34,38 +35,10 @@ class Chef
       :default => false
 
       def run
-
-        validate!
-
-        image_list = [
-          ui.color('ID', :bold),
-          ui.color('Name', :bold),
-          ui.color('Snapshot', :bold),
-        ]
-        begin
-          connection.images.sort_by do |image|
-            [image.name.to_s.downcase, image.id].compact
-          end.each do |image|
-            unless ((image.name =~ /initrd$|kernel$|loader$|virtual$|vmlinuz$/) &&
-                !config[:disable_filter])
-              image_list << image.id
-              image_list << image.name
-              snapshot = 'no'
-              image.metadata.each do |datum|
-                if (datum.key == 'image_type') && (datum.value == 'snapshot')
-                  snapshot = 'yes'
-                end
-              end
-              image_list << snapshot
-            end
-          end
-        rescue Excon::Errors::BadRequest => e
-          response = Chef::JSONCompat.from_json(e.response.body)
-          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
-          raise e
-        end
-        puts ui.list(image_list, :uneven_columns_across, 3)
+        @cloud_service = Cloud::OpenstackService.new(self)
+        @cloud_service.image_list([{:attribute => 'name', :regex => /initrd$|kernel$|loader$|virtual$|vmlinuz$/}])
       end
+
     end
   end
 end
