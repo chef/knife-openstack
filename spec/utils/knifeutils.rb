@@ -1,7 +1,6 @@
 
 require 'active_support/concern'
 require 'mixlib/shellout'
-require 'factory_girl'
 module RSpec
   module KnifeUtils    
     extend ActiveSupport::Concern

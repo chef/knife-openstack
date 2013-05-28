@@ -9,4 +9,6 @@ group :development do
   gem 'rspec_junit_formatter'
   gem 'rake'
   gem 'mixlib-shellout'
+  gem 'active_support'
+  gem 'activesupport'
 end
