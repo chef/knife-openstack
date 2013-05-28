@@ -33,27 +33,30 @@ def match_status(test_run_expect)
   end
 end 
 
-def is_mac?
-  ENV['OS'].downcase.include?("darwin")
-end
-
 def is_windows?
-  ENV['OS'].downcase.include?("windows")
+  if(ENV['OS'] != nil)
+    ENV['OS'].downcase.include?("windows")
+  end
 end
 
 def is_linux?
-  ENV['OS'].downcase.include?("linux")
+  RbConfig::CONFIG["arch"].include?("linux")
 end
 
-def create_dummy_validation_pem()
+def create_dummy_validation_pem() 
   data_to_write = "../integration/config/validation.pem"
   if(is_windows?)
-    FileUtils.mkpath 'C:/chef'
-    create_file("C:/chef", "validation.pem", data_to_write)
+    if(!File.exist?('C:/chef/validation.pem'))
+      FileUtils.mkpath 'C:/chef'
+      create_file("C:/chef", "validation.pem", data_to_write)
+    end
   end
   if(is_linux?)
-    FileUtils.mkpath '/etc/chef'
-    create_file("/etc/chef", "validation.pem", data_to_write)
+    if(!File.exist?('/etc/chef/validation.pem'))
+      # FIXME a dummy file needs to be present at '/etc/chef'
+      FileUtils.mkpath '/etc/chef'
+      create_file("/etc/chef", "validation.pem", data_to_write)
+    end
   end
 end
 
