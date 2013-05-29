@@ -15,21 +15,21 @@ class Chef
           columns_with_info = [
             { :key => 'id', :label => 'Instance ID' },
             { :key => 'name', :label => 'Name' },
-            { :key => 'addresses', :label => 'Public IP', :formatter_callback => method(:primary_public_ip_address) },
-            { :key => 'addresses', :label => 'Private IP', :formatter_callback => method(:primary_private_ip_address) },
-            { :key => 'flavor', :label => 'Flavor', :formatter_callback => method(:format_flavor) },
-            { :key => 'image', :label => 'Image', :formatter_callback => method(:format_image) },
+            { :key => 'addresses', :label => 'Public IP', :value_callback => method(:primary_public_ip_address) },
+            { :key => 'addresses', :label => 'Private IP', :value_callback => method(:primary_private_ip_address) },
+            { :key => 'flavor', :label => 'Flavor', :value_callback => method(:flavor_id) },
+            { :key => 'image', :label => 'Image', :value_callback => method(:image_id) },
             { :key => 'key_name', :label => 'Keypair' },
-            { :key => 'state', :label => 'State', :formatter_callback => method(:format_server_state)}
+            { :key => 'state', :label => 'State', :value_callback => method(:format_server_state)}
           ]
           super(servers, columns_with_info)
         end
 
-        def format_image(image)
+        def image_id(image)
           image['id'].to_s
         end
 
-        def format_flavor(flavor)
+        def flavor_id(flavor)
           flavor['id'].to_s
         end
 
