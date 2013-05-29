@@ -12,7 +12,9 @@ class Chef
         def declare_command_classes
           super
           # override the classes
-          @create_server_class, @list_servers_class, @list_image_class = Cloud::OpenstackServerCreateCommand, Cloud::OpenstackServerListCommand, Cloud::OpenstackImageListCommand
+          @create_server_class = Cloud::OpenstackServerCreateCommand
+          @list_servers_class = Cloud::OpenstackServerListCommand
+          @list_image_class = Cloud::OpenstackImageListCommand
         end
 
         def cloud_auth_params(options)
