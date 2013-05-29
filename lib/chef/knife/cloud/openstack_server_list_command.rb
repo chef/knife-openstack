@@ -10,8 +10,7 @@ class Chef
         # For helper methods
         include OpenstackHelpers
 
-        def handleResponse(servers, columns_with_info = [])
-          puts "OpenstackServerListCommand#handleResponse"
+        def list(servers, columns_with_info = [])
           # form the columns_with_info and pass on to super
           columns_with_info = [
             { :key => 'id', :label => 'Instance ID' },
