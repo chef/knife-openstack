@@ -20,6 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 def append_openstack_creds(is_list_cmd = false)
   openstack_config = YAML.load(File.read(File.expand_path("../config/environment.yml", __FILE__)))
   openstack_creds_cmd = " --openstack-username #{openstack_config['development']['openstack_username']} --openstack-password #{openstack_config['development']['openstack_password']} --openstack-api-endpoint #{openstack_config['development']['openstack_auth_url']}"
+  openstack_creds_cmd = openstack_creds_cmd + " -c #{temp_dir}/knife.rb"
   if(!is_list_cmd)
     openstack_creds_cmd = openstack_creds_cmd + " --openstack-tenant #{openstack_config['development']['openstack_tenant']}"
     openstack_creds_cmd = openstack_creds_cmd + " --ssh-user #{openstack_config['development']['ssh_user']}"
@@ -43,16 +44,17 @@ def linux_template_file_path
 end
 
 def init_test
-  puts "Creating Test Data"
-  create_dummy_validation_pem()
+  puts "\nCreating Test Data\n"
+  create_file("#{temp_dir}", "validation.pem", "../integration/config/validation.pem" )
   create_file("#{temp_dir}", "chef-full-chef-zero.erb", "../integration/templates/chef-full-chef-zero.erb" )
   create_file("#{temp_dir}", "openstack.pem", "../integration/config/openstack.pem")
+  create_file("#{temp_dir}", "knife.rb", "../integration/config/knife.rb")
 end
 
 def cleanup_test_data
-  puts "Cleaning Test Data: #{temp_dir}"
+  puts "\nCleaning Test Data\n"
   FileUtils.rm_rf("#{temp_dir}")
-  puts "Done"
+  puts "\nDone\n"
 end
 
 describe 'knife' do
