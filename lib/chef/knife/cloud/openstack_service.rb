@@ -9,6 +9,12 @@ class Chef
     class Cloud
       class OpenstackService < FogService
 
+        def declare_command_classes
+          super
+          # override the classes
+          @create_server_class, @list_servers_class, @list_image_class = Cloud::OpenstackServerCreateCommand, Cloud::OpenstackServerListCommand, Cloud::OpenstackImageListCommand
+        end
+
         def cloud_auth_params(options)
           Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
           Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
@@ -25,20 +31,6 @@ class Chef
               :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
             }
           }
-        end
-
-        # factory method to create a command object
-        def command_object(type)
-          case type
-          when 'server-list'
-            Cloud::OpenstackServerListCommand.new(@app, self)
-          when 'server-create'
-            Cloud::OpenstackServerCreateCommand.new(@app, self)
-          when 'image-list'
-            Cloud::OpenstackImageListCommand.new(@app, self)
-          else
-            super(type)
-          end
         end
 
       end
