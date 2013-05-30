@@ -30,7 +30,6 @@ class Chef
             :default => ["default"],
             :proc => Proc.new { |groups| groups.split(',') }
 
-            # TODO -KD- can be moved to chef/knife/cloud/create_command_options
             option :ssh_key_name,
             :short => "-S KEY",
             :long => "--ssh-key KEY",
