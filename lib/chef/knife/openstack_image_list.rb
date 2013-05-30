@@ -19,20 +19,16 @@
 
 require 'chef/knife/openstack_base'
 require 'chef/knife/cloud/openstack_service'
+require 'chef/knife/cloud/list_resource_options'
 
 class Chef
   class Knife
     class OpenstackImageList < Knife
 
       include Knife::OpenstackBase
+      include Knife::Cloud::ResourceListOptions
 
       banner "knife openstack image list (options)"
-
-      option :disable_filter,
-      :long => "--disable-filter",
-      :description => "Disable filtering of the image list. Currently filters names ending with 'initrd' or 'kernel'",
-      :boolean => true,
-      :default => false
 
       def run
         @cloud_service = Cloud::OpenstackService.new(self)
