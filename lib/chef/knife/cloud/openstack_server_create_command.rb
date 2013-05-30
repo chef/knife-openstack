@@ -41,7 +41,7 @@ class Chef
           floating_address = @app.locate_config_value(:openstack_floating_ip)
           Chef::Log.debug("Floating IP Address requested #{floating_address}")
           unless (floating_address == '-1') #no floating IP requested
-            addresses = @service.connection.addresses # TODO -KD- replaced from connection
+            addresses = @service.connection.addresses
             #floating requested without value
             if floating_address.nil?
               free_floating = addresses.find_index {|a| a.fixed_ip.nil?}
@@ -62,12 +62,6 @@ class Chef
           Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
           msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
-
-          # let ohai know we're using OpenStack
-          # TODO -KD- moved here from bootstrap. remove comment after verification.
-          Chef::Config[:knife][:hints] ||= {}
-          Chef::Config[:knife][:hints]['openstack'] ||= {}
-
         end
 
         def before_bootstrap
@@ -83,6 +77,10 @@ class Chef
             raise "No IP address available for bootstrapping."
           end
           @app.config[:bootstrap_ip_address] = bootstrap_ip_address
+
+          # let ohai know we're using OpenStack
+          Chef::Config[:knife][:hints] ||= {}
+          Chef::Config[:knife][:hints]['openstack'] ||= {}
         end
 
       end
