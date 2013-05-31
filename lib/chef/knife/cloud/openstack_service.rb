@@ -3,11 +3,13 @@ require 'chef/knife/cloud/fog/service'
 require 'chef/knife/cloud/openstack_server_list_command'
 require 'chef/knife/cloud/openstack_server_create_command'
 require 'chef/knife/cloud/openstack_image_list_command'
+require 'chef/knife/cloud/openstack_flavor_list_command'
 
 class Chef
   class Knife
     class Cloud
       class OpenstackService < FogService
+        attr_accessor :list_flavor_class
 
         def declare_command_classes
           super
@@ -15,6 +17,7 @@ class Chef
           @create_server_class = Cloud::OpenstackServerCreateCommand
           @list_servers_class = Cloud::OpenstackServerListCommand
           @list_image_class = Cloud::OpenstackImageListCommand
+          @list_flavor_class = Cloud::OpenstackFlavorListCommand
         end
 
         def cloud_auth_params(options)
@@ -33,6 +36,12 @@ class Chef
               :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
             }
           }
+        end
+
+        def flavor_list(flavor_filters = nil)
+          # creates a flavor_list_command instance
+          @cmd = list_flavor_class.new(@app, self)
+          @cmd.run(flavor_filters)
         end
 
       end
