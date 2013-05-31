@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-require 'fog'
 require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_service_options'
 
