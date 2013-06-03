@@ -17,40 +17,21 @@
 #
 
 require 'chef/knife/openstack_base'
+require 'chef/knife/cloud/openstack_service'
+require 'chef/knife/cloud/list_resource_options'
 
 class Chef
   class Knife
     class OpenstackGroupList < Knife
 
       include Knife::OpenstackBase
+      include Knife::Cloud::ResourceListOptions
 
       banner "knife openstack group list (options)"
 
       def run
-
-        validate!
-
-        group_list = [
-          ui.color('Name', :bold),
-          ui.color('Protocol', :bold),
-          ui.color('From', :bold),
-          ui.color('To', :bold),
-          ui.color('CIDR', :bold),
-          ui.color('Description', :bold),
-        ]
-        connection.security_groups.sort_by(&:name).each do |group|
-          group.rules.each do |rule|
-            unless rule['ip_protocol'].nil?
-              group_list << group.name
-              group_list << rule['ip_protocol']
-              group_list << rule['from_port'].to_s
-              group_list << rule['to_port'].to_s
-              group_list << rule['ip_range']['cidr']
-              group_list << group.description
-            end
-          end
-        end
-        puts ui.list(group_list, :uneven_columns_across, 6)
+        @cloud_service = Cloud::OpenstackService.new(self)
+        @cloud_service.group_list()
       end
     end
   end

@@ -4,12 +4,13 @@ require 'chef/knife/cloud/openstack_server_list_command'
 require 'chef/knife/cloud/openstack_server_create_command'
 require 'chef/knife/cloud/openstack_image_list_command'
 require 'chef/knife/cloud/openstack_flavor_list_command'
+require 'chef/knife/cloud/openstack_group_list_command'
 
 class Chef
   class Knife
     class Cloud
       class OpenstackService < FogService
-        attr_accessor :list_flavor_class
+        attr_accessor :list_flavor_class, :list_group_class
 
         def declare_command_classes
           super
@@ -18,6 +19,7 @@ class Chef
           @list_servers_class = Cloud::OpenstackServerListCommand
           @list_image_class = Cloud::OpenstackImageListCommand
           @list_flavor_class = Cloud::OpenstackFlavorListCommand
+          @list_group_class = Cloud::OpenstackGroupListCommand
         end
 
         def cloud_auth_params(options)
@@ -42,6 +44,12 @@ class Chef
           # creates a flavor_list_command instance
           @cmd = list_flavor_class.new(@app, self)
           @cmd.run(flavor_filters)
+        end
+
+        def group_list(group_filters = nil)
+          # creates a group instance
+          @cmd = list_group_class.new(@app, self)
+          @cmd.run(group_filters)
         end
 
       end
