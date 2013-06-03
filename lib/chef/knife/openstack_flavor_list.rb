@@ -18,41 +18,23 @@
 #
 
 require 'chef/knife/openstack_base'
+require 'chef/knife/cloud/openstack_service'
+require 'chef/knife/cloud/list_resource_options'
 
 class Chef
   class Knife
     class OpenstackFlavorList < Knife
 
       include Knife::OpenstackBase
+      include Knife::Cloud::ResourceListOptions
 
       banner "knife openstack flavor list (options)"
 
       def run
-
-        validate!
-
-        flavor_list = [
-          ui.color('ID', :bold),
-          ui.color('Name', :bold),
-          ui.color('Virtual CPUs', :bold),
-          ui.color('RAM', :bold),
-          ui.color('Disk', :bold),
-        ]
-        begin
-          connection.flavors.sort_by(&:id).each do |flavor|
-            flavor_list << flavor.id.to_s
-            flavor_list << flavor.name
-            flavor_list << flavor.vcpus.to_s
-            flavor_list << "#{flavor.ram.to_s} MB"
-            flavor_list << "#{flavor.disk.to_s} GB"
-          end
-        rescue Excon::Errors::BadRequest => e
-          response = Chef::JSONCompat.from_json(e.response.body)
-          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
-          raise e
-        end
-        puts ui.list(flavor_list, :uneven_columns_across, 5)
+        @cloud_service = Cloud::OpenstackService.new(self)
+        @cloud_service.flavor_list()
       end
+
     end
   end
 end
