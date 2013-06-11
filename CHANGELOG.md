@@ -1,3 +1,7 @@
+## v0.8.1
+
+* KNIFE-296 knife-windows overrides -i, -p, -P and -x options with winrm values
+
 ## v0.8.0
 
 * KNIFE-221 Windows bootstrapping (winrm-based) support for knife-openstack (Chirag Jog)
