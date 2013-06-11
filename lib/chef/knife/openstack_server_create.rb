@@ -82,6 +82,13 @@ class Chef
       :description => "The OpenStack SSH keypair id",
       :proc => Proc.new { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
 
+      option :ssh_port,
+      :short => "-p PORT",
+      :long => "--ssh-port PORT",
+      :description => "The ssh port",
+      :default => "22",
+      :proc => Proc.new { |key| Chef::Config[:knife][:ssh_port] = key }
+
       option :ssh_user,
       :short => "-x USERNAME",
       :long => "--ssh-user USERNAME",
@@ -210,6 +217,28 @@ class Chef
         validate!
         if locate_config_value(:bootstrap_protocol) == 'winrm'
           load_winrm_deps
+        else
+          # hack fix for KNIFE-296 winrm values stomping on ssh values
+          # unchanged ssh_user and changed winrm_user, override ssh_user
+          if locate_config_value(:ssh_user).eql?(options[:ssh_user][:default]) &&
+              !locate_config_value(:winrm_user).eql?(options[:winrm_user][:default])
+            config[:ssh_user] = locate_config_value(:winrm_user)
+          end
+          # unchanged ssh_port and changed winrm_port, override ssh_port
+          if locate_config_value(:ssh_port).eql?(options[:ssh_port][:default]) &&
+              !locate_config_value(:winrm_port).eql?(options[:winrm_port][:default])
+            config[:ssh_port] = locate_config_value(:winrm_port)
+          end
+          # unset ssh_password and set winrm_password, override ssh_password
+          if locate_config_value(:ssh_password).nil? &&
+              !locate_config_value(:winrm_password).nil?
+            config[:ssh_password] = locate_config_value(:winrm_password)
+          end
+          # unset identity_file and set kerberos_keytab_file, override identity_file
+          if locate_config_value(:identity_file).nil? &&
+              !locate_config_value(:kerberos_keytab_file).nil?
+            config[:identity_file] = locate_config_value(:kerberos_keytab_file)
+          end
         end
         #servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
