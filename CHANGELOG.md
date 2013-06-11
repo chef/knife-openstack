@@ -1,29 +1,29 @@
 ## v0.8.0
 
-* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221)(Chirag Jog)
+* KNIFE-221 Windows bootstrapping (winrm-based) support for knife-openstack (Chirag Jog)
 
 ## v0.7.1
 
-* file permissions fixed (KNIFE-261)
+* KNIFE-261 file permissions fixed
 
 ## v0.7.0
 * Update dependency on to Fog 1.10.0
 * 'delay-loading' changes to reduce load-time (Mohit Sethi)
-* Use the hint with the bootstrap method instead of assuming the :personality works with the server.create method (KNIFE-201)
-* Added 'knife openstack group list' for listing security groups and their rules (KNIFE-227)
+* KNIFE-201 Use the hint with the bootstrap method instead of assuming the :personality works with the server.create method
+* KNIFE-227 Added 'knife openstack group list' for listing security groups and their rules
 * Filter out extraneous images from knife openstack image list and added '--disable-filter' to disable
 * Fixed minor issue for public ip addresses (Edmund Haselwanter)
-* Fixed security groups, adding `-G` support (KNIFE-230)
+* KNIFE-230 Fixed security groups, adding `-G` support
 * Added snapshots as a new column in image list
-* "knife openstack image list" fails with empty image name (KNIFE-83)(Simon Belluzzo)
-* excon / fog errors are a JSON blob, Rescue fog errors (KNIFE-87)(Bryan McLellan)
+* KNIFE-83 "knife openstack image list" fails with empty image name (Simon Belluzzo)
+* KNIFE-87 excon / fog errors are a JSON blob, Rescue fog errors (Bryan McLellan)
 * Better error handling for connection errors.
-* Pass ssh_password to bootstrap (KNIFE-88)(David Petzel)
+* KNIFE-88 Pass ssh_password to bootstrap (David Petzel)
 * Catch Net Unreachable error (E.J. Finneran)
-* Allow an option to ignore the SSL cert (KNIFE-225)(BK Box)
+* KNIFE-225 Allow an option to ignore the SSL cert (BK Box)
 * Attach to floating IPs (Mohit Sethi)
-* Key pair is not required (KNIFE-226)(BK Box)
-* Fog 1.10.0 changes API for OpenStack IP addresses (KNIFE-248)
+* KNIFE-226 Key pair is not required (BK Box)
+* KNIFE-248 Fog 1.10.0 changes API for OpenStack IP addresses
 
 ## v0.6.2
 * Use less pessimistic fog version constraint.
@@ -33,10 +33,10 @@
 * Switched to OpenStack API from OpenStack EC2 API.
 * Updated to point to Fog 1.4.0 for latest `OpenStack` provider
 * testing with Diablo & Essex
-* knife openstack server create (KNIFE_OPENSTACK-1)
-* knife openstack server delete (KNIFE_OPENSTACK-2)
-* Support for unenven_columns for prettier output (KNIFE_OPENSTACK-5)
-* Added chef gem dependency (KNIFE_OPENSTACK-6)
+* KNIFE_OPENSTACK-1 knife openstack server create
+* KNIFE_OPENSTACK-2 knife openstack server delete
+* KNIFE_OPENSTACK-5 Support for unenven_columns for prettier output
+* KNIFE_OPENSTACK-6 Added chef gem dependency
 * Added virtual cpus to 'knife openstack flavor list'
 * Removed unsupported features to match current state of plugin (public_key, kernel, architecture, cores, location)
 * Added support for openstack_tenant (Rob Hirschfeld & Alexander Gordeev)
@@ -54,15 +54,14 @@
 This is a list of missing(?) features and open questions currently under development consideration:
 
 * Basic availability zones support (Jarek Zmudzinski) NEED TESTING ACCESS FOR AVAILABILITY ZONES
-* Windows bootstrapping (winrm-based) support for knife-openstack (KNIFE-221) winrm branch, UGLY WARNINGS NEED RESOLUTION
 * purge only works when names match up with clients
 * `knife openstack floating list|associate|release NODE` with --floating-ip-pool also
-* Allow specifying the name of the pool when using floating IPs (KNIFE-229)
+* KNIFE-229 Allow specifying the name of the pool when using floating IPs
 * attempt to allocate a floating ipaddress if none if free, currently missing in Fog
-* take either the flavor ID or the flavor name (KNIFE-76)
+* KNIFE-76 take either the flavor ID or the flavor name
 * take either the image ID or the image name (similar for KNIFE-76)
-* server create with expired password hangs (KNIFE-86)
-* added ability to specify arbitrary network ID (KNIFE-231)
+* KNIFE-86 server create with expired password hangs
+* KNIFE-231 added ability to specify arbitrary network ID
 * assumption of only single floating IP (and fog uses the last as the public_ip_address)
 * probably other places public network is assumed that could cause issues
 * fog is putting the original public IP address into the private_ip_address method when you get a floating_ip, this is wrong. Remove KNIFE-248 code once fixed.
