@@ -57,7 +57,7 @@ def cleanup_test_data
   puts "\nDone\n"
 end
 
-describe 'knife' do
+describe 'knife', :if => is_config_present do
   include RSpec::KnifeUtils
   before(:all) { init_test }
   after(:all) { cleanup_test_data }
