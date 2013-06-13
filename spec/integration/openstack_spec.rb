@@ -36,7 +36,7 @@ end
 
 def append_openstack_creds_for_windows
   openstack_config = YAML.load(File.read(File.expand_path("../config/environment.yml", __FILE__)))
-  openstack_creds_cmd = " --openstack-username #{openstack_config['development']['openstack_username']} --openstack-password #{openstack_config['development']['openstack_password']} --openstack-api-endpoint #{openstack_config['development']['openstack_auth_url']}"
+  openstack_creds_cmd = " --openstack-username #{openstack_config['development']['openstack_username']} --openstack-password #{openstack_config['development']['openstack_password']} --openstack-api-endpoint #{openstack_config['development']['openstack_auth_url']} -x #{openstack_config['development']['winrm_user']} -P #{openstack_config['development']['winrm_password']}"
   openstack_creds_cmd = openstack_creds_cmd + " -c #{temp_dir}/knife.rb"
   openstack_creds_cmd = openstack_creds_cmd + " --openstack-tenant #{openstack_config['development']['openstack_tenant']}"
   openstack_creds_cmd
@@ -76,7 +76,7 @@ describe 'knife-openstack' do
     end
 
     context 'install ' do
-      let(:command) { "gem install " + get_gem_file_name  } 
+      let(:command) { "gem install " + get_gem_file_name  }
       it 'should succeed' do
         match_status("should succeed")
       end
@@ -85,47 +85,47 @@ describe 'knife-openstack' do
     describe 'knife' do
       context 'openstack' do
         context 'flavor list --help' do
-         let(:command) { "knife openstack flavor list --help" } 
+         let(:command) { "knife openstack flavor list --help" }
            it 'should succeed' do
             match_stdout(/--help/)
           end
         end
 
         context 'group list --help' do
-         let(:command) { "knife openstack group list --help" } 
+         let(:command) { "knife openstack group list --help" }
            it 'should succeed' do
             match_stdout(/--help/)
           end
         end
 
         context 'image list --help' do
-         let(:command) { "knife openstack image list --help" } 
+         let(:command) { "knife openstack image list --help" }
            it 'should succeed' do
             match_stdout(/--help/)
           end
         end
 
         context 'server create --help' do
-         let(:command) { "knife openstack server create --help" } 
+         let(:command) { "knife openstack server create --help" }
            it 'should succeed' do
             match_stdout(/--help/)
           end
         end
 
         context 'server delete --help' do
-         let(:command) { "knife openstack server delete --help" } 
+         let(:command) { "knife openstack server delete --help" }
            it 'should succeed' do
             match_stdout(/--help/)
           end
         end
 
         context 'server list --help' do
-         let(:command) { "knife openstack server list --help" } 
+         let(:command) { "knife openstack server list --help" }
            it 'should succeed' do
             match_stdout(/--help/)
           end
         end
-      end      
+      end
     end
 
     describe 'knife' , :if => is_config_present do
@@ -159,8 +159,6 @@ describe 'knife-openstack' do
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
-        " --winrm-user Administrator" +
-        " --winrm-password Chef2UncleNed!" +
         " --yes" +
         append_openstack_creds_for_windows() }
         after(:each)  { cmd_out = "#{cmd_stdout}" }
