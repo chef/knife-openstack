@@ -388,6 +388,7 @@ class Chef
       bootstrap = Chef::Knife::Bootstrap.new
       bootstrap.name_args = [bootstrap_ip_address]
       bootstrap.config[:ssh_user] = config[:ssh_user]
+      bootstrap.config[:ssh_port] = config[:ssh_port]
       bootstrap.config[:identity_file] = config[:identity_file]
       bootstrap.config[:host_key_verify] = config[:host_key_verify]
       bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'

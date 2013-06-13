@@ -96,6 +96,7 @@ describe Chef::Knife::OpenstackServerCreate do
   describe "when configuring the bootstrap process" do
     before do
       @knife_openstack_create.config[:ssh_user] = "ubuntu"
+      @knife_openstack_create.config[:ssh_port] = "22"
       @knife_openstack_create.config[:identity_file] = "~/.ssh/key.pem"
       @knife_openstack_create.config[:chef_node_name] = "blarf"
       @knife_openstack_create.config[:template_file] = '~/.chef/templates/my-bootstrap.sh.erb'
@@ -116,6 +117,10 @@ describe Chef::Knife::OpenstackServerCreate do
 
     it "configures the bootstrap to use the correct ssh_user login" do
       @bootstrap.config[:ssh_user].should == 'ubuntu'
+    end
+
+    it "configures the bootstrap to use the correct ssh_port" do
+      @bootstrap.config[:ssh_port].should == '22'
     end
 
     it "configures the bootstrap to use the correct ssh identity file" do
