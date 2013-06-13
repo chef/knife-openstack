@@ -1,6 +1,7 @@
 ## v0.8.1
 
 * KNIFE-296 knife-windows overrides -i, -p, -P and -x options with winrm values
+* KNIFE-304 enable setting the ssh port for knife-openstack
 
 ## v0.8.0
 
