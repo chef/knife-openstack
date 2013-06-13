@@ -218,7 +218,7 @@ class Chef
         if locate_config_value(:bootstrap_protocol) == 'winrm'
           load_winrm_deps
         else
-          # hack fix for KNIFE-296 winrm values stomping on ssh values
+          # workaround for KNIFE-296 winrm values stomping on ssh values
           # unchanged ssh_user and changed winrm_user, override ssh_user
           if locate_config_value(:ssh_user).eql?(options[:ssh_user][:default]) &&
               !locate_config_value(:winrm_user).eql?(options[:winrm_user][:default])
