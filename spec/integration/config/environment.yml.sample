@@ -24,3 +24,5 @@ development:
   openstack_auth_url: openstack_auth_url
   key_pair: key_pair
   ssh_user: ubuntu
+  winrm_user: winrm_user
+  winrm_password: winrm_password
