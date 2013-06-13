@@ -14,10 +14,10 @@ describe Chef::Knife::OpenstackServerCreate do
     @openstack_connection.stub_chain(:flavors, :get).and_return ('flavor_id')
     @openstack_connection.stub_chain(:images, :get).and_return mock('image_id')
     @openstack_connection.stub_chain(:addresses).and_return [mock('addresses', {
-            :instance_id => nil,
-            :ip => '111.111.111.111',
-            :fixed_ip => true
-            })]
+          :instance_id => nil,
+          :ip => '111.111.111.111',
+          :fixed_ip => true
+        })]
 
     @knife_openstack_create = Chef::Knife::OpenstackServerCreate.new
     @knife_openstack_create.initial_sleep_delay = 0
@@ -43,20 +43,39 @@ describe Chef::Knife::OpenstackServerCreate do
     @new_openstack_server = mock()
 
     @openstack_server_attribs = { :name => 'Mock Server',
-                                  :id => 'id-123456',
-                                  :key_name => 'key_name',
-                                  :flavor => 'flavor_id',
-                                  :image => 'image_id',
-                                  :addresses => {
-                                    'public' => [{'addr' => '75.101.253.10'}],
-                                    'private' => [{'addr' => '10.251.75.20'}]
-                                    },
-                                  :password => 'password'
-                                }
+      :id => 'id-123456',
+      :key_name => 'key_name',
+      :flavor => 'flavor_id',
+      :image => 'image_id',
+      :addresses => {
+        'public' => [{'addr' => '75.101.253.10'}],
+        'private' => [{'addr' => '10.251.75.20'}]
+      },
+      :password => 'password'
+    }
 
 
     @openstack_server_attribs.each_pair do |attrib, value|
       @new_openstack_server.stub(attrib).and_return(value)
+    end
+  end
+
+  describe "options" do
+    before do
+      @options = @knife_openstack_create.options
+    end
+
+    it "ensures default options" do
+      @options[:bootstrap_protocol][:default].should == nil
+      @options[:distro][:default].should == 'chef-full'
+      @options[:floating_ip][:default].should == '-1'
+      @options[:host_key_verify][:default].should == true
+      @options[:private_network][:default].should == false
+      @options[:run_list][:default].should == []
+      @options[:security_groups][:default].should == ['default']
+      @options[:server_create_timeout][:default].should == 600
+      @options[:ssh_port][:default].should == '22'
+      @options[:ssh_user][:default].should == 'root'
     end
   end
 
@@ -96,6 +115,7 @@ describe Chef::Knife::OpenstackServerCreate do
   describe "when configuring the bootstrap process" do
     before do
       @knife_openstack_create.config[:ssh_user] = "ubuntu"
+      @knife_openstack_create.config[:ssh_port] = "44"
       @knife_openstack_create.config[:identity_file] = "~/.ssh/key.pem"
       @knife_openstack_create.config[:chef_node_name] = "blarf"
       @knife_openstack_create.config[:template_file] = '~/.chef/templates/my-bootstrap.sh.erb'
@@ -116,6 +136,10 @@ describe Chef::Knife::OpenstackServerCreate do
 
     it "configures the bootstrap to use the correct ssh_user login" do
       @bootstrap.config[:ssh_user].should == 'ubuntu'
+    end
+
+    it "configures the bootstrap to use the correct ssh_port" do
+      @bootstrap.config[:ssh_port].should == '44'
     end
 
     it "configures the bootstrap to use the correct ssh identity file" do
