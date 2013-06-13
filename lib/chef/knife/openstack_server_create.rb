@@ -156,11 +156,11 @@ class Chef
       :default => 600,
       :proc => Proc.new { |v| Chef::Config[:knife][:server_create_timeouts] = v}
 
-      def tcp_test_ssh(hostname)
-        tcp_socket = TCPSocket.new(hostname, 22)
+      def tcp_test_ssh(hostname, port)
+        tcp_socket = TCPSocket.new(hostname, port)
         readable = IO.select([tcp_socket], nil, nil, 5)
         if readable
-          Chef::Log.debug("sshd accepting connections on #{hostname}, banner is #{tcp_socket.gets}")
+          Chef::Log.debug("sshd accepting connections on #{hostname} port #{port}, banner is #{tcp_socket.gets}")
           yield
           true
         else
@@ -336,8 +336,9 @@ class Chef
         print(".") until tcp_test_winrm(bootstrap_ip_address, locate_config_value(:winrm_port))
         bootstrap_for_windows_node(server, bootstrap_ip_address).run
       else
+        Chef::Log.debug("Waiting for sshd on IP address: #{bootstrap_ip_address} and port: #{locate_config_value(:ssh_port)}")
         print "\n#{ui.color("Waiting for sshd", :magenta)}"
-        print(".") until tcp_test_ssh(bootstrap_ip_address) {
+        print(".") until tcp_test_ssh(bootstrap_ip_address, locate_config_value(:ssh_port)) {
           sleep @initial_sleep_delay ||= 10
           puts("done")
         }
