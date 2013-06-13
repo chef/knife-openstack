@@ -30,8 +30,16 @@ def append_openstack_creds(is_list_cmd = false)
   openstack_creds_cmd
 end
 
+def append_openstack_creds_for_windows
+  openstack_config = YAML.load(File.read(File.expand_path("../config/environment.yml", __FILE__)))
+  openstack_creds_cmd = " --openstack-username #{openstack_config['development']['openstack_username']} --openstack-password #{openstack_config['development']['openstack_password']} --openstack-api-endpoint #{openstack_config['development']['openstack_auth_url']}"
+  openstack_creds_cmd = openstack_creds_cmd + " -c #{temp_dir}/knife.rb"
+  openstack_creds_cmd = openstack_creds_cmd + " --openstack-tenant #{openstack_config['development']['openstack_tenant']}"
+  openstack_creds_cmd
+end
+
 def delete_instance_cmd(stdout)
-  "knife openstack server delete " + find_instance_id("Instance ID:", stdout) + 
+  "knife openstack server delete " + find_instance_id("Instance ID:", stdout) +
   append_openstack_creds(is_list_cmd = true) + " --yes"
 end
 
@@ -43,10 +51,15 @@ def linux_template_file_path
   "#{temp_dir}/chef-full-chef-zero.erb"
 end
 
+def windows_template_file_path
+  "#{temp_dir}/windows-chef-client-msi.erb"
+end
+
 def init_test
   puts "\nCreating Test Data\n"
   create_file("#{temp_dir}", "validation.pem", "../integration/config/validation.pem" )
   create_file("#{temp_dir}", "chef-full-chef-zero.erb", "../integration/templates/chef-full-chef-zero.erb" )
+  create_file("#{temp_dir}", "windows-chef-client-msi.erb", "../integration/templates/windows-chef-client-msi.erb" )
   create_file("#{temp_dir}", "openstack.pem", "../integration/config/openstack.pem")
   create_file("#{temp_dir}", "knife.rb", "../integration/config/knife.rb")
 end
@@ -77,7 +90,32 @@ describe 'knife' do
       end
 
       context "delete server after create" do
-        let(:command) { delete_instance_cmd(cmd_out) }      
+        let(:command) { delete_instance_cmd(cmd_out) }
+        it "should succeed" do
+          match_status("should succeed")
+        end
+      end
+    end
+
+    context 'create server (for windows)' do
+      cmd_out = ""
+      before(:each) { create_node_name }
+      let(:command) { "knife openstack server create -N #{@name_node}"+
+      " -I 18f6310a-f0b2-41ff-add5-a16e0f79ff6f -f 18"+
+      " --template-file " + windows_template_file_path +
+      " --server-url http://localhost:8889" +
+      " --bootstrap-protocol winrm" +
+      " --winrm-user Administrator" +
+      " --winrm-password Chef2UncleNed!" +
+      " --yes" +
+      append_openstack_creds_for_windows() }
+      after(:each)  { cmd_out = "#{cmd_stdout}" }
+      it 'should succeed' do
+        match_status("should succeed")
+      end
+
+      context "delete server after create" do
+        let(:command) { delete_instance_cmd(cmd_out) }
         it "should succeed" do
           match_status("should succeed")
         end
