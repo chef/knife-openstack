@@ -128,7 +128,7 @@ describe 'knife-openstack' do
       end      
     end
 
-    describe 'knife' do
+    describe 'knife' , :if => is_config_present do
       context 'create server' do
         cmd_out = ""
         before(:each) { create_node_name }
