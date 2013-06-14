@@ -82,6 +82,13 @@ class Chef
       :description => "The OpenStack SSH keypair id",
       :proc => Proc.new { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
 
+      option :ssh_port,
+      :short => "-p PORT",
+      :long => "--ssh-port PORT",
+      :description => "The ssh port",
+      :default => "22",
+      :proc => Proc.new { |key| Chef::Config[:knife][:ssh_port] = key }
+
       option :ssh_user,
       :short => "-x USERNAME",
       :long => "--ssh-user USERNAME",
@@ -149,11 +156,11 @@ class Chef
       :default => 600,
       :proc => Proc.new { |v| Chef::Config[:knife][:server_create_timeouts] = v}
 
-      def tcp_test_ssh(hostname)
-        tcp_socket = TCPSocket.new(hostname, 22)
+      def tcp_test_ssh(hostname, port)
+        tcp_socket = TCPSocket.new(hostname, port)
         readable = IO.select([tcp_socket], nil, nil, 5)
         if readable
-          Chef::Log.debug("sshd accepting connections on #{hostname}, banner is #{tcp_socket.gets}")
+          Chef::Log.debug("sshd accepting connections on #{hostname} port #{port}, banner is #{tcp_socket.gets}")
           yield
           true
         else
@@ -210,6 +217,28 @@ class Chef
         validate!
         if locate_config_value(:bootstrap_protocol) == 'winrm'
           load_winrm_deps
+        else
+          # workaround for KNIFE-296 winrm values stomping on ssh values
+          # unchanged ssh_user and changed winrm_user, override ssh_user
+          if locate_config_value(:ssh_user).eql?(options[:ssh_user][:default]) &&
+              !locate_config_value(:winrm_user).eql?(options[:winrm_user][:default])
+            config[:ssh_user] = locate_config_value(:winrm_user)
+          end
+          # unchanged ssh_port and changed winrm_port, override ssh_port
+          if locate_config_value(:ssh_port).eql?(options[:ssh_port][:default]) &&
+              !locate_config_value(:winrm_port).eql?(options[:winrm_port][:default])
+            config[:ssh_port] = locate_config_value(:winrm_port)
+          end
+          # unset ssh_password and set winrm_password, override ssh_password
+          if locate_config_value(:ssh_password).nil? &&
+              !locate_config_value(:winrm_password).nil?
+            config[:ssh_password] = locate_config_value(:winrm_password)
+          end
+          # unset identity_file and set kerberos_keytab_file, override identity_file
+          if locate_config_value(:identity_file).nil? &&
+              !locate_config_value(:kerberos_keytab_file).nil?
+            config[:identity_file] = locate_config_value(:kerberos_keytab_file)
+          end
         end
         #servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
@@ -307,8 +336,9 @@ class Chef
         print(".") until tcp_test_winrm(bootstrap_ip_address, locate_config_value(:winrm_port))
         bootstrap_for_windows_node(server, bootstrap_ip_address).run
       else
+        Chef::Log.debug("Waiting for sshd on IP address: #{bootstrap_ip_address} and port: #{locate_config_value(:ssh_port)}")
         print "\n#{ui.color("Waiting for sshd", :magenta)}"
-        print(".") until tcp_test_ssh(bootstrap_ip_address) {
+        print(".") until tcp_test_ssh(bootstrap_ip_address, locate_config_value(:ssh_port)) {
           sleep @initial_sleep_delay ||= 10
           puts("done")
         }
@@ -358,6 +388,7 @@ class Chef
       bootstrap = Chef::Knife::Bootstrap.new
       bootstrap.name_args = [bootstrap_ip_address]
       bootstrap.config[:ssh_user] = config[:ssh_user]
+      bootstrap.config[:ssh_port] = config[:ssh_port]
       bootstrap.config[:identity_file] = config[:identity_file]
       bootstrap.config[:host_key_verify] = config[:host_key_verify]
       bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
