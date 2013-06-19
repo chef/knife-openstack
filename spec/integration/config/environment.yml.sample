@@ -27,6 +27,9 @@ os_creds:
 os_ssh_params:
   key_pair: key_pair
   ssh_user: ubuntu
+  ssh_user_for_windows: ssh_user_for_windows
+  ssh_password_for_windows: ssh_password_for_windows
+  invalid_key_pair_name: invalid_key
 
 os_winrm_params:
   winrm_user: winrm_user
@@ -35,7 +38,9 @@ os_winrm_params:
 knife_params:
   linux_image: linux_image
   windows_image: windows_image
+  ssh_enabled_windows_image: ssh_enabled_windows_image
   invalid_image: some-invalid-image-random-string
   invalid_security_group: invalid-group
   linux_flavor: linux_flavor
   windows_flavor: windows_flavor
+  invalid_flavor: invalid_flavor
