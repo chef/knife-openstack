@@ -1,4 +1,4 @@
-# Copyright: Copyright (c) 2012 Opscode, Inc.
+# Copyright: Copyright (c) 2013 Opscode, Inc.
 # License: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,7 @@
 # limitations under the License.
 
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
@@ -275,6 +276,31 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { cmd_out = "#{cmd_stdout}" }
         it 'should throw validation message and stop execution.' do
+          match_status("should fail")
+        end
+
+        context "delete server after create" do
+          let(:command) { delete_instance_cmd(cmd_out) }
+          it "should successfully delete the server." do
+            match_status("should succeed")
+          end
+        end
+      end
+
+      context 'create server with incorrect key_pair file' do
+        cmd_out = ""
+        before(:each) { create_node_name("linux") }
+        let(:command) { "knife openstack server create -N #{@name_node}"+
+        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " --template-file " + get_linux_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --yes" +
+        " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user']}"+
+        " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
+        " --identity-file #{temp_dir}/incorrect_openstack.pem"+
+        append_openstack_creds() }
+        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        it 'should throw AuthenticationFailed Error message and stop execution.' do
           match_status("should fail")
         end
 
