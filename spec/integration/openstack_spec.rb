@@ -124,7 +124,7 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -148,22 +148,15 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"  }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -171,21 +164,14 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -193,24 +179,17 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --groups #{@openstack_config['knife_params']['invalid_security_group']}"+
+        " --groups #{SecureRandom.hex(4)}"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-        let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -218,23 +197,16 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['invalid_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{SecureRandom.hex(18)} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -242,23 +214,16 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['invalid_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['invalid_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -266,24 +231,17 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user']}"+
-        " --ssh-key #{@openstack_config['os_ssh_params']['invalid_key_pair_name']}"+
+        " --ssh-key #{SecureRandom.hex(6)}"+
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -291,7 +249,7 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -299,16 +257,9 @@ describe 'knife-openstack' do
         " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
         " --identity-file #{temp_dir}/incorrect_openstack.pem"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw AuthenticationFailed Error message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -316,7 +267,7 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -324,16 +275,9 @@ describe 'knife-openstack' do
         " --identity-file #{temp_dir}/openstack.pem"+
         " --private-network"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
           match_status("should succeed")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -341,7 +285,7 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['linux_image']} -f #{@openstack_config['knife_params']['linux_flavor']} "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -349,16 +293,9 @@ describe 'knife-openstack' do
         " --identity-file #{temp_dir}/openstack.pem"+
         " --floating-ip"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
           match_status("should succeed")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
     end
@@ -369,8 +306,8 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@openstack_config['knife_params']['windows_image']} " +
-        " -f #{@openstack_config['knife_params']['windows_flavor']} " +
+        " -I #{@openstack_config['os_params']['windows_image']} " +
+        " -f #{@openstack_config['os_params']['windows_flavor']} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -395,49 +332,75 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@openstack_config['knife_params']['windows_image']} " +
-        " -f #{@openstack_config['knife_params']['windows_flavor']} " +
+        " -I #{@openstack_config['os_params']['windows_image']} " +
+        " -f #{@openstack_config['os_params']['windows_flavor']} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
         " --yes" +
         get_winrm_credentials }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
         end
+      end
 
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
+      context 'create server (for windows) with invalid winrm user' do
+        cmd_out = ""
+        before(:each) { create_node_name("windows") }
+        let(:command) { "knife openstack server create -N #{@name_node}" +
+        " -I #{@openstack_config['os_params']['windows_image']} " +
+        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " --template-file " + get_windows_msi_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --bootstrap-protocol winrm" +
+        " --yes" +
+        " --winrm-user #{SecureRandom.hex(6)}"+
+        " --winrm-password #{@openstack_config['os_winrm_params']['winrm_password']}" +
+        append_openstack_creds_for_windows() }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
+
+        it 'should fail to bootstrap and stop execution.' do
+          match_status("should fail")
         end
       end
 
-      context 'create server (for windows) using a ssh enabled windows image with ssh parameters' do
+      context 'create server (for windows) with invalid winrm password' do
+        cmd_out = ""
+        before(:each) { create_node_name("windows") }
+        let(:command) { "knife openstack server create -N #{@name_node}" +
+        " -I #{@openstack_config['os_params']['windows_image']} " +
+        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " --template-file " + get_windows_msi_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --bootstrap-protocol winrm" +
+        " --yes" +
+        " --winrm-user #{@openstack_config['os_winrm_params']['winrm_user']}"+
+        " --winrm-password #{SecureRandom.hex(6)}" +
+        append_openstack_creds_for_windows() }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
+
+        it 'should fail to bootstrap and stop execution.' do
+          match_status("should fail")
+        end
+      end
+
+      pending 'create server (for windows) using a ssh enabled windows image with ssh parameters' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['ssh_enabled_windows_image']}"+
-        " -f #{@openstack_config['knife_params']['windows_flavor']} "+
+        " -I #{@openstack_config['os_params']['ssh_enabled_windows_image']}"+
+        " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         " --identity-file #{temp_dir}/openstack.pem"+
         get_ssh_credentials_for_windows_image+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'successfully create the (windows VM) server with the provided options and bootstrap.' do
           match_status("should succeed")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -445,23 +408,16 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['ssh_enabled_windows_image']}"+
-        " -f #{@openstack_config['knife_params']['windows_flavor']} "+
+        " -I #{@openstack_config['os_params']['ssh_enabled_windows_image']}"+
+        " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -469,25 +425,19 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['windows_image']}"+
-        " -f #{@openstack_config['knife_params']['windows_flavor']} "+
+        " -I #{@openstack_config['os_params']['windows_image']}"+
+        " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
         " --bootstrap-protocol winrm" +
         get_winrm_credentials+
-        " --groups #{@openstack_config['knife_params']['invalid_security_group']}"+
+        " --groups #{SecureRandom.hex(4)}"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
+
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -495,8 +445,8 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['invalid_image']}"+
-        " -f #{@openstack_config['knife_params']['windows_flavor']} "+
+        " -I #{SecureRandom.hex(18)}"+
+        " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -504,16 +454,9 @@ describe 'knife-openstack' do
         get_winrm_credentials+
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -521,8 +464,8 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['windows_image']}"+
-        " -f #{@openstack_config['knife_params']['invalid_flavor']} "+
+        " -I #{@openstack_config['os_params']['windows_image']}"+
+        " -f #{@openstack_config['os_params']['invalid_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -530,16 +473,9 @@ describe 'knife-openstack' do
         get_winrm_credentials+
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -547,8 +483,8 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['windows_image']}"+
-        " -f #{@openstack_config['knife_params']['windows_flavor']} "+
+        " -I #{@openstack_config['os_params']['windows_image']}"+
+        " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -557,16 +493,9 @@ describe 'knife-openstack' do
         " --identity-file #{temp_dir}/openstack.pem"+
         " --private-network"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
           match_status("should succeed")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
 
@@ -574,8 +503,8 @@ describe 'knife-openstack' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['knife_params']['windows_image']}"+
-        " -f #{@openstack_config['knife_params']['windows_flavor']} "+
+        " -I #{@openstack_config['os_params']['windows_image']}"+
+        " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -584,16 +513,9 @@ describe 'knife-openstack' do
         " --identity-file #{temp_dir}/openstack.pem"+
         " --floating-ip"+
         append_openstack_creds() }
-        after(:each)  { cmd_out = "#{cmd_stdout}" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
           match_status("should succeed")
-        end
-
-        context "delete server after create" do
-          let(:command) { delete_instance_cmd(cmd_out) }
-          it "should successfully delete the server." do
-            match_status("should succeed")
-          end
         end
       end
     end
@@ -625,7 +547,6 @@ describe 'knife-openstack' do
           match_status("should succeed")
         end
       end
-
 
     context 'uninstall ' do
       let(:command) { "gem uninstall knife-openstack -v '#{Knife::OpenStack::VERSION}'" }
