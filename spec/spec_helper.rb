@@ -46,4 +46,11 @@ def init_openstack_test
   rescue
     puts "Error while creating file - openstack.pem"
   end
+
+  begin
+    data_to_write = File.read(File.expand_path("../integration/config/incorrect_openstack.pem", __FILE__))
+    File.open("#{temp_dir}/incorrect_openstack.pem", 'w') {|f| f.write(data_to_write)}
+  rescue
+    puts "Error while creating file - incorrect_openstack.pem"
+  end
 end
