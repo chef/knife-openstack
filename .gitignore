@@ -2,4 +2,22 @@
 .bundle
 .rvmrc
 Gemfile.lock
-pkg/*
+.autotest
+coverage
+.DS_Store
+pkg
+*/tags
+
+# ignore some common Bundler 'binstubs' directory names
+# http://gembundler.com/man/bundle-exec.1.html
+b/
+binstubs/
+
+# RVM and RBENV ruby version files
+.rbenv-version
+.rvmrc
+
+# Documentation
+_site/*
+.yardoc/
+doc/

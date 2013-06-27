@@ -1,3 +1,6 @@
+## v1.0.0
+* Implementation using knife-cloud gem
+
 ## v0.8.1
 
 * KNIFE-296 knife-windows overrides -i, -p, -P and -x options with winrm values
