@@ -18,9 +18,9 @@ Gem::PackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
-desc "uninstall #{GEM_NAME}-#{Knife::Cloud::VERSION}.gem from system..."
+desc "uninstall #{GEM_NAME}-#{Knife::OpenStack::VERSION}.gem from system..."
 task :uninstall do
-  sh %{gem uninstall #{GEM_NAME} -x -v #{Knife::Cloud::VERSION} }
+  sh %{gem uninstall #{GEM_NAME} -x -v #{Knife::OpenStack::VERSION} }
 end
 
 # rspec
