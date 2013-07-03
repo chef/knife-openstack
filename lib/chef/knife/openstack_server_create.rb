@@ -20,19 +20,22 @@
 
 require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_server_create_options'
-
+require 'chef/knife/cloud/openstack_service'
+require 'chef/knife/cloud/openstack_service_options'
+require 'chef/knife/core/bootstrap_context'
+require 'net/ssh/multi'
 class Chef
   class Knife
     class OpenstackServerCreate < Knife
 
       include Knife::OpenstackHelpers
       include Knife::Cloud::OpenstackServerCreateOptions
+      include Knife::Cloud::OpenstackServiceOptions
 
       banner "knife openstack server create (options)"
 
       def run
           $stdout.sync = true
-
           @cloud_service = Cloud::OpenstackService.new(self)
           @cloud_service.server_create()
       end

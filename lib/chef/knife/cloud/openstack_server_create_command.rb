@@ -22,6 +22,11 @@ class Chef
           server_def
         end
 
+        #generate a random name if chef_node_name is empty
+        def get_node_name(chef_node_name)
+          !chef_node_name.nil? ? chef_node_name : "os-"+rand.to_s.split('.')[1]
+        end
+
         def after_handler
           msg_pair("Flavor", server.flavor['id'])
           msg_pair("Image", server.image['id'])

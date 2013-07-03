@@ -1,10 +1,10 @@
 
 require 'chef/knife/cloud/fog/service'
-require 'chef/knife/cloud/openstack_server_list_command'
+# require 'chef/knife/cloud/openstack_server_list_command'
 require 'chef/knife/cloud/openstack_server_create_command'
-require 'chef/knife/cloud/openstack_image_list_command'
-require 'chef/knife/cloud/openstack_flavor_list_command'
-require 'chef/knife/cloud/openstack_group_list_command'
+# require 'chef/knife/cloud/openstack_image_list_command'
+# require 'chef/knife/cloud/openstack_flavor_list_command'
+# require 'chef/knife/cloud/openstack_group_list_command'
 
 class Chef
   class Knife
