@@ -1,5 +1,3 @@
-
-
 class Chef
   class Knife
     class Cloud
