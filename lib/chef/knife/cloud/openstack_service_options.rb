@@ -1,6 +1,3 @@
-
-require 'chef/knife/cloud/fog/service_options'
-
 class Chef
   class Knife
     class Cloud
@@ -8,12 +5,6 @@ class Chef
 
        def self.included(includer)
           includer.class_eval do
-            include FogServiceOptions
-
-            deps do
-              require 'readline'
-              require 'chef/json_compat'
-            end
 
             # Openstack Connection params.
             option :openstack_username,
