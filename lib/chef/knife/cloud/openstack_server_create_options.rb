@@ -9,8 +9,8 @@ class Chef
        def self.included(includer)
           includer.class_eval do
             include ServerCreateOptions
-            # Openstack Server create params.
 
+            # Openstack Server create params.
             option :openstack_private_network,
             :long => "--openstack-private-network",
             :description => "Use the private IP for bootstrapping rather than the public IP",

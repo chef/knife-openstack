@@ -18,26 +18,73 @@
 # limitations under the License.
 #
 
+require 'chef/knife/cloud/server/create_command'
 require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_server_create_options'
 require 'chef/knife/cloud/openstack_service'
 require 'chef/knife/cloud/openstack_service_options'
-require 'chef/knife/core/bootstrap_context'
-require 'net/ssh/multi'
+
 class Chef
   class Knife
-    class OpenstackServerCreate < Knife
+    class Cloud
+      class OpenstackServerCreate < ServerCreateCommand
 
-      include Knife::OpenstackHelpers
-      include Knife::Cloud::OpenstackServerCreateOptions
-      include Knife::Cloud::OpenstackServiceOptions
+        include OpenstackHelpers
+        include OpenstackServerCreateOptions
+        include OpenstackServiceOptions
 
-      banner "knife openstack server create (options)"
+        banner "knife openstack server create (options)"
 
-      def run
-          $stdout.sync = true
-          @cloud_service = Cloud::OpenstackService.new(self)
-          @cloud_service.server_create()
+        def before_exec_command
+            # setup the create options
+            @create_options = {
+              :server_def => {
+                #servers require a name, generate one if not passed
+                :name => get_node_name(locate_config_value(:chef_node_name)),
+                :image_ref => locate_config_value(:image),
+                :flavor_ref => locate_config_value(:flavor),
+                :security_groups => locate_config_value(:openstack_security_groups),
+                :key_name => locate_config_value(:openstack_ssh_key_id)
+              },
+              :server_create_timeout => locate_config_value(:server_create_timeout)
+            }
+            Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
+            super
+        end
+
+        # Setup the floating ip after server creation.
+        def after_exec_command
+          msg_pair("Flavor", server.flavor['id'])
+          msg_pair("Image", server.image['id'])
+          Chef::Log.debug("Addresses #{server.addresses}")
+          msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
+
+          floating_address = locate_config_value(:openstack_floating_ip)
+          Chef::Log.debug("Floating IP Address requested #{floating_address}")
+          unless (floating_address == '-1') #no floating IP requested
+            addresses = service.connection.addresses
+            #floating requested without value
+            if floating_address.nil?
+              free_floating = addresses.find_index {|a| a.fixed_ip.nil?}
+              if free_floating.nil? #no free floating IP found
+                ui.error("Unable to assign a Floating IP from allocated IPs.")
+                exit 1
+              else
+                floating_address = addresses[free_floating].ip
+              end
+            end
+            server.associate_address(floating_address)
+            #a bit of a hack, but server.reload takes a long time
+            (server.addresses['public'] ||= []) << {"version"=>4,"addr"=>floating_address}
+            msg_pair("Floating IP Address", floating_address)
+          end
+
+          Chef::Log.debug("Addresses #{server.addresses}")
+          Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
+
+          msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+        end
+
       end
     end
   end
