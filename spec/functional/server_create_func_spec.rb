@@ -1,7 +1,7 @@
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 require File.expand_path('../../spec_helper', __FILE__)
-require 'fog'
-require 'chef/knife/bootstrap'
-require 'chef/knife/bootstrap_windows_winrm'
+
 describe Chef::Knife::OpenstackServerCreate do
 
   before do
