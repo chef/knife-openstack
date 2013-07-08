@@ -92,6 +92,25 @@ describe Chef::Knife::OpenstackServerCreate do
     end
   end
 
+  describe "options" do
+    before do
+      @options = @knife_openstack_create.options
+    end
+
+    it "ensures default options" do
+      @options[:bootstrap_protocol][:default].should == nil
+      @options[:distro][:default].should == 'chef-full'
+      @options[:floating_ip][:default].should == '-1'
+      @options[:host_key_verify][:default].should == true
+      @options[:private_network][:default].should == false
+      @options[:run_list][:default].should == []
+      @options[:security_groups][:default].should == ['default']
+      @options[:server_create_timeout][:default].should == 600
+      @options[:ssh_port][:default].should == '22'
+      @options[:ssh_user][:default].should == 'root'
+    end
+  end
+
   describe "when configuring the bootstrap process" do
     before do
       @knife_openstack_create.config[:ssh_user] = "ubuntu"

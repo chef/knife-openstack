@@ -3,6 +3,7 @@ require 'chef/knife/bootstrap'
 require 'chef/knife/openstack_helpers'
 require 'fog'
 require 'chef/knife/openstack_server_create'
+require 'chef/knife/openstack_server_delete'
 require "securerandom"
 require 'knife-openstack/version'
 require 'test/knife-utils/test_bed'
