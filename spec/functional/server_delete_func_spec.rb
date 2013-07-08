@@ -1,12 +1,14 @@
 require File.expand_path('../../spec_helper', __FILE__)
+require 'chef/knife/openstack_server_delete'
+require 'chef/knife/cloud/openstack_service'
 
-describe Chef::Knife::OpenstackServerDelete do
+describe Chef::Knife::Cloud::OpenstackServerDelete do
 
   before do
-    @openstack_connection = mock(Fog::Compute::OpenStack)
-    @chef_node = mock(Chef::Node)
-    @chef_client = mock(Chef::ApiClient)
-    @knife_openstack_delete = Chef::Knife::OpenstackServerDelete.new
+    @openstack_connection = double(Fog::Compute::OpenStack)
+    @chef_node = double(Chef::Node)
+    @chef_client = double(Chef::ApiClient)
+    @knife_openstack_delete = Chef::Knife::Cloud::OpenstackServerDelete.new
     {
       :openstack_username => 'openstack_username',
       :openstack_password => 'openstack_password',
@@ -14,13 +16,14 @@ describe Chef::Knife::OpenstackServerDelete do
     }.each do |key, value|
       Chef::Config[:knife][key] = value
     end
-
-    @knife_openstack_delete.stub(:msg_pair)
-    @knife_openstack_delete.stub(:puts)
-    @knife_openstack_delete.stub(:confirm)
+    
+    @openstack_service = Chef::Knife::Cloud::OpenstackService.new
+    @openstack_service.stub(:msg_pair)
+    @knife_openstack_delete.stub(:create_service_instance).and_return(@openstack_service)
     @knife_openstack_delete.ui.stub(:warn)
-    @openstack_servers = mock()
-    @running_openstack_server = mock()
+    @knife_openstack_delete.ui.stub(:confirm)
+    @openstack_servers = double()
+    @running_openstack_server = double()
     @openstack_server_attribs = { :name => 'Mock Server',
                                   :id => 'id-123456',
                                   :flavor => 'flavor_id',
