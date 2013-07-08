@@ -23,13 +23,11 @@ require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_server_create_options'
 require 'chef/knife/cloud/openstack_service'
 require 'chef/knife/cloud/openstack_service_options'
-require 'chef/knife/cloud/fog/options'
 
 class Chef
   class Knife
     class Cloud
       class OpenstackServerCreate < ServerCreateCommand
-        include FogOptions
         include OpenstackHelpers
         include OpenstackServerCreateOptions
         include OpenstackServiceOptions
@@ -102,6 +100,32 @@ class Chef
         end
 
         def validate!
+          super(:openstack_username,:openstack_password,:openstack_auth_url)
+          errors = []
+
+          if config[:image_os_type] == 'other'
+            super(:ssh_user, :ssh_key_name)
+            if config[:identity_file].nil? && config[:ssh_password].nil?
+              errors << "You must provide either Identity file or SSH Password."
+            end
+            # when both identity file and ssh_password are given, bootstrap will be performed using identity file
+            if !config[:identity_file].nil? && !config[:ssh_password].nil?
+              config[:ssh_password] = nil
+            end
+
+          # elsif config[:image_os_type] == 'windows'
+          #   #TODO windows bootstrap options and validations will go here.
+          #   if config[:bootstrap_protocol] == 'winrm'
+          #     super(:winrm_user, :winrm_password)
+          #   elsif config[:bootstrap_protocol] == 'ssh'
+          #     super(:ssh_user, :ssh_password)
+          #   else
+          #     errors << "You must provide a valid bootstrap protocol. options [winrm/ssh]"
+          #   end
+          # else
+          #   errors << "You must provide a valid image os type. options [windows/other]"
+          end
+          exit 1 if errors.each{|e| ui.error(e)}.any?
         end
       end
     end

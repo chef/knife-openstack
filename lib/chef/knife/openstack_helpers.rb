@@ -23,22 +23,6 @@ class Chef
         def create_service_instance
           OpenstackService.new
         end
-
-        def validate!(keys=[:openstack_username, :openstack_password, :openstack_auth_url])
-          errors = []
-
-          keys.each do |k|
-            pretty_key = k.to_s.gsub(/_/, ' ').gsub(/\w+/){ |w| (w =~ /(ssh)|(aws)/i) ? w.upcase  : w.capitalize }
-            if Chef::Config[:knife][k].nil?
-              errors << "You did not provided a valid '#{pretty_key}' value."
-            end
-          end
-
-          if errors.each{|e| ui.error(e)}.any?
-            exit 1
-          end
-        end
-
       end
     end
   end
