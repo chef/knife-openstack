@@ -23,15 +23,17 @@ require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_server_create_options'
 require 'chef/knife/cloud/openstack_service'
 require 'chef/knife/cloud/openstack_service_options'
+require 'chef/knife/cloud/fog/options'
 
 class Chef
   class Knife
     class Cloud
       class OpenstackServerCreate < ServerCreateCommand
-
+        include FogOptions
         include OpenstackHelpers
         include OpenstackServerCreateOptions
         include OpenstackServiceOptions
+
 
         banner "knife openstack server create (options)"
 
@@ -83,8 +85,24 @@ class Chef
           Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
           msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+          super
         end
 
+        def before_bootstrap
+          super
+          # Which IP address to bootstrap
+          bootstrap_ip_address = primary_public_ip_address(server.addresses) if primary_public_ip_address(server.addresses)
+          bootstrap_ip_address = primary_private_ip_address(server.addresses) if config[:private_network]
+          Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
+          if bootstrap_ip_address.nil?
+            ui.error("No IP address available for bootstrapping.")
+            raise "No IP address available for bootstrapping."
+          end
+          config[:bootstrap_ip_address] = bootstrap_ip_address
+        end
+
+        def validate!
+        end
       end
     end
   end
