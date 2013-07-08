@@ -21,3 +21,8 @@ binstubs/
 _site/*
 .yardoc/
 doc/
+pkg/*
+*.yml
+
+#keys
+*.pem
