@@ -102,8 +102,7 @@ class Chef
         def validate!
           super(:openstack_username,:openstack_password,:openstack_auth_url)
           errors = []
-
-          if config[:image_os_type] == 'other'
+          if (config[:image_os_type] == 'other') || (Chef::Config[:knife][:image_os]== 'other')
             if locate_config_value(:identity_file).nil? && locate_config_value(:ssh_password).nil?
               errors << "You must provide either Identity file or SSH Password."
             end

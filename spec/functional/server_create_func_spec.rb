@@ -2,7 +2,7 @@
 # Copyright:: Copyright (c) 2013 Opscode, Inc.
 require File.expand_path('../../spec_helper', __FILE__)
 
-describe Chef::Knife::OpenstackServerCreate do
+describe Chef::Knife::Cloud::OpenstackServerCreate do
 
   before do
     @openstack_connection = mock(Fog::Compute::OpenStack)
@@ -14,10 +14,7 @@ describe Chef::Knife::OpenstackServerCreate do
             :fixed_ip => true
             })]
 
-    @knife_openstack_create = Chef::Knife::OpenstackServerCreate.new
-    @knife_openstack_create.initial_sleep_delay = 0
-    @knife_openstack_create.stub(:tcp_test_ssh).and_return(true)
-    @knife_openstack_create.stub(:tcp_test_winrm).and_return(true)
+    @knife_openstack_create = Chef::Knife::Cloud::OpenstackServerCreate.new
 
     {
       :image => 'image',
@@ -62,11 +59,12 @@ describe Chef::Knife::OpenstackServerCreate do
       Chef::Knife::Bootstrap.stub(:new).and_return(@bootstrap)
       @bootstrap.should_receive(:run)
       @knife_openstack_create.config[:run_list] = []
-      @knife_openstack_create.config[:floating_ip] = '-1'
+      @knife_openstack_create.config[:openstack_floating_ip] = '-1'
     end
 
     it "Creates an OpenStack instance and bootstraps it" do
       @new_openstack_server.should_receive(:wait_for).and_return(true)
+      @new_openstack_server.bootstrapperjhfhyfjh.protocol.stub(:tcp_test_ssh)
       @knife_openstack_create.run
     end
 

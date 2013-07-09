@@ -6,6 +6,7 @@ require 'chef/knife/winrm_base'
 require 'chef/knife/bootstrap_windows_winrm'
 require 'chef/knife/openstack_server_create'
 require 'chef/knife/openstack_server_delete'
+require 'chef/knife/bootstrap_windows_ssh'
 require "securerandom"
 require 'knife-openstack/version'
 require 'test/knife-utils/test_bed'
