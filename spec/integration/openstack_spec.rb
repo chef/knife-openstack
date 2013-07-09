@@ -78,6 +78,7 @@ describe 'knife-openstack' do
         context 'flavor list --help' do
          let(:command) { "knife openstack flavor list --help" }
            it 'should list all the options available for flavors list command.' do
+            pending 'not yet implemented'
             match_stdout(/--help/)
           end
         end
@@ -85,6 +86,7 @@ describe 'knife-openstack' do
         context 'group list --help' do
          let(:command) { "knife openstack group list --help" }
            it 'should list all the options available for group list command.' do
+            pending 'not yet implemented'
             match_stdout(/--help/)
           end
         end
@@ -92,6 +94,7 @@ describe 'knife-openstack' do
         context 'image list --help' do
          let(:command) { "knife openstack image list --help" }
            it 'should list all the options available for image list command.' do
+            pending 'not yet implemented'
             match_stdout(/--help/)
           end
         end
@@ -113,6 +116,7 @@ describe 'knife-openstack' do
         context 'server list --help' do
          let(:command) { "knife openstack server list --help" }
            it 'should list all the options available for server list command.' do
+            pending 'not yet implemented'
             match_stdout(/--help/)
           end
         end
@@ -189,6 +193,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
+          pending 'not yet implemented'
           match_status("should fail")
         end
       end
@@ -263,7 +268,7 @@ describe 'knife-openstack' do
         end
       end
 
-      pending 'create server with --private-network option' do
+      context 'create server with --private-network option' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -277,11 +282,12 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
 
-      pending 'create server with --floating-ip option' do
+      context 'create server with --floating-ip option' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -295,13 +301,13 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
     end
 
     describe 'Windows Platform Tests - knife' , :if => is_config_present do
-
       context 'create server (for windows) with standard options' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
@@ -317,12 +323,14 @@ describe 'knife-openstack' do
         after(:each)  { cmd_out = "#{cmd_stdout}" }
 
         it 'should successfully create the (windows VM) server with the provided options.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
 
         context "delete server after create" do
           let(:command) { delete_instance_cmd(cmd_out) }
           it "should successfully delete the server." do
+            pending 'not yet implemented'
             match_status("should succeed")
           end
         end
@@ -342,6 +350,7 @@ describe 'knife-openstack' do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should throw validation message and stop execution.' do
+          pending 'not yet implemented'
           match_status("should fail")
         end
       end
@@ -362,6 +371,7 @@ describe 'knife-openstack' do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should fail to bootstrap and stop execution.' do
+          pending 'not yet implemented'
           match_status("should fail")
         end
       end
@@ -382,11 +392,12 @@ describe 'knife-openstack' do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should fail to bootstrap and stop execution.' do
+          pending 'not yet implemented'
           match_status("should fail")
         end
       end
 
-      pending 'create server (for windows) using a ssh enabled windows image with ssh parameters' do
+      context 'create server (for windows) using a ssh enabled windows image with ssh parameters' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -400,6 +411,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'successfully create the (windows VM) server with the provided options and bootstrap.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
@@ -417,6 +429,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
+          pending 'not yet implemented'
           match_status("should fail")
         end
       end
@@ -437,6 +450,7 @@ describe 'knife-openstack' do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should throw validation message and stop execution.' do
+          pending 'not yet implemented'
           match_status("should fail")
         end
       end
@@ -456,6 +470,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
+          pending 'not yet implemented'
           match_status("should fail")
         end
       end
@@ -475,11 +490,12 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
+          pending 'not yet implemented'
           match_status("should fail")
         end
       end
 
-      pending 'create server (for windows) with --private-network option' do
+      context 'create server (for windows) with --private-network option' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -495,11 +511,12 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
 
-      pending 'create server (for windows) with --floating-ip option' do
+      context 'create server (for windows) with --floating-ip option' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -515,6 +532,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
@@ -523,6 +541,7 @@ describe 'knife-openstack' do
       context 'server list' do
         let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) }
         it 'should successfully list all the servers.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
@@ -530,6 +549,7 @@ describe 'knife-openstack' do
       context 'flavor list' do
         let(:command) { "knife openstack flavor list" + append_openstack_creds(is_list_cmd = true) }
         it 'should successfully list all the available flavors.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
@@ -537,6 +557,7 @@ describe 'knife-openstack' do
       context 'image list' do
         let(:command) { "knife openstack image list" + append_openstack_creds(is_list_cmd = true) }
         it 'should successfully list all the available images.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
@@ -544,6 +565,7 @@ describe 'knife-openstack' do
       context 'group  list' do
         let(:command) { "knife openstack group list" + append_openstack_creds(is_list_cmd = true) }
         it 'should successfully list all the available security groups.' do
+          pending 'not yet implemented'
           match_status("should succeed")
         end
       end
