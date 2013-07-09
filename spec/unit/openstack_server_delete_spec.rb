@@ -8,9 +8,9 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
     @instance = Chef::Knife::Cloud::OpenstackServerDelete.new
     @instance.stub(:exit)
   end
-  
+
   it_behaves_like Chef::Knife::Cloud::ServerDeleteCommand, Chef::Knife::Cloud::OpenstackServerDelete.new
-  
+
   describe "#validate!" do
     before(:each) do
       Chef::Config[:knife][:openstack_username] = "testuser"
@@ -24,23 +24,23 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
 
     it "raise error on openstack_username missing" do
       Chef::Config[:knife].delete(:openstack_username)
-      @instance.ui.should_receive(:error).with("You did not provided a valid 'Openstack Username' value.")
+      @instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Username' value.")
       @instance.validate!
     end
 
     it "raise error on openstack_password missing" do
       Chef::Config[:knife].delete(:openstack_password)
-      @instance.ui.should_receive(:error).with("You did not provided a valid 'Openstack Password' value.")
+      @instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Password' value.")
       @instance.validate!
     end
 
     it "raise error on openstack_auth_url missing" do
       Chef::Config[:knife].delete(:openstack_auth_url)
-      @instance.ui.should_receive(:error).with("You did not provided a valid 'Openstack Auth Url' value.")
+      @instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Auth Url' value.")
       @instance.validate!
     end
   end
-  
+
   describe "#create_service_instance" do
     it "return OpenstackService instance" do
       expect(@instance.create_service_instance).to be_an_instance_of(Chef::Knife::Cloud::OpenstackService)
