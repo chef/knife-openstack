@@ -20,6 +20,9 @@ class Chef
 
         banner "knife openstack server delete INSTANCEID [INSTANCEID] (options)"
 
+        def validate!
+          super(:openstack_username,:openstack_password,:openstack_auth_url)
+        end
       end
     end
   end
