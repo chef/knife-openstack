@@ -58,7 +58,11 @@ class Chef
               server_list << ''
             end
             server_list << server.flavor['id'].to_s
-            server_list << server.image['id'].to_s
+            if server.image
+              server_list << server.image['id']
+            else
+              server_list << ""
+            end
             server_list << server.key_name
             server_list << begin
                              state = server.state.to_s.downcase
