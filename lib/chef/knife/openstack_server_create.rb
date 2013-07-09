@@ -104,14 +104,13 @@ class Chef
           errors = []
 
           if config[:image_os_type] == 'other'
-            super(:ssh_user, :ssh_key_name)
-            if config[:identity_file].nil? && config[:ssh_password].nil?
+            if locate_config_value(:identity_file).nil? && locate_config_value(:ssh_password).nil?
               errors << "You must provide either Identity file or SSH Password."
             end
-            # when both identity file and ssh_password are given, bootstrap will be performed using identity file
-            if !config[:identity_file].nil? && !config[:ssh_password].nil?
-              config[:ssh_password] = nil
+            if !locate_config_value(:identity_file).nil? && (config[:ssh_key_name].nil? && Chef::Config[:knife][:openstack_ssh_key_id].nil?)
+              errors << "You must provide SSH Key."
             end
+
 
           # elsif config[:image_os_type] == 'windows'
           #   #TODO windows bootstrap options and validations will go here.
