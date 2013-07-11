@@ -11,5 +11,5 @@ group :development do
   gem 'mixlib-shellout'
   gem 'active_support'
   gem 'activesupport'
-  gem 'knife-cloud'
+  gem 'knife-cloud', :path => '/home/mukta/github/knife-cloud-muktaa'
 end
