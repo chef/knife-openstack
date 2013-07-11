@@ -29,12 +29,34 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-
         banner "knife openstack server list (options)"
 
-        def validate!
-          super(:openstack_username,:openstack_password,:openstack_auth_url)
+        def before_exec_command
+          #set columns_with_info map
+          @columns_with_info = [
+          {:label => 'Instance ID', :key => 'id'},
+          {:label => 'Name', :key => 'name'},
+          {:label => 'Public IP', :key => 'addresses', :value_callback => method(:get_public_ip_address)},
+          {:label => 'Private IP', :key => 'addresses', :value_callback => method(:get_private_ip_address)},
+          {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
+          {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
+          {:label => 'Keypair', :key => 'key_name'},
+          {:label => 'State', :key => 'state'}
+        ]
         end
+
+        def get_public_ip_address (addresses)
+          primary_public_ip_address(addresses)
+        end
+
+        def get_private_ip_address (addresses)
+          primary_private_ip_address(addresses)
+        end
+
+        def get_id(value)
+          value['id']
+        end
+
       end
     end
   end

@@ -23,6 +23,10 @@ class Chef
         def create_service_instance
           OpenstackService.new
         end
+
+        def validate!
+          super(:openstack_username, :openstack_password, :openstack_auth_url)
+        end
       end
     end
   end
