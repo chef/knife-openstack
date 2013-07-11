@@ -3,3 +3,7 @@
 .rvmrc
 Gemfile.lock
 pkg/*
+*.yml
+
+#keys
+*.pem
