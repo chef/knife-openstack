@@ -20,17 +20,23 @@ class Chef
           ui.color('CIDR', :bold),
           ui.color('Description', :bold),
         ]
-        @service.connection.security_groups.sort_by(&:name).each do |group|
-          group.rules.each do |rule|
-            unless rule['ip_protocol'].nil?
-              group_list << group.name
-              group_list << rule['ip_protocol']
-              group_list << rule['from_port'].to_s
-              group_list << rule['to_port'].to_s
-              group_list << rule['ip_range']['cidr']
-              group_list << group.description
+        begin
+          @service.connection.security_groups.sort_by(&:name).each do |group|
+            group.rules.each do |rule|
+              unless rule['ip_protocol'].nil?
+                group_list << group.name
+                group_list << rule['ip_protocol']
+                group_list << rule['from_port'].to_s
+                group_list << rule['to_port'].to_s
+                group_list << rule['ip_range']['cidr']
+                group_list << group.description
+              end
             end
           end
+        rescue Excon::Errors::BadRequest => e
+          response = Chef::JSONCompat.from_json(e.response.body)
+          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          raise e
         end
         puts ui.list(group_list, :uneven_columns_across, 6)
         end

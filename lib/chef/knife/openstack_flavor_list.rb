@@ -23,7 +23,13 @@ class Chef
         end
 
         def query_resource
-          @service.connection.flavors.all
+          begin
+            @service.connection.flavors.all
+          rescue Excon::Errors::BadRequest => e
+            response = Chef::JSONCompat.from_json(e.response.body)
+            ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+            raise e
+          end
         end
 
         def ram_in_mb(ram)

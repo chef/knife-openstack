@@ -54,7 +54,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     it "validates ssh params" do
       Chef::Config[:knife][:image_os] = "other"
       @instance.ui.should_receive(:error).with("You must provide either Identity file or SSH Password.")
-      @instance.validate!
+      @instance.validate_params!
     end
   end
 end
