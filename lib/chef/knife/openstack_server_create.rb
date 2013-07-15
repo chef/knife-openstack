@@ -104,6 +104,7 @@ class Chef
           if !locate_config_value(:identity_file).nil? && (config[:ssh_key_name].nil? && Chef::Config[:knife][:openstack_ssh_key_id].nil?)
             errors << "You must provide SSH Key."
           end
+		  exit 1 if errors.each{|e| ui.error(e)}.any?
         end
       end
     end
