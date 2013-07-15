@@ -1,22 +1,19 @@
 require 'spec_helper'
-require 'chef/knife/openstack_server_delete'
+require 'chef/knife/openstack_flavor_list'
 require 'chef/knife/cloud/openstack_service'
-require 'support/shared_examples_for_serverdeletecommand'
+require 'support/shared_examples_for_command'
 
-describe Chef::Knife::Cloud::OpenstackServerDelete do
-  it_behaves_like Chef::Knife::Cloud::ServerDeleteCommand, Chef::Knife::Cloud::OpenstackServerDelete.new
+describe Chef::Knife::Cloud::OpenstackFlavorList do
+  it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackFlavorList.new
 
-  let (:instance) {Chef::Knife::Cloud::OpenstackServerDelete.new}
+  let (:instance) {Chef::Knife::Cloud::OpenstackFlavorList.new}
 
-  before(:each) do
-    instance.stub(:exit)
-  end
-
-  describe "#validate!" do
+  context "#validate!" do
     before(:each) do
       Chef::Config[:knife][:openstack_username] = "testuser"
       Chef::Config[:knife][:openstack_password] = "testpassword"
       Chef::Config[:knife][:openstack_auth_url] = "tsturl"
+      instance.stub(:exit)
     end
 
     it "validate openstack mandatory options" do
@@ -42,9 +39,5 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
     end
   end
 
-  describe "#create_service_instance" do
-    it "return OpenstackService instance" do
-      expect(instance.create_service_instance).to be_an_instance_of(Chef::Knife::Cloud::OpenstackService)
-    end
-  end
+
 end
