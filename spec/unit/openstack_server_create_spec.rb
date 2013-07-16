@@ -89,7 +89,6 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       before(:each) do
         @instance.configure_chef
         @instance.config[:bootstrap_protocol] = 'winrm'
-        Chef::Config[:knife][:image_os] = 'windows'
       end
 
        it "validates gracefully when winrm User and Winrm password are provided." do
