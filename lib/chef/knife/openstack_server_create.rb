@@ -109,7 +109,7 @@ class Chef
             if !locate_config_value(:identity_file).nil? && (config[:ssh_key_name].nil? && Chef::Config[:knife][:openstack_ssh_key_id].nil?)
               errors << "You must provide SSH Key."
             end
-          elsif locate_config_value(:bootstrap_protocol) == 'winrm' && ((config[:image_os_type] == 'windows') || (Chef::Config[:knife][:image_os] == 'windows'))
+          elsif locate_config_value(:bootstrap_protocol) == 'winrm'
             super(:winrm_user, :winrm_password)
           else
             errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
