@@ -11,5 +11,5 @@ group :development do
   gem 'mixlib-shellout'
   gem 'active_support'
   gem 'activesupport'
-  gem 'knife-cloud'
+  gem 'knife-cloud', :git => 'https://github.com/opscode/knife-cloud.git'
 end
