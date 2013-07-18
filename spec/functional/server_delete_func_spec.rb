@@ -1,3 +1,19 @@
+#
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# License:: Apache License, Version 2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 require File.expand_path('../../spec_helper', __FILE__)
 require 'chef/knife/openstack_server_delete'
 require 'chef/knife/cloud/openstack_service'
@@ -16,7 +32,7 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
     }.each do |key, value|
       Chef::Config[:knife][key] = value
     end
-    
+
     @openstack_service = Chef::Knife::Cloud::OpenstackService.new
     @openstack_service.stub(:msg_pair)
     @knife_openstack_delete.stub(:create_service_instance).and_return(@openstack_service)
