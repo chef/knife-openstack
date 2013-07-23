@@ -99,10 +99,20 @@ class Chef
           config[:bootstrap_ip_address] = bootstrap_ip_address
         end
 
-        def validate_params!
-          super
-          if !locate_config_value(:identity_file).nil? && (config[:ssh_key_name].nil? && Chef::Config[:knife][:openstack_ssh_key_id].nil?)
-            errors << "You must provide SSH Key."
+        def validate!
+          super(:openstack_username,:openstack_password,:openstack_auth_url)
+          errors = []
+          if locate_config_value(:bootstrap_protocol) == 'ssh'
+            if locate_config_value(:identity_file).nil? && locate_config_value(:ssh_password).nil?
+              errors << "You must provide either Identity file or SSH Password."
+            end
+            if !locate_config_value(:identity_file).nil? && (config[:ssh_key_name].nil? && Chef::Config[:knife][:openstack_ssh_key_id].nil?)
+              errors << "You must provide SSH Key."
+            end
+          elsif locate_config_value(:bootstrap_protocol) == 'winrm'
+            super(:winrm_user, :winrm_password)
+          else
+            errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
           end
 		  exit 1 if errors.each{|e| ui.error(e)}.any?
         end
