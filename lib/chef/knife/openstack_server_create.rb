@@ -99,8 +99,7 @@ class Chef
           config[:bootstrap_ip_address] = bootstrap_ip_address
         end
 
-        def validate!
-          super(:openstack_username,:openstack_password,:openstack_auth_url)
+        def validate_params!
           errors = []
           if locate_config_value(:bootstrap_protocol) == 'ssh'
             if locate_config_value(:identity_file).nil? && locate_config_value(:ssh_password).nil?
@@ -114,7 +113,7 @@ class Chef
           else
             errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
           end
-		  exit 1 if errors.each{|e| ui.error(e)}.any?
+	        exit 1 if errors.each{|e| ui.error(e)}.any?
         end
       end
     end
