@@ -263,7 +263,7 @@ describe 'knife-openstack' do
         end
       end
 
-      context 'create server with --private-network option' do
+      context 'create server with --openstack-private-network option' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -273,7 +273,7 @@ describe 'knife-openstack' do
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --private-network"+
+        " --openstack-private-network"+
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
@@ -281,7 +281,7 @@ describe 'knife-openstack' do
         end
       end
 
-      context 'create server with --floating-ip option' do
+      context 'create server with --openstack-floating-ip option' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -291,7 +291,7 @@ describe 'knife-openstack' do
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --floating-ip"+
+        " --openstack-floating-ip"+
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
@@ -478,7 +478,7 @@ describe 'knife-openstack' do
         end
       end
 
-      context 'create server (for windows) with --private-network option' do
+      context 'create server (for windows) with --openstack-private-network option' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -490,7 +490,7 @@ describe 'knife-openstack' do
         " --bootstrap-protocol winrm" +
         get_winrm_credentials+
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --private-network"+
+        " --openstack-private-network"+
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
@@ -498,7 +498,7 @@ describe 'knife-openstack' do
         end
       end
 
-      context 'create server (for windows) with --floating-ip option' do
+      context 'create server (for windows) with --openstack-floating-ip option' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -510,7 +510,7 @@ describe 'knife-openstack' do
         " --bootstrap-protocol winrm" +
         get_winrm_credentials+
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --floating-ip"+
+        " --openstack-floating-ip"+
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
