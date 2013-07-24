@@ -395,6 +395,7 @@ describe 'knife-openstack' do
         " --server-url http://localhost:8889" +
         " --yes" +
         " --identity-file #{temp_dir}/openstack.pem"+
+        " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
         get_ssh_credentials_for_windows_image+
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
