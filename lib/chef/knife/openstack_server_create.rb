@@ -102,28 +102,19 @@ class Chef
         def validate!
           super(:openstack_username,:openstack_password,:openstack_auth_url)
           errors = []
-          if (config[:image_os_type] == 'other') || (Chef::Config[:knife][:image_os]== 'other')
+          if locate_config_value(:bootstrap_protocol) == 'ssh'
             if locate_config_value(:identity_file).nil? && locate_config_value(:ssh_password).nil?
               errors << "You must provide either Identity file or SSH Password."
             end
             if !locate_config_value(:identity_file).nil? && (config[:ssh_key_name].nil? && Chef::Config[:knife][:openstack_ssh_key_id].nil?)
               errors << "You must provide SSH Key."
             end
-
-
-          # elsif config[:image_os_type] == 'windows'
-          #   #TODO windows bootstrap options and validations will go here.
-          #   if config[:bootstrap_protocol] == 'winrm'
-          #     super(:winrm_user, :winrm_password)
-          #   elsif config[:bootstrap_protocol] == 'ssh'
-          #     super(:ssh_user, :ssh_password)
-          #   else
-          #     errors << "You must provide a valid bootstrap protocol. options [winrm/ssh]"
-          #   end
-          # else
-          #   errors << "You must provide a valid image os type. options [windows/other]"
+          elsif locate_config_value(:bootstrap_protocol) == 'winrm'
+            super(:winrm_user, :winrm_password)
+          else
+            errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
           end
-          exit 1 if errors.each{|e| ui.error(e)}.any?
+		  exit 1 if errors.each{|e| ui.error(e)}.any?
         end
       end
     end

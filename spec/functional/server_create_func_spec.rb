@@ -1,21 +1,25 @@
+#
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Copyright:: Copyright (c) 2013 Opscode, Inc.
+# License:: Apache License, Version 2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 require File.expand_path('../../spec_helper', __FILE__)
 
 describe Chef::Knife::Cloud::OpenstackServerCreate do
 
   before do
-    @openstack_connection = mock(Fog::Compute::OpenStack)
-    @openstack_connection.stub_chain(:flavors, :get).and_return ('flavor_id')
-    @openstack_connection.stub_chain(:images, :get).and_return mock('image_id')
-    @openstack_connection.stub_chain(:addresses).and_return [mock('addresses', {
-            :instance_id => nil,
-            :ip => '111.111.111.111',
-            :fixed_ip => true
-            })]
-
     @knife_openstack_create = Chef::Knife::Cloud::OpenstackServerCreate.new
-
     {
       :image => 'image',
       :openstack_username => 'openstack_username',
@@ -26,12 +30,12 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][key] = value
     end
 
-    @knife_openstack_create.stub(:msg_pair)
+    @openstack_service = Chef::Knife::Cloud::OpenstackService.new
+    @openstack_service.stub(:msg_pair)
+    @openstack_service.stub(:print)
+    @knife_openstack_create.stub(:create_service_instance).and_return(@openstack_service)
     @knife_openstack_create.stub(:puts)
-    @knife_openstack_create.stub(:print)
-
-    @openstack_servers = mock()
-    @new_openstack_server = mock()
+    @new_openstack_server = double()
 
     @openstack_server_attribs = { :name => 'Mock Server',
                                   :id => 'id-123456',
@@ -51,36 +55,51 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
   end
 
   describe "run" do
-    before do
-      @openstack_servers.should_receive(:create).and_return(@new_openstack_server)
-      @openstack_connection.should_receive(:servers).and_return(@openstack_servers)
-      Fog::Compute::OpenStack.should_receive(:new).and_return(@openstack_connection)
-      @bootstrap = Chef::Knife::Bootstrap.new
-      Chef::Knife::Bootstrap.stub(:new).and_return(@bootstrap)
-      @bootstrap.should_receive(:run)
-      @knife_openstack_create.config[:run_list] = []
+    before(:each) do
+      @knife_openstack_create.stub(:validate!)
+      Fog::Compute::OpenStack.stub_chain(:new, :servers, :create).and_return(@new_openstack_server)
       @knife_openstack_create.config[:openstack_floating_ip] = '-1'
+      @new_openstack_server.stub(:wait_for)
     end
 
-    it "Creates an OpenStack instance and bootstraps it" do
-      @new_openstack_server.should_receive(:wait_for).and_return(true)
-      @new_openstack_server.bootstrapperjhfhyfjh.protocol.stub(:tcp_test_ssh)
-      @knife_openstack_create.run
+    context "for Linux" do
+      before do
+        @config = {:openstack_floating_ip=>"-1", :bootstrap_ip_address => "75.101.253.10"}
+        @knife_openstack_create.config[:distro] = 'chef-full'
+        @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@config)
+        @ssh_bootstrap_protocol = Chef::Knife::Cloud::SshBootstrapProtocol.new(@config)
+        @unix_distribution = Chef::Knife::Cloud::UnixDistribution.new(@config)
+        @ssh_bootstrap_protocol.stub(:send_bootstrap_command)
+      end
+
+      it "Creates an OpenStack instance and bootstraps it" do
+        Chef::Knife::Cloud::Bootstrapper.should_receive(:new).with(@config).and_return(@bootstrapper)
+        @bootstrapper.stub(:bootstrap).and_call_original
+        @bootstrapper.should_receive(:create_bootstrap_protocol).and_return(@ssh_bootstrap_protocol)
+        @bootstrapper.should_receive(:create_bootstrap_distribution).and_return(@unix_distribution)
+        @knife_openstack_create.run
+      end
     end
 
-    it "Creates an OpenStack instance for Windows and bootstraps it" do
-      @bootstrap_win = Chef::Knife::BootstrapWindowsWinrm.new
-      Chef::Knife::BootstrapWindowsWinrm.stub(:new).and_return(@bootstrap_win)
-      Chef::Config[:knife][:bootstrap_protocol] = 'winrm'
-      @new_openstack_server.should_receive(:wait_for).and_return(true)
-      @knife_openstack_create.run
+    context "for Windows" do
+      before do
+        @config = {:openstack_floating_ip=>"-1", :image_os_type => 'windows', :bootstrap_ip_address => "75.101.253.10", :bootstrap_protocol => 'winrm'}
+        @knife_openstack_create.config[:image_os_type] = 'windows'
+        @knife_openstack_create.config[:bootstrap_protocol] = 'winrm'
+        @knife_openstack_create.config[:distro] = 'windows-chef-client-msi'
+        @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@config)
+        @winrm_bootstrap_protocol = Chef::Knife::Cloud::WinrmBootstrapProtocol.new(@config)
+        @windows_distribution = Chef::Knife::Cloud::WindowsDistribution.new(@config)
+      end
+      it "Creates an OpenStack instance for Windows and bootstraps it" do
+        Chef::Knife::Cloud::Bootstrapper.should_receive(:new).with(@config).and_return(@bootstrapper)
+        @bootstrapper.stub(:bootstrap).and_call_original
+        @bootstrapper.should_receive(:create_bootstrap_protocol).and_return(@winrm_bootstrap_protocol)
+        @bootstrapper.should_receive(:create_bootstrap_distribution).and_return(@windows_distribution)
+        @winrm_bootstrap_protocol.stub(:send_bootstrap_command)
+        @knife_openstack_create.run
+      end
     end
 
-    it "creates an OpenStack instance, assigns existing floating ip and bootstraps it" do
-      @knife_openstack_create.config[:floating_ip] = "111.111.111.111"
-      @new_openstack_server.should_receive(:wait_for).and_return(true)
-      @new_openstack_server.should_receive(:associate_address).with('111.111.111.111')
-      @knife_openstack_create.run
-    end
   end
 end
