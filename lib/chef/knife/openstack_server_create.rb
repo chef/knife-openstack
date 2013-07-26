@@ -109,7 +109,9 @@ class Chef
               errors << "You must provide SSH Key."
             end
           elsif locate_config_value(:bootstrap_protocol) == 'winrm'
-            super(:winrm_user, :winrm_password)
+            if locate_config_value(:winrm_password).nil?
+              errors << "You must provide Winrm Password."
+            end
           else
             errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
           end
