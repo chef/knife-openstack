@@ -301,7 +301,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
-          pending 'not yet implemented'
+          pending 'empty floating ip pool'
           match_status("should succeed")
         end
       end
@@ -533,7 +533,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
-          pending 'not yet implemented'
+          pending 'empty floating ip pool'
           match_status("should succeed")
         end
       end
