@@ -49,6 +49,10 @@ def get_winrm_credentials
   " --winrm-password #{@openstack_config['os_winrm_params']['winrm_password']}"
 end
 
+def rm_known_host
+  FileUtils.rm_rf("~/.ssh/known_hosts")
+end
+
 describe 'knife-openstack' do
   include KnifeTestBed
   include RSpec::KnifeTestUtils
@@ -124,6 +128,7 @@ describe 'knife-openstack' do
     end
 
     describe 'Linux Platform Tests - knife' , :if => is_config_present do
+      after(:each) {rm_known_host}
       context 'create server with standard options' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
@@ -134,7 +139,7 @@ describe 'knife-openstack' do
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
-        append_openstack_creds }
+        append_openstack_creds + "  --sudo"}
         after(:each)  { cmd_out = "#{cmd_stdout}" }
         it 'should successfully create the server with the provided options.' do
           match_status("should succeed")
@@ -282,7 +287,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
-          pending 'not yet implemented'
+          pending "not yet done"
           match_status("should succeed")
         end
       end
@@ -308,6 +313,7 @@ describe 'knife-openstack' do
     end
 
     describe 'Windows Platform Tests - knife' , :if => is_config_present do
+      after(:each) {rm_known_host}
       context 'create server (for windows) with standard options' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
@@ -317,7 +323,7 @@ describe 'knife-openstack' do
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         get_winrm_credentials+
         append_openstack_creds_for_windows() }
         after(:each)  { cmd_out = "#{cmd_stdout}" }
@@ -405,7 +411,7 @@ describe 'knife-openstack' do
         " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         " --identity-file #{temp_dir}/openstack.pem"+
         " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
         get_ssh_credentials_for_windows_image+
@@ -512,7 +518,7 @@ describe 'knife-openstack' do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
-          pending 'not yet implemented'
+          pending "not yet done"
           match_status("should succeed")
         end
       end
