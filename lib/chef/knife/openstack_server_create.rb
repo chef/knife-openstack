@@ -156,6 +156,13 @@ class Chef
       :default => 600,
       :proc => Proc.new { |v| Chef::Config[:knife][:server_create_timeouts] = v}
 
+      option :first_boot_attributes,
+      :short => "-j JSON_ATTRIBS",
+      :long => "--json-attributes JSON_ATTRIBS",
+      :description => "A JSON string to be added to the first run of chef-client",
+      :proc => lambda { |o| JSON.parse(o) },
+      :default => {}
+
       def tcp_test_ssh(hostname, port)
         tcp_socket = TCPSocket.new(hostname, port)
         readable = IO.select([tcp_socket], nil, nil, 5)
