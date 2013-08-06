@@ -37,17 +37,18 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     it "raise error on openstack_username missing and exit immediately." do
       Chef::Config[:knife].delete(:openstack_username)
       instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Username' value.")
-      lambda { instance.validate!}.should raise_error(SystemExit)
+      instance.validate!
     end
 
     it "raise error on openstack_auth_url missing and exit immediately." do
       Chef::Config[:knife].delete(:openstack_auth_url)
       instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Auth Url' value.")
-      lambda { instance.validate!}.should raise_error(SystemExit)
+      instance.validate!
     end
       
     it "validates ssh params" do
       Chef::Config[:knife][:image_os] = "other"
+      Chef::Config[:knife][:bootstrap_protocol] = "ssh"
       instance.ui.should_receive(:error).with("You must provide either Identity file or SSH Password.")
       instance.validate_params!
     end
@@ -61,20 +62,20 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         Chef::Config[:knife][:identity_file] = nil
         Chef::Config[:knife][:ssh_password] = nil
         instance.ui.should_receive(:error).with("You must provide either Identity file or SSH Password.")
-        lambda { instance.validate!}.should raise_error(SystemExit)
+        instance.validate_params!
       end
 
       it "raise error when Identity file is provided but SSH key is not provided and exits immediately." do
         Chef::Config[:knife][:identity_file] = "identity_file_path"
         Chef::Config[:knife][:openstack_ssh_key_id] = nil
         instance.ui.should_receive(:error).with("You must provide SSH Key.")
-        lambda { instance.validate!}.should raise_error(SystemExit)
+        instance.validate_params!
       end
 
       it "validates gracefully when SSH password is provided." do
         Chef::Config[:knife][:identity_file] = nil
         Chef::Config[:knife][:ssh_password] = "ssh_password"
-        instance.validate!
+        instance.validate_params!
       end
 
        it "validates gracefully when both Identity file and SSH key are provided." do
@@ -113,8 +114,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       it "raise error when winrm password is not provided and exits immediately." do
         Chef::Config[:knife][:winrm_password] = nil
         instance.config[:winrm_password] = nil
-        instance.ui.should_receive(:error).with("You did not provide a valid 'Winrm Password' value.")
-        lambda { instance.validate!}.should raise_error(SystemExit)
+        instance.ui.should_receive(:error).with("You must provide Winrm Password.")
+        instance.validate_params!
       end
     end
   end

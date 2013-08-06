@@ -56,7 +56,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
   describe "run" do
     before(:each) do
-      @knife_openstack_create.stub(:validate!)
+      @knife_openstack_create.stub(:validate_params!)
       Fog::Compute::OpenStack.stub_chain(:new, :servers, :create).and_return(@new_openstack_server)
       @knife_openstack_create.config[:openstack_floating_ip] = '-1'
       @new_openstack_server.stub(:wait_for)
