@@ -1,0 +1,25 @@
+# FIXME For now we will fetch the  creds from a config file
+
+os_creds:
+  openstack_username: openstack_username
+  openstack_password: openstack_password
+  openstack_tenant: openstack_tenant
+  openstack_auth_url: openstack_auth_url
+
+os_ssh_params:
+  key_pair: key_pair
+  ssh_user: ubuntu
+  ssh_user_for_windows: ssh_user_for_windows
+  ssh_password_for_windows: ssh_password_for_windows
+
+os_winrm_params:
+  winrm_user: winrm_user
+  winrm_password: winrm_password
+
+os_params:
+  linux_image: linux_image
+  windows_image: windows_image
+  ssh_enabled_windows_image: ssh_enabled_windows_image
+  linux_flavor: linux_flavor
+  windows_flavor: windows_flavor
+  invalid_flavor: invalid_flavor
