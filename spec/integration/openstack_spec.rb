@@ -405,7 +405,7 @@ describe 'knife-openstack' do
         " --identity-file #{temp_dir}/openstack.pem"+
         " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
         get_ssh_credentials_for_windows_image+
-        append_openstack_creds() }
+        append_openstack_creds() + " --image-os-type windows" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'successfully create the (windows VM) server with the provided options and bootstrap.' do
           match_status("should succeed")
