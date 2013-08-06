@@ -18,6 +18,8 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
+=begin
+
 def append_openstack_creds(is_list_cmd = false)
   openstack_creds_cmd = " --openstack-username #{@openstack_config['os_creds']['openstack_username']} --openstack-password #{@openstack_config['os_creds']['openstack_password']} --openstack-api-endpoint #{@openstack_config['os_creds']['openstack_auth_url']}"
   openstack_creds_cmd = openstack_creds_cmd + " -c #{temp_dir}/knife.rb"
@@ -585,3 +587,5 @@ describe 'knife-openstack' do
     end
   end
 end
+
+=end
