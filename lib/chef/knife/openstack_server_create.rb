@@ -23,6 +23,7 @@ require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_server_create_options'
 require 'chef/knife/cloud/openstack_service'
 require 'chef/knife/cloud/openstack_service_options'
+require 'chef/knife/cloud/exceptions'
 
 class Chef
   class Knife
@@ -70,11 +71,16 @@ class Chef
             #floating requested without value
             if floating_address.nil?
               free_floating = addresses.find_index {|a| a.fixed_ip.nil?}
-              if free_floating.nil? #no free floating IP found
-                ui.error("Unable to assign a Floating IP from allocated IPs.")
-                exit 1
-              else
-                floating_address = addresses[free_floating].ip
+              begin
+                if free_floating.nil? #no free floating IP found
+                  ui.fatal("Unable to assign a Floating IP from allocated IPs.")
+                  raise CloudExceptions::ServerSetupError
+                else
+                  floating_address = addresses[free_floating].ip
+                end                
+              rescue CloudExceptions::ServerSetupError => e
+                cleanup_on_failure
+                raise e
               end
             end
             server.associate_address(floating_address)
@@ -98,7 +104,7 @@ class Chef
           Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
           if bootstrap_ip_address.nil?
             ui.error("No IP address available for bootstrapping.")
-            raise "No IP address available for bootstrapping."
+            raise CloudExceptions::BootstrapError
           end
           config[:bootstrap_ip_address] = bootstrap_ip_address
         end
@@ -111,7 +117,7 @@ class Chef
             
           errors << "You must provide --image-os-type option [windows/linux]" if ! (%w(windows linux).include?(locate_config_value(:image_os_type)))
 
-	        exit 1 if errors.each{|e| ui.error(e)}.any?
+	        raise CloudExceptions::ValidationError if errors.each{|e| ui.error(e)}.any?
         end
       end
     end
