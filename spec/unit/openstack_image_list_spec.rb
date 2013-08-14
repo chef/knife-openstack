@@ -23,19 +23,19 @@ describe Chef::Knife::Cloud::OpenstackImageList do
     it "raise error on openstack_username missing" do
       Chef::Config[:knife].delete(:openstack_username)
       instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Username' value.")
-      instance.validate!
+      expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
     end
 
     it "raise error on openstack_password missing" do
       Chef::Config[:knife].delete(:openstack_password)
       instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Password' value.")
-      instance.validate!
+      expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
     end
 
     it "raise error on openstack_auth_url missing" do
       Chef::Config[:knife].delete(:openstack_auth_url)
       instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Auth Url' value.")
-      instance.validate!
+      expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
     end
   end
 
