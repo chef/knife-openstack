@@ -35,6 +35,10 @@ class Chef
 
         banner "knife openstack server create (options)"
 
+        def set_image_os_type
+          # Openstack does not provide a way to identify image os type, So image_os_type is taken from user.
+        end
+
         def before_exec_command
             # setup the create options
             @create_options = {
@@ -100,21 +104,13 @@ class Chef
         end
 
         def validate_params!
+          super
           errors = []
-          if locate_config_value(:bootstrap_protocol) == 'ssh'
-            if locate_config_value(:identity_file).nil? && locate_config_value(:ssh_password).nil?
-              errors << "You must provide either Identity file or SSH Password."
-            end
-            if !locate_config_value(:identity_file).nil? && (config[:ssh_key_name].nil? && Chef::Config[:knife][:openstack_ssh_key_id].nil?)
-              errors << "You must provide SSH Key."
-            end
-          elsif locate_config_value(:bootstrap_protocol) == 'winrm'
-            if locate_config_value(:winrm_password).nil?
-              errors << "You must provide Winrm Password."
-            end
-          else
-            errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
-          end
+          
+          errors << "You must provide SSH Key." if locate_config_value(:bootstrap_protocol) == 'ssh' && !locate_config_value(:identity_file).nil? && locate_config_value(:openstack_ssh_key_id).nil?
+            
+          errors << "You must provide --image-os-type option [windows/linux]" if ! (%w(windows linux).include?(locate_config_value(:image_os_type)))
+
 	        exit 1 if errors.each{|e| ui.error(e)}.any?
         end
       end

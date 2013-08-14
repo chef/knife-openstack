@@ -30,9 +30,9 @@ class Chef
             :default => ["default"],
             :proc => Proc.new { |groups| groups.split(',') }
 
-            option :ssh_key_name,
+            option :openstack_ssh_key_id,
             :short => "-S KEY",
-            :long => "--ssh-key KEY",
+            :long => "--openstack-ssh-key-id KEY",
             :description => "The OpenStack SSH keypair id",
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
 
