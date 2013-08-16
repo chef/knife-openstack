@@ -73,8 +73,9 @@ class Chef
               free_floating = addresses.find_index {|a| a.fixed_ip.nil?}
               begin
                 if free_floating.nil? #no free floating IP found
-                  ui.fatal("Unable to assign a Floating IP from allocated IPs.")
-                  raise CloudExceptions::ServerSetupError
+                  error_message = "Unable to assign a Floating IP from allocated IPs."
+                  ui.fatal(error_message)
+                  raise CloudExceptions::ServerSetupError, error_message
                 else
                   floating_address = addresses[free_floating].ip
                 end                
@@ -103,8 +104,9 @@ class Chef
           bootstrap_ip_address = primary_private_ip_address(server.addresses) if config[:private_network]
           Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
           if bootstrap_ip_address.nil?
-            ui.error("No IP address available for bootstrapping.")
-            raise CloudExceptions::BootstrapError
+            error_message = "No IP address available for bootstrapping."
+            ui.error(error_message)
+            raise CloudExceptions::BootstrapError, error_message
           end
           config[:bootstrap_ip_address] = bootstrap_ip_address
         end
@@ -116,8 +118,8 @@ class Chef
           errors << "You must provide SSH Key." if locate_config_value(:bootstrap_protocol) == 'ssh' && !locate_config_value(:identity_file).nil? && locate_config_value(:openstack_ssh_key_id).nil?
             
           errors << "You must provide --image-os-type option [windows/linux]" if ! (%w(windows linux).include?(locate_config_value(:image_os_type)))
-
-	        raise CloudExceptions::ValidationError if errors.each{|e| ui.error(e)}.any?
+          error_message = ""
+          raise CloudExceptions::ValidationError, error_message if errors.each{|e| ui.error(e); error_message = "#{error_message} #{e}."}.any?
         end
       end
     end
