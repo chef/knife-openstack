@@ -47,15 +47,32 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
       
     it "validates ssh params" do
-      Chef::Config[:knife][:image_os] = "other"
+      Chef::Config[:knife][:image_os_type] = "linux"
       Chef::Config[:knife][:bootstrap_protocol] = "ssh"
       instance.ui.should_receive(:error).with("You must provide either Identity file or SSH Password.")
+      instance.validate_params!
+    end
+
+    it "raise_error on invalid image_os_type params" do
+      Chef::Config[:knife][:ssh_password] = "ssh_password"
+      Chef::Config[:knife][:openstack_ssh_key_id] = "ssh_key"
+      Chef::Config[:knife][:image_os_type] = "other_than_windows_linux"
+      instance.ui.should_receive(:error).with("You must provide --image-os-type option [windows/linux]")
+      instance.validate_params!
+    end
+
+    it "raise_error on mising image_os_type params" do
+      Chef::Config[:knife][:image_os_type] = "other_than_windows_linux"
+      Chef::Config[:knife][:ssh_password] = "ssh_password"
+      Chef::Config[:knife][:openstack_ssh_key_id] = "ssh_key"
+      instance.ui.should_receive(:error).with("You must provide --image-os-type option [windows/linux]")
       instance.validate_params!
     end
 
     context "bootstrap protocol: Ssh " do
       before(:each) do
         Chef::Config[:knife][:bootstrap_protocol] = "ssh"
+        Chef::Config[:knife][:image_os_type] = 'linux'
       end
 
       it "raise error when neither identity file nor SSH password is provided and exits immediately." do
@@ -96,7 +113,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       before(:each) do
         instance.configure_chef
         instance.config[:bootstrap_protocol] = 'winrm'
-        Chef::Config[:knife][:image_os] = 'windows'
+        Chef::Config[:knife][:image_os_type] = 'windows'
       end
 
        it "validates gracefully when winrm User and Winrm password are provided." do
