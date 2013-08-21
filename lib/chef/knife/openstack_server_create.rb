@@ -36,10 +36,6 @@ class Chef
 
         banner "knife openstack server create (options)"
 
-        def set_image_os_type
-          # Openstack does not provide a way to identify image os type, So image_os_type is taken from user.
-        end
-
         def before_exec_command
             # setup the create options
             @create_options = {
