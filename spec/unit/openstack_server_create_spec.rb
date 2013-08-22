@@ -37,39 +37,56 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     it "raise error on openstack_username missing and exit immediately." do
       Chef::Config[:knife].delete(:openstack_username)
       instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Username' value.")
-      instance.validate!
+      expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
     end
 
     it "raise error on openstack_auth_url missing and exit immediately." do
       Chef::Config[:knife].delete(:openstack_auth_url)
       instance.ui.should_receive(:error).with("You did not provide a valid 'Openstack Auth Url' value.")
-      instance.validate!
+      expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
     end
       
     it "validates ssh params" do
-      Chef::Config[:knife][:image_os] = "other"
+      Chef::Config[:knife][:image_os_type] = "linux"
       Chef::Config[:knife][:bootstrap_protocol] = "ssh"
       instance.ui.should_receive(:error).with("You must provide either Identity file or SSH Password.")
-      instance.validate_params!
+      expect { instance.validate_params! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
+    end
+
+    it "raise_error on invalid image_os_type params" do
+      Chef::Config[:knife][:ssh_password] = "ssh_password"
+      Chef::Config[:knife][:openstack_ssh_key_id] = "ssh_key"
+      Chef::Config[:knife][:image_os_type] = "other_than_windows_linux"
+      instance.ui.should_receive(:error).with("You must provide --image-os-type option [windows/linux]")
+      expect { instance.validate_params! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
+    end
+
+    it "raise_error on mising image_os_type params" do
+      Chef::Config[:knife][:image_os_type] = "other_than_windows_linux"
+      Chef::Config[:knife][:ssh_password] = "ssh_password"
+      Chef::Config[:knife][:openstack_ssh_key_id] = "ssh_key"
+      instance.ui.should_receive(:error).with("You must provide --image-os-type option [windows/linux]")
+      expect { instance.validate_params! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
     end
 
     context "bootstrap protocol: Ssh " do
       before(:each) do
         Chef::Config[:knife][:bootstrap_protocol] = "ssh"
+        Chef::Config[:knife][:image_os_type] = 'linux'
       end
 
       it "raise error when neither identity file nor SSH password is provided and exits immediately." do
         Chef::Config[:knife][:identity_file] = nil
         Chef::Config[:knife][:ssh_password] = nil
         instance.ui.should_receive(:error).with("You must provide either Identity file or SSH Password.")
-        instance.validate_params!
+        expect { instance.validate_params! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
       end
 
       it "raise error when Identity file is provided but SSH key is not provided and exits immediately." do
         Chef::Config[:knife][:identity_file] = "identity_file_path"
         Chef::Config[:knife][:openstack_ssh_key_id] = nil
         instance.ui.should_receive(:error).with("You must provide SSH Key.")
-        instance.validate_params!
+        expect { instance.validate_params! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
       end
 
       it "validates gracefully when SSH password is provided." do
@@ -96,7 +113,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       before(:each) do
         instance.configure_chef
         instance.config[:bootstrap_protocol] = 'winrm'
-        Chef::Config[:knife][:image_os] = 'windows'
+        Chef::Config[:knife][:image_os_type] = 'windows'
       end
 
        it "validates gracefully when winrm User and Winrm password are provided." do
@@ -115,7 +132,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         Chef::Config[:knife][:winrm_password] = nil
         instance.config[:winrm_password] = nil
         instance.ui.should_receive(:error).with("You must provide Winrm Password.")
-        instance.validate_params!
+        expect { instance.validate_params! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
       end
     end
   end
