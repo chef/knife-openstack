@@ -36,7 +36,7 @@ end
 
 def get_ssh_credentials
   " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user']}"+
-  " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"
+  " --openstack-ssh-key-id #{@openstack_config['os_ssh_params']['key_pair']}"
 end
 
 def get_ssh_credentials_for_windows_image
@@ -135,7 +135,7 @@ describe 'knife-openstack' do
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
-        append_openstack_creds + "  --sudo"}
+        append_openstack_creds + "  --sudo --image-os-type linux"}
         after(:each)  { cmd_out = "#{cmd_stdout}" }
         it 'should successfully create the server with the provided options.' do
           match_status("should succeed")
@@ -158,7 +158,7 @@ describe 'knife-openstack' do
         " --server-url http://localhost:8889" +
         " --yes" +
         get_ssh_credentials +
-        " --identity-file #{temp_dir}/openstack.pem"  }
+        " --identity-file #{temp_dir}/openstack.pem --sudo --image-os-type linux"  }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
@@ -173,7 +173,7 @@ describe 'knife-openstack' do
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
-        append_openstack_creds() }
+        append_openstack_creds() + " --sudo --image-os-type linux" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
@@ -191,7 +191,7 @@ describe 'knife-openstack' do
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         " --groups #{SecureRandom.hex(4)}"+
-        append_openstack_creds() }
+        append_openstack_creds() + " --sudo --image-os-type linux"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
@@ -208,7 +208,7 @@ describe 'knife-openstack' do
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
-        append_openstack_creds() }
+        append_openstack_creds() + " --sudo --image-os-type linux"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
@@ -225,7 +225,7 @@ describe 'knife-openstack' do
         " --yes" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
-        append_openstack_creds() }
+        append_openstack_creds() + " --sudo --image-os-type linux"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
@@ -241,9 +241,9 @@ describe 'knife-openstack' do
         " --server-url http://localhost:8889" +
         " --yes" +
         " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user']}"+
-        " --ssh-key #{SecureRandom.hex(6)}"+
+        " --openstack-ssh-key-id #{SecureRandom.hex(6)}"+
         " --identity-file #{temp_dir}/openstack.pem"+
-        append_openstack_creds() }
+        append_openstack_creds() + " --sudo --image-os-type linux"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
           match_status("should fail")
@@ -259,9 +259,9 @@ describe 'knife-openstack' do
         " --server-url http://localhost:8889" +
         " --yes" +
         " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user']}"+
-        " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
+        " --openstack-ssh-key-id #{@openstack_config['os_ssh_params']['key_pair']}"+
         " --identity-file #{temp_dir}/incorrect_openstack.pem"+
-        append_openstack_creds() }
+        append_openstack_creds() + " --sudo --image-os-type linux"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw AuthenticationFailed Error message and stop execution.' do
           match_status("should fail")
@@ -279,7 +279,7 @@ describe 'knife-openstack' do
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         " --openstack-private-network"+
-        append_openstack_creds() }
+        append_openstack_creds() + " --sudo --image-os-type linux"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should bootstrap sucessfully with private ip address.' do
           pending "not yet done"
@@ -298,7 +298,7 @@ describe 'knife-openstack' do
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         " --openstack-floating-ip"+
-        append_openstack_creds() }
+        append_openstack_creds() + " --sudo --image-os-type linux"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should associate a floating IP address to the new OpenStack node.' do
           pending 'empty floating ip pool'
@@ -318,7 +318,7 @@ describe 'knife-openstack' do
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
-        " --yes --server-create-timeout 1800" +
+        " --yes --server-create-timeout 1800 --image-os-type windows" +
         get_winrm_credentials+
         append_openstack_creds_for_windows() }
         after(:each)  { cmd_out = "#{cmd_stdout}" }
@@ -342,7 +342,7 @@ describe 'knife-openstack' do
         " -I #{@openstack_config['os_params']['windows_image']} " +
         " -f #{@openstack_config['os_params']['windows_flavor']} " +
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --bootstrap-protocol winrm" +
         " --yes" +
         get_winrm_credentials }
@@ -360,7 +360,7 @@ describe 'knife-openstack' do
         " -I #{@openstack_config['os_params']['windows_image']} " +
         " -f #{@openstack_config['os_params']['windows_flavor']} " +
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --bootstrap-protocol winrm" +
         " --yes" +
         " --winrm-user #{SecureRandom.hex(6)}"+
@@ -380,7 +380,7 @@ describe 'knife-openstack' do
         " -I #{@openstack_config['os_params']['windows_image']} " +
         " -f #{@openstack_config['os_params']['windows_flavor']} " +
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --bootstrap-protocol winrm" +
         " --yes" +
         " --winrm-user #{@openstack_config['os_winrm_params']['winrm_user']}"+
@@ -403,7 +403,7 @@ describe 'knife-openstack' do
         " --server-url http://localhost:8889" +
         " --yes --server-create-timeout 1800" +
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
+        " --openstack-ssh-key-id #{@openstack_config['os_ssh_params']['key_pair']}"+
         get_ssh_credentials_for_windows_image+
         append_openstack_creds() + " --image-os-type windows" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
@@ -419,7 +419,7 @@ describe 'knife-openstack' do
         " -I #{@openstack_config['os_params']['ssh_enabled_windows_image']}"+
         " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --yes" +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() }
@@ -436,7 +436,7 @@ describe 'knife-openstack' do
         " -I #{@openstack_config['os_params']['windows_image']}"+
         " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --yes" +
         " --bootstrap-protocol winrm" +
         get_winrm_credentials+
@@ -456,7 +456,7 @@ describe 'knife-openstack' do
         " -I #{SecureRandom.hex(18)}"+
         " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --yes" +
         " --bootstrap-protocol winrm" +
         get_winrm_credentials+
@@ -475,7 +475,7 @@ describe 'knife-openstack' do
         " -I #{@openstack_config['os_params']['windows_image']}"+
         " -f #{@openstack_config['os_params']['invalid_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --yes" +
         " --bootstrap-protocol winrm" +
         get_winrm_credentials+
@@ -494,7 +494,7 @@ describe 'knife-openstack' do
         " -I #{@openstack_config['os_params']['windows_image']}"+
         " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --yes" +
         " --bootstrap-protocol winrm" +
         get_winrm_credentials+
@@ -515,7 +515,7 @@ describe 'knife-openstack' do
         " -I #{@openstack_config['os_params']['windows_image']}"+
         " -f #{@openstack_config['os_params']['windows_flavor']} "+
         " --template-file " + get_windows_msi_template_file_path +
-        " --server-url http://localhost:8889" +
+        " --server-url http://localhost:8889 --image-os-type windows" +
         " --yes" +
         " --bootstrap-protocol winrm" +
         get_winrm_credentials+
