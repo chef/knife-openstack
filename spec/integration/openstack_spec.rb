@@ -362,13 +362,14 @@ describe 'knife-openstack' do
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889 --image-os-type windows" +
         " --bootstrap-protocol winrm" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         " --winrm-user #{SecureRandom.hex(6)}"+
         " --winrm-password #{@openstack_config['os_winrm_params']['winrm_password']}" +
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should fail to bootstrap and stop execution.' do
+          pending "Fails due to OC-9708 bug in knife-windows."
           match_status("should fail")
         end
       end
@@ -382,13 +383,14 @@ describe 'knife-openstack' do
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889 --image-os-type windows" +
         " --bootstrap-protocol winrm" +
-        " --yes" +
+        " --yes  --server-create-timeout 1800" +
         " --winrm-user #{@openstack_config['os_winrm_params']['winrm_user']}"+
         " --winrm-password #{SecureRandom.hex(6)}" +
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should fail to bootstrap and stop execution.' do
+          pending "Fails due to OC-9708 bug in knife-windows."
           match_status("should fail")
         end
       end
@@ -533,6 +535,7 @@ describe 'knife-openstack' do
       context 'server list' do
         let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) }
         it 'should successfully list all the servers.' do
+          pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
           match_status("should succeed")
         end
       end
