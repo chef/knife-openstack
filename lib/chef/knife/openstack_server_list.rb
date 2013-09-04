@@ -21,6 +21,7 @@
 require 'chef/knife/cloud/server/list_command'
 require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_service_options'
+require 'chef/knife/cloud/server/list_options'
 
 class Chef
   class Knife
@@ -28,6 +29,7 @@ class Chef
       class OpenstackServerList < ServerListCommand
         include OpenstackHelpers
         include OpenstackServiceOptions
+        include ServerListOptions
 
         banner "knife openstack server list (options)"
 
@@ -43,6 +45,7 @@ class Chef
           {:label => 'Keypair', :key => 'key_name'},
           {:label => 'State', :key => 'state'}
         ]
+          super
         end
 
         def get_public_ip_address (addresses)
