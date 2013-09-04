@@ -1,3 +1,5 @@
+
+* Implementation using knife-cloud gem
 * KNIFE-310 "knife openstack server list" will fail with boot from volume instances
 
 ## v0.8.1
