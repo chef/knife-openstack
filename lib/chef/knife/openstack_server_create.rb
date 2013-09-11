@@ -36,16 +36,12 @@ class Chef
 
         banner "knife openstack server create (options)"
 
-        def set_image_os_type
-          # Openstack does not provide a way to identify image os type, So image_os_type is taken from user.
-        end
-
         def before_exec_command
             # setup the create options
             @create_options = {
               :server_def => {
-                #servers require a name, generate one if not passed
-                :name => get_node_name(locate_config_value(:chef_node_name)),
+                #servers require a name, knife-cloud generates the chef_node_name
+                :name => config[:chef_node_name],
                 :image_ref => locate_config_value(:image),
                 :flavor_ref => locate_config_value(:flavor),
                 :security_groups => locate_config_value(:openstack_security_groups),
