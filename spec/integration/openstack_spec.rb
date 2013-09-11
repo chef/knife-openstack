@@ -149,6 +149,74 @@ describe 'knife-openstack' do
         end
       end
 
+      context 'create server by using standard options and chef node name prefix default value(i.e openstack)' do
+        cmd_out = ""
+        let(:command) { "knife openstack server create "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " --template-file " + get_linux_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --yes" +
+        get_ssh_credentials +
+        " --identity-file #{temp_dir}/openstack.pem"+
+        append_openstack_creds + " --sudo"}
+        after(:each)  {  run(delete_instance_cmd("#{cmd_stdout}"))  }
+        it 'should successfully create the server with the provided options.' do
+          match_status("should succeed")
+        end
+      end
+
+      context 'create server by using standard options and chef node name prefix user specified value' do
+        cmd_out = ""
+        let(:command) { "knife openstack server create "+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " --template-file " + get_linux_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --yes" +
+        " --chef-node-name-prefix test" +
+        get_ssh_credentials +
+        " --identity-file #{temp_dir}/openstack.pem"+
+        append_openstack_creds + " --sudo"}
+        after(:each)  {  run(delete_instance_cmd("#{cmd_stdout}"))  }
+        it 'should successfully create the server with the provided options.' do
+          match_status("should succeed")
+        end
+      end
+
+      context 'create server by using standard options and delete-server-on-failure' do
+        cmd_out = ""
+        before(:each) { create_node_name("linux") }
+        let(:command) { "knife openstack server create -N #{@name_node}"+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " --template-file " + get_linux_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --yes" +
+        " --delete-server-on-failure" +
+        get_ssh_credentials +
+        " --identity-file #{temp_dir}/openstack.pem"+
+        append_openstack_creds + " --sudo"}
+        after(:each)  {  run(delete_instance_cmd("#{cmd_stdout}"))  }
+        it 'should successfully create the server with the provided options.' do
+          match_status("should succeed")
+        end
+      end
+
+      context 'create server by using standard options and delete-server-on-failure' do
+        cmd_out = ""
+        before(:each) { create_node_name("linux") }
+        let(:command) { "knife openstack server create -N #{@name_node}"+
+        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " --template-file " + get_linux_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --yes" +
+        " --delete-server-on-failure" +
+        get_ssh_credentials +
+        " --identity-file #{temp_dir}/incorrect_openstack.pem"+
+        append_openstack_creds() + " --sudo" }
+        it 'should delete server on bootstrap failure' do
+          match_status("should fail")
+        end
+      end
+
       context 'create server without openstack credentials' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
@@ -335,6 +403,79 @@ describe 'knife-openstack' do
         end
       end
 
+      context 'create server (for windows) with standard options and chef node name prefix default value(i.e openstack)' do
+        cmd_out = ""
+        let(:command) { "knife openstack server create " +
+        " -I #{@openstack_config['os_params']['windows_image']} " +
+        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " --template-file " + get_windows_msi_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --bootstrap-protocol winrm" +
+        " --yes --server-create-timeout 1800" +
+        get_winrm_credentials+
+        append_openstack_creds_for_windows() }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
+
+        it 'should successfully create the (windows VM) server with the provided options.' do
+          match_status("should succeed")
+        end
+      end
+
+      context 'create server (for windows) with standard options and chef node name prefix user specified value' do
+        cmd_out = ""
+        let(:command) { "knife openstack server create " +
+        " -I #{@openstack_config['os_params']['windows_image']} " +
+        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " --template-file " + get_windows_msi_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --bootstrap-protocol winrm" +
+        " --chef-node-name-prefix test"  +
+        " --yes --server-create-timeout 1800" +
+        get_winrm_credentials+
+        append_openstack_creds_for_windows() }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
+        it 'should successfully create the (windows VM) server with the provided options.' do
+          match_status("should succeed")
+        end
+      end
+
+      context 'create server (for windows) with standard options and delete-server-on-failure' do
+        cmd_out = ""
+        before(:each) { create_node_name("windows") }
+        let(:command) { "knife openstack server create -N #{@name_node}" +
+        " -I #{@openstack_config['os_params']['windows_image']} " +
+        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " --template-file " + get_windows_msi_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --bootstrap-protocol winrm" +
+        " --delete-server-on-failure" +
+        " --yes --server-create-timeout 1800" +
+        get_winrm_credentials+
+        append_openstack_creds_for_windows() }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
+        it 'should successfully create the (windows VM) server with the provided options.' do
+          match_status("should succeed")
+        end
+      end
+
+      context 'create server (for windows) with standard options and delete-server-on-failure' do
+        cmd_out = ""
+        before(:each) { create_node_name("windows") }
+        let(:command) { "knife openstack server create -N #{@name_node}" +
+        " -I #{@openstack_config['os_params']['windows_image']} " +
+        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " --template-file " + get_windows_msi_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --bootstrap-protocol invalid_bootstrap_protocol" +
+        " --delete-server-on-failure" +
+        " --yes --server-create-timeout 1800" +
+        get_winrm_credentials +
+        append_openstack_creds_for_windows() }
+        it 'should delete created (windows VM) server on bootstrap failure.' do
+          match_status("should fail")
+        end
+      end
+
       context 'create server (for windows) without openstack credentials' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
@@ -395,7 +536,7 @@ describe 'knife-openstack' do
         end
       end
 
-      context 'create server (for windows) using a ssh enabled windows image with ssh parameters' do
+      context 'create server (for windows) using a ssh enabled windows image with ssh parameters and valid image-os-type' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
@@ -413,6 +554,25 @@ describe 'knife-openstack' do
           match_status("should succeed")
         end
       end
+
+      context 'create server (for windows) using a ssh enabled windows image with ssh parameters and invalid image-os-type' do
+        cmd_out = ""
+        before(:each) { create_node_name("windows") }
+        let(:command) { "knife openstack server create -N #{@name_node}"+
+        " -I #{@openstack_config['os_params']['ssh_enabled_windows_image']}"+
+        " -f #{@openstack_config['os_params']['windows_flavor']} "+
+        " --template-file " + get_windows_msi_template_file_path +
+        " --server-url http://localhost:8889" +
+        " --yes --server-create-timeout 1800" +
+        " --identity-file #{temp_dir}/openstack.pem"+
+        " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
+        get_ssh_credentials_for_windows_image+
+        append_openstack_creds() + " --image-os-type invalid" }
+        after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
+        it 'successfully create the (windows VM) server with the provided options and bootstrap.' do
+          match_status("should fail")
+        end
+      end      
 
       context 'create server (for windows) without ssh parameters' do
         cmd_out = ""
@@ -537,6 +697,30 @@ describe 'knife-openstack' do
         it 'should successfully list all the servers.' do
           pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
           match_status("should succeed")
+        end
+      end
+ 
+      context 'server list and chef-data' do
+        let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data" }
+        it 'should successfully list all the servers.' do
+          pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
+          match_status("should succeed")
+        end
+      end
+
+      context 'server list and chef-data option with valid chef-node-attribute' do
+        let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute platform_family" }
+        it 'should successfully list all the servers.' do
+          pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
+          match_status("should succeed")
+        end
+      end
+
+      context 'server list and chef-data option with invalid chef-node-attribute' do
+        let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute invalid" }
+        it 'should successfully list all the servers.' do
+          pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
+          match_status("should fail")
         end
       end
 
