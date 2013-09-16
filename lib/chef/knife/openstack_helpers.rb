@@ -14,12 +14,6 @@ class Chef
           return addresses['public'].last['addr'] if addresses['public'] && !addresses['public'].empty?
         end
 
-        def is_image_windows?
-          # Openstack image info does not have os type, so we use image_os_type cli option to interpret if we are creating windows server.
-          os_type = locate_config_value(:image_os)
-          os_type.nil? ? false : (os_type.downcase == 'windows')
-        end
-
         def create_service_instance
           OpenstackService.new
         end
