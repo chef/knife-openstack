@@ -50,7 +50,8 @@ def get_winrm_credentials
 end
 
 def rm_known_host
-  FileUtils.rm_rf("~/.ssh/known_hosts")
+  known_hosts = File.expand_path("~") + "/.ssh/known_hosts"
+  FileUtils.rm_rf(known_hosts)
 end
 
 describe 'knife-openstack' do
@@ -124,7 +125,7 @@ describe 'knife-openstack' do
     end
 
     describe 'Linux Platform Tests - knife' , :if => is_config_present do
-      after(:each) {rm_known_host}
+      before(:each) {rm_known_host}
       context 'create server with standard options' do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
@@ -376,7 +377,7 @@ describe 'knife-openstack' do
     end
 
     describe 'Windows Platform Tests - knife' , :if => is_config_present do
-      after(:each) {rm_known_host}
+      before(:each) {rm_known_host}
       context 'create server (for windows) with standard options' do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
