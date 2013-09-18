@@ -54,7 +54,7 @@ def rm_known_host
   FileUtils.rm_rf(known_hosts)
 end
 
-describe 'knife-openstack' do
+describe 'knife-openstack' , :if => is_config_present do
   include KnifeTestBed
   include RSpec::KnifeTestUtils
 
@@ -124,7 +124,7 @@ describe 'knife-openstack' do
       end
     end
 
-    describe 'Linux Platform Tests - knife' , :if => is_config_present do
+    describe 'Linux Platform Tests - knife'  do
       before(:each) {rm_known_host}
       context 'create server with standard options' do
         cmd_out = ""
@@ -376,7 +376,7 @@ describe 'knife-openstack' do
       end
     end
 
-    describe 'Windows Platform Tests - knife' , :if => is_config_present do
+    describe 'Windows Platform Tests - knife'  do
       before(:each) {rm_known_host}
       context 'create server (for windows) with standard options' do
         cmd_out = ""
