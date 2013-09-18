@@ -696,7 +696,6 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'server list' do
         let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) }
         it 'should successfully list all the servers.' do
-          pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
           match_status("should succeed")
         end
       end
@@ -704,7 +703,6 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'server list and chef-data' do
         let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data" }
         it 'should successfully list all the servers.' do
-          pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
           match_status("should succeed")
         end
       end
@@ -712,7 +710,6 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'server list and chef-data option with valid chef-node-attribute' do
         let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute platform_family" }
         it 'should successfully list all the servers.' do
-          pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
           match_status("should succeed")
         end
       end
@@ -720,7 +717,6 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'server list and chef-data option with invalid chef-node-attribute' do
         let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute invalid" }
         it 'should successfully list all the servers.' do
-          pending "Currently failing due to OC-9451 bug, which is fixed but not yet merged into master"
           match_status("should fail")
         end
       end
