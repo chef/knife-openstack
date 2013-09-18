@@ -29,6 +29,11 @@ class Chef
                                 }
                 }}))
         end
+
+        # add alternate user defined api_endpoint value.
+        def add_api_endpoint
+          @auth_params.merge!({:openstack_auth_url => Chef::Config[:knife][:api_endpoint]}) unless Chef::Config[:knife][:api_endpoint].nil?
+        end
       end
     end
   end
