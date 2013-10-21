@@ -28,25 +28,25 @@ def append_openstack_creds(is_list_cmd = false)
 end
 
 def append_openstack_creds_for_windows
-  openstack_creds_cmd = " --openstack-username #{ENV['OPENSTACK_USERNAME']} --openstack-password #{ENV['OPENSTACK_PASSWORD']} --openstack-api-endpoint #{ENV['OPENSTACK_AUTH_URL']} "
+  openstack_creds_cmd = " --openstack-username #{ENV['OPENSTACK_USERNAME']} --openstack-password #{ENV['OPENSTACK_PASSWORD']} --openstack-api-endpoint #{ENV['OPENSTACK_AUTH_URL']} "   
   openstack_creds_cmd = openstack_creds_cmd + " -c #{temp_dir}/knife.rb"
   openstack_creds_cmd = openstack_creds_cmd + " --openstack-tenant #{ENV['OPENSTACK_TENANT']}"
   openstack_creds_cmd
 end
 
 def get_ssh_credentials
-  " --ssh-user #{ENV['OS_SSH_USER']}"+
-  " --openstack-ssh-key-id #{ENV['OPENSTACK_KEY_PAIR']}"
+  " --ssh-user #{@os_ssh_user}"+
+  " --openstack-ssh-key-id #{@openstack_key_pair}"
 end
 
 def get_ssh_credentials_for_windows_image
-  " --ssh-user #{ENV['OS_WINDOWS_SSH_USER']}"+
-  " --ssh-password #{ENV['OS_WINDOWS_SSH_PASSWORD']}"
+  " --ssh-user #{@os_windows_ssh_user}"+
+  " --ssh-password #{@os_windows_ssh_password}"
 end
 
 def get_winrm_credentials
-  " --winrm-user #{ENV['OS_WINRM_USER']}"+
-  " --winrm-password #{ENV['OS_WINRM_PASSWORD']}"
+  " --winrm-user #{@os_winrm_user}"+
+  " --winrm-password #{@os_winrm_password}"
 end
 
 def rm_known_host
@@ -130,7 +130,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -153,7 +153,7 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'create server by using standard options and chef node name prefix default value(i.e openstack)' do
         cmd_out = ""
         let(:command) { "knife openstack server create "+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -169,7 +169,7 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'create server by using standard options and chef node name prefix user specified value' do
         cmd_out = ""
         let(:command) { "knife openstack server create "+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -187,7 +187,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -205,7 +205,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -222,7 +222,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -238,7 +238,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -253,7 +253,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -271,7 +271,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{SecureRandom.hex(18)} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{SecureRandom.hex(18)} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -288,7 +288,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_INVALID_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_invalid_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -305,11 +305,11 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
-        " --ssh-user #{ENV['OS_SSH_USER']}"+
+        " --ssh-user #{@os_ssh_user}"+
         " --openstack-ssh-key-id #{SecureRandom.hex(6)}"+
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() + " --sudo"}
@@ -323,12 +323,12 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
-        " --ssh-user #{ENV['OS_SSH_USER']}"+
-        " --openstack-ssh-key-id #{ENV['OPENSTACK_KEY_PAIR']}"+
+        " --ssh-user #{@os_ssh_user}"+
+        " --openstack-ssh-key-id #{@openstack_key_pair}"+
         " --identity-file #{temp_dir}/incorrect_openstack.pem"+
         append_openstack_creds() + " --sudo"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
@@ -341,7 +341,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -360,7 +360,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_LINUX_IMAGE']} -f #{ENV['OS_LINUX_FLAVOR']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -382,8 +382,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{ENV['OS_WINDOWS_IMAGE']} " +
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -407,8 +407,8 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'create server (for windows) with standard options and chef node name prefix default value(i.e openstack)' do
         cmd_out = ""
         let(:command) { "knife openstack server create " +
-        " -I #{ENV['OS_WINDOWS_IMAGE']} " +
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -425,8 +425,8 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'create server (for windows) with standard options and chef node name prefix user specified value' do
         cmd_out = ""
         let(:command) { "knife openstack server create " +
-        " -I #{ENV['OS_WINDOWS_IMAGE']} " +
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -444,8 +444,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{ENV['OS_WINDOWS_IMAGE']} " +
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -463,8 +463,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{ENV['OS_WINDOWS_IMAGE']} " +
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol invalid_bootstrap_protocol" +
@@ -481,8 +481,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{ENV['OS_WINDOWS_IMAGE']} " +
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889 --image-os-type windows" +
         " --bootstrap-protocol winrm" +
@@ -499,14 +499,14 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{ENV['OS_WINDOWS_IMAGE']} " +
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
         " --yes --server-create-timeout 1800" +
         " --winrm-user #{SecureRandom.hex(6)}"+
-        " --winrm-password #{ENV['OS_WINRM_PASSWORD']}" +
+        " --winrm-password #{@os_winrm_password}" +
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
@@ -520,13 +520,13 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{ENV['OS_WINDOWS_IMAGE']} " +
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
         " --yes  --server-create-timeout 1800" +
-        " --winrm-user #{ENV['OS_WINRM_USER']}"+
+        " --winrm-user #{@os_winrm_user}"+
         " --winrm-password #{SecureRandom.hex(6)}" +
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
@@ -541,13 +541,13 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_WINDOWS_SSH_IMAGE']}"+
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} "+
+        " -I #{@os_windows_ssh_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes --server-create-timeout 1800" +
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --openstack-ssh-key-id #{ENV['OPENSTACK_KEY_PAIR']}"+
+        " --openstack-ssh-key-id #{@openstack_key_pair}"+
         get_ssh_credentials_for_windows_image+
         append_openstack_creds() + " --image-os-type windows" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
@@ -560,13 +560,13 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_WINDOWS_SSH_IMAGE']}"+
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} "+
+        " -I #{@os_windows_ssh_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes --server-create-timeout 1800" +
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --ssh-key #{ENV['OPENSTACK_KEY_PAIR']}"+
+        " --ssh-key #{@openstack_key_pair}"+
         get_ssh_credentials_for_windows_image+
         append_openstack_creds() + " --image-os-type invalid" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
@@ -579,8 +579,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_WINDOWS_SSH_IMAGE']}"+
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} "+
+        " -I #{@os_windows_ssh_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889 --image-os-type windows" +
         " --yes" +
@@ -596,8 +596,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_WINDOWS_IMAGE']}"+
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} "+
+        " -I #{@os_windows_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -617,7 +617,7 @@ describe 'knife-openstack' , :if => is_config_present do
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
         " -I #{SecureRandom.hex(18)}"+
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} "+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -635,8 +635,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_WINDOWS_IMAGE']}"+
-        " -f #{ENV['OS_INVALID_FLAVOR']} "+
+        " -I #{@os_windows_image}"+
+        " -f #{@os_invalid_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -654,8 +654,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_WINDOWS_IMAGE']}"+
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} "+
+        " -I #{@os_windows_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889 " +
         " --yes" +
@@ -675,8 +675,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{ENV['OS_WINDOWS_IMAGE']}"+
-        " -f #{ENV['OS_WINDOWS_FLAVOR']} "+
+        " -I #{@os_windows_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +

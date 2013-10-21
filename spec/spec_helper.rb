@@ -22,18 +22,44 @@ end
 
 def is_config_present
   unset_env_var = []
+  unset_config_options = []
   is_config = true
-  %w(OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL OPENSTACK_TENANT OS_SSH_USER OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_env_var|
-      ENV[os_env_var] = "60" if ( os_env_var == "OS_INVALID_FLAVOR" && ENV[os_env_var].nil? )
+  is_config_file_present = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
+  
+  if(!is_config_file_present)
+    puts "\nSkipping the integration tests for knife openstack commands"
+    puts "\nPlease make sure environment.yml is present and set with valid credentials."
+    puts "\nPlease look for a sample file at spec/integration/config/environment.yml.sample"
+    puts "\nPlease make sure openstack.pem is present and set with valid key pair content. This content should match for key pair name mentioned in environment.yml at attribute 'key_pair: key_pair_name'"
+    puts "\nBy default openstack.pem contains dummy key pair content.\n"
+  end
+ 
+  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if is_config_file_present
+
+  %w(OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL OPENSTACK_TENANT).each do |os_env_var|
       if ENV[os_env_var].nil?
         unset_env_var <<  os_env_var
         is_config = false
       end
     end
-  err_msg = "Please set #{unset_env_var.join(', ')} environment"
-  err_msg = err_msg + ( unset_env_var.length > 1 ? " varriables for integration tests." : " varriable for integration tests." )
+
+  err_msg = "\nPlease set #{unset_env_var.join(', ')} environment"
+  err_msg = err_msg + ( unset_env_var.length > 1 ? " varriables " : " varriable " ) + "for integration tests."
   puts err_msg unless unset_env_var.empty?
-  is_config
+  
+  %w(OS_SSH_USER OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_config_opt|
+    option_value = (openstack_config[os_config_opt] if openstack_config) || ENV[os_config_opt]
+    if option_value.nil?
+      unset_config_options << os_config_opt
+      is_config = false
+    end
+  end
+
+  config_err_msg = "\nPlease set #{unset_config_options.join(', ')} config"
+  config_err_msg = config_err_msg + ( unset_config_options.length > 1 ? " options in environment.yml or as environment varriables" : " option in environment.yml or as environment variable" ) + " for integration tests."
+  puts config_err_msg unless unset_config_options.empty?
+  
+  is_config && is_config_file_present
 end
 
 def get_gem_file_name
@@ -65,4 +91,10 @@ def init_openstack_test
   rescue
     puts "Error while creating file - incorrect_openstack.pem"
   end
+
+  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__)))
+
+  %w(OS_SSH_USER OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_config_opt|
+    instance_variable_set("@#{os_config_opt.downcase}", (openstack_config[os_config_opt] if openstack_config) || ENV[os_config_opt])
+  end  
 end
