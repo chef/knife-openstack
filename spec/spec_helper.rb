@@ -33,6 +33,7 @@ def is_config_present
   is_config = true
   config_file_exist = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
   openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if config_file_exist
+
   %w(OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL OPENSTACK_TENANT).each do |os_env_var|
       if ENV[os_env_var].nil?
         unset_env_var <<  os_env_var
@@ -46,6 +47,7 @@ def is_config_present
   
   %w(OS_SSH_USER OPENSTACK_PRI_KEY OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_config_opt|
     option_value = ENV[os_config_opt] || (openstack_config[os_config_opt] if openstack_config)
+
     if option_value.nil?
       unset_config_options << os_config_opt
       is_config = false
