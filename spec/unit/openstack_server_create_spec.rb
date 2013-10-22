@@ -10,10 +10,10 @@ require 'chef/knife/bootstrap_windows_winrm'
 describe Chef::Knife::OpenstackServerCreate do
   before do
 
-    @openstack_connection = mock(Fog::Compute::OpenStack)
+    @openstack_connection = double(Fog::Compute::OpenStack)
     @openstack_connection.stub_chain(:flavors, :get).and_return ('flavor_id')
-    @openstack_connection.stub_chain(:images, :get).and_return mock('image_id')
-    @openstack_connection.stub_chain(:addresses).and_return [mock('addresses', {
+    @openstack_connection.stub_chain(:images, :get).and_return double('image_id')
+    @openstack_connection.stub_chain(:addresses).and_return [double('addresses', {
           :instance_id => nil,
           :ip => '111.111.111.111',
           :fixed_ip => true
@@ -39,8 +39,8 @@ describe Chef::Knife::OpenstackServerCreate do
     @knife_openstack_create.stub(:print)
 
 
-    @openstack_servers = mock()
-    @new_openstack_server = mock()
+    @openstack_servers = double()
+    @new_openstack_server = double()
 
     @openstack_server_attribs = { :name => 'Mock Server',
       :id => 'id-123456',
