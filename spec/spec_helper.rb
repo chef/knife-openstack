@@ -21,21 +21,16 @@ def find_instance_id(instance_name, file)
 end
 
 def is_config_present
+  if ! ENV['RUN_INTEGRATION_TESTS']
+    puts("\nPlease set RUN_INTEGRATION_TESTS environment variable to run integration tests")
+    return false
+  end
+
   unset_env_var = []
   unset_config_options = []
   is_config = true
-  is_config_file_present = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
-  
-  if(!is_config_file_present)
-    puts "\nSkipping the integration tests for knife openstack commands"
-    puts "\nPlease make sure environment.yml is present and set with valid credentials."
-    puts "\nPlease look for a sample file at spec/integration/config/environment.yml.sample"
-    puts "\nPlease make sure openstack.pem is present and set with valid key pair content. This content should match for key pair name mentioned in environment.yml at attribute 'key_pair: key_pair_name'"
-    puts "\nBy default openstack.pem contains dummy key pair content.\n"
-  end
- 
-  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if is_config_file_present
 
+  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__)))
   %w(OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL OPENSTACK_TENANT).each do |os_env_var|
       if ENV[os_env_var].nil?
         unset_env_var <<  os_env_var
@@ -44,11 +39,11 @@ def is_config_present
     end
 
   err_msg = "\nPlease set #{unset_env_var.join(', ')} environment"
-  err_msg = err_msg + ( unset_env_var.length > 1 ? " varriables " : " varriable " ) + "for integration tests."
+  err_msg = err_msg + ( unset_env_var.length > 1 ? " variables " : " variable " ) + "for integration tests."
   puts err_msg unless unset_env_var.empty?
   
   %w(OS_SSH_USER OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_config_opt|
-    option_value = (openstack_config[os_config_opt] if openstack_config) || ENV[os_config_opt]
+    option_value = ENV[os_config_opt] || (openstack_config[os_config_opt] if openstack_config)
     if option_value.nil?
       unset_config_options << os_config_opt
       is_config = false
@@ -56,10 +51,10 @@ def is_config_present
   end
 
   config_err_msg = "\nPlease set #{unset_config_options.join(', ')} config"
-  config_err_msg = config_err_msg + ( unset_config_options.length > 1 ? " options in environment.yml or as environment varriables" : " option in environment.yml or as environment variable" ) + " for integration tests."
+  config_err_msg = config_err_msg + ( unset_config_options.length > 1 ? " options in ../spec/integration/config/environment.yml or as environment variables" : " option in ../spec/integration/config/environment.yml or as environment variable" ) + " for integration tests."
   puts config_err_msg unless unset_config_options.empty?
   
-  is_config && is_config_file_present
+  is_config
 end
 
 def get_gem_file_name
