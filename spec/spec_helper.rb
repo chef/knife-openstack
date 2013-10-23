@@ -23,6 +23,11 @@ def find_instance_id(instance_name, file)
 end
 
 def is_config_present
+  if ! ENV['RUN_INTEGRATION_TESTS']
+    puts("\nPlease set RUN_INTEGRATION_TESTS environment variable to run integration tests")
+    return false
+  end
+
   unset_env_var = []
   unset_config_options = []
   is_config = true
@@ -36,7 +41,7 @@ def is_config_present
     end
 
   err_msg = "\nPlease set #{unset_env_var.join(', ')} environment"
-  err_msg = err_msg + ( unset_env_var.length > 1 ? " varriables " : " varriable " ) + "for integration tests."
+  err_msg = err_msg + ( unset_env_var.length > 1 ? " variables " : " variable " ) + "for integration tests."
   puts err_msg unless unset_env_var.empty?
   
   %w(OS_SSH_USER OPENSTACK_PRI_KEY OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_config_opt|
@@ -48,10 +53,10 @@ def is_config_present
   end
 
   config_err_msg = "\nPlease set #{unset_config_options.join(', ')} config"
-  config_err_msg = config_err_msg + ( unset_config_options.length > 1 ? " options in environment.yml or as environment varriables" : " option in environment.yml or as environment variable" ) + " for integration tests."
+  config_err_msg = config_err_msg + ( unset_config_options.length > 1 ? " options in ../spec/integration/config/environment.yml or as environment variables" : " option in ../spec/integration/config/environment.yml or as environment variable" ) + " for integration tests."
   puts config_err_msg unless unset_config_options.empty?
   
-  is_config && is_config_file_present
+  is_config
 end
 
 def get_gem_file_name
