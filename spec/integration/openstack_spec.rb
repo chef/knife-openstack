@@ -87,7 +87,6 @@ describe 'knife-openstack' , :if => is_config_present do
     context 'build' do
       let(:command) { "gem build knife-openstack.gemspec" }
       it 'should successfully build the knife-openstack gem using knife-openstack.gemspec.' do
-        pending "for test"
         match_status("should succeed")
       end
     end
@@ -95,7 +94,6 @@ describe 'knife-openstack' , :if => is_config_present do
     context 'install ' do
       let(:command) { "gem install " + get_gem_file_name  }
       it 'should successfully install the gem on the target system.' do
-        pending "for test"
         match_status("should succeed")
       end
     end
