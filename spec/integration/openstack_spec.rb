@@ -156,7 +156,7 @@ describe 'knife-openstack' , :if => is_config_present do
         " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds + " --sudo"}
@@ -190,7 +190,7 @@ describe 'knife-openstack' , :if => is_config_present do
         " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         " --delete-server-on-failure" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
@@ -699,10 +699,11 @@ describe 'knife-openstack' , :if => is_config_present do
           match_status("should succeed")
         end
       end
- 
+
       context 'server list and chef-data' do
         let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data" }
         it 'should successfully list all the servers.' do
+          pending('setup a chef-zero on workspace node')
           match_status("should succeed")
         end
       end
@@ -710,6 +711,7 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'server list and chef-data option with valid chef-node-attribute' do
         let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute platform_family" }
         it 'should successfully list all the servers.' do
+          pending('setup a chef-zero on workspace node')
           match_status("should succeed")
         end
       end
@@ -717,6 +719,7 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'server list and chef-data option with invalid chef-node-attribute' do
         let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute invalid" }
         it 'should successfully list all the servers.' do
+          pending('setup a chef-zero on workspace node')
           match_status("should fail")
         end
       end
