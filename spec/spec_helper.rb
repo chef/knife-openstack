@@ -29,8 +29,8 @@ def is_config_present
   unset_env_var = []
   unset_config_options = []
   is_config = true
-
-  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__)))
+  config_file_exist = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
+  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if config_file_exist
   %w(OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL OPENSTACK_TENANT).each do |os_env_var|
       if ENV[os_env_var].nil?
         unset_env_var <<  os_env_var
@@ -67,7 +67,7 @@ def delete_instance_cmd(stdout)
 end
 
 def create_node_name(name)
-  @name_node  = (name == "linux") ? "ostsp-linux-#{SecureRandom.hex(4)}" :  "ostsp-win-#{SecureRandom.hex(4)}"
+  @name_node  = (name == "linux") ? "os-integration-test-linux-#{SecureRandom.hex(4)}" :  "os-integration-test-win-#{SecureRandom.hex(4)}"
 end
 
 
@@ -87,7 +87,8 @@ def init_openstack_test
     puts "Error while creating file - incorrect_openstack.pem"
   end
 
-  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__)))
+  config_file_exist = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
+  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if config_file_exist
 
   %w(OS_SSH_USER OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_config_opt|
     instance_variable_set("@#{os_config_opt.downcase}", (openstack_config[os_config_opt] if openstack_config) || ENV[os_config_opt])
