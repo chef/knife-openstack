@@ -59,24 +59,17 @@ describe 'knife-openstack' , :if => is_config_present do
   include RSpec::KnifeTestUtils
 
   before(:all) do
+    run('gem build knife-openstack.gemspec').exitstatus.should == 0
+    run("gem install #{get_gem_file_name}").exitstatus.should == 0
     init_openstack_test
   end
 
-  after(:all) { cleanup_test_data }
-  context 'gem' do
-    context 'build' do
-      let(:command) { "gem build knife-openstack.gemspec" }
-      it 'should successfully build the knife-openstack gem using knife-openstack.gemspec.' do
-        match_status("should succeed")
-      end
-    end
+  after(:all) do
+    run("gem uninstall knife-openstack -v '#{Knife::OpenStack::VERSION}'").exitstatus.should == 0
+    cleanup_test_data
+  end
 
-    context 'install ' do
-      let(:command) { "gem install " + get_gem_file_name  }
-      it 'should successfully install the gem on the target system.' do
-        match_status("should succeed")
-      end
-    end
+  context 'gem' do
 
     describe 'knife' do
       context 'openstack' do
@@ -745,12 +738,5 @@ describe 'knife-openstack' , :if => is_config_present do
         end
       end
 
-    context 'uninstall ' do
-      let(:command) { "gem uninstall knife-openstack -v '#{Knife::OpenStack::VERSION}'" }
-      it 'should successfully uninstall the gem from the system.' do
-        pending 'for test'
-        match_status("should succeed")
-      end
-    end
   end
 end
