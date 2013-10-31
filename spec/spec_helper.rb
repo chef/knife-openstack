@@ -33,7 +33,6 @@ def is_config_present
   is_config = true
   config_file_exist = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
   openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if config_file_exist
-
   %w(OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL OPENSTACK_TENANT).each do |os_env_var|
       if ENV[os_env_var].nil?
         unset_env_var <<  os_env_var
