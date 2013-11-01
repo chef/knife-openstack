@@ -65,7 +65,7 @@ describe 'knife-openstack' , :if => is_config_present do
   end
 
   after(:all) do
-    run("gem uninstall knife-openstack -v '#{Knife::OpenStack::VERSION}'").exitstatus.should == 0
+    run("gem uninstall knife-openstack -v '#{Knife::OpenStack::VERSION}'")
     cleanup_test_data
   end
 
@@ -126,7 +126,7 @@ describe 'knife-openstack' , :if => is_config_present do
         " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds + " --sudo"}
@@ -165,7 +165,7 @@ describe 'knife-openstack' , :if => is_config_present do
         " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         " --chef-node-name-prefix test" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
@@ -201,7 +201,7 @@ describe 'knife-openstack' , :if => is_config_present do
         " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         " --delete-server-on-failure" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/incorrect_openstack.pem"+
@@ -218,7 +218,7 @@ describe 'knife-openstack' , :if => is_config_present do
         " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem --sudo" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
