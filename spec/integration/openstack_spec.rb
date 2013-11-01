@@ -477,4 +477,4 @@ describe 'knife-openstack integration test' , :if => is_config_present do
     end
   end
 end
-
+ 
