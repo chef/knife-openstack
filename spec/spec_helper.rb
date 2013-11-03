@@ -99,3 +99,4 @@ def init_openstack_test
     puts "Error while creating file - openstack.pem"
   end
 end
+
