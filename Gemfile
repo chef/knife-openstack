@@ -12,5 +12,5 @@ group :development do
   gem 'active_support'
   gem 'activesupport'
   gem 'knife-cloud', :git => 'https://github.com/opscode/knife-cloud.git'
-  gem 'knife-windows', :git => 'https://github.com/opscode/knife-windows.git'
+  gem 'knife-windows', '0.5.12'
 end
