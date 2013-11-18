@@ -50,7 +50,23 @@ class Chef
               :server_create_timeout => locate_config_value(:server_create_timeout)
             }
             Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
+
+            #set columns_with_info map
+            @columns_with_info = [
+            {:label => 'Instance ID', :key => 'id'},
+            {:label => 'Name', :key => 'name'},
+            {:label => 'Public IP', :key => 'addresses', :value_callback => method(:primary_public_ip_address)},
+            {:label => 'Private IP', :key => 'addresses', :value_callback => method(:primary_private_ip_address)},
+            {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
+            {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
+            {:label => 'Keypair', :key => 'key_name'},
+            {:label => 'State', :key => 'state'}
+            ]
             super
+        end
+
+        def get_id(value)
+          value['id']
         end
 
         # Setup the floating ip after server creation.
