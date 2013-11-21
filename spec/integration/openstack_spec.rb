@@ -388,7 +388,6 @@ describe 'knife-openstack' , :if => is_config_present do
         after(:each)  { cmd_out = "#{cmd_stdout}" }
 
         it 'should successfully create the (windows VM) server with the provided options.' do
-          pending 'run windows tests later'
           match_status("should succeed")
         end
 
@@ -415,7 +414,6 @@ describe 'knife-openstack' , :if => is_config_present do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should successfully create the (windows VM) server with the provided options.' do
-          pending 'run windows tests later'
           match_status("should succeed")
         end
       end
@@ -428,13 +426,12 @@ describe 'knife-openstack' , :if => is_config_present do
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
-        " --chef-node-name-prefix test"  +
+        " --chef-node-name-prefix os-integration-test-"  +
         " --yes --server-create-timeout 1800" +
         get_winrm_credentials+
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should successfully create the (windows VM) server with the provided options.' do
-          pending 'run windows tests later'
           match_status("should succeed")
         end
       end
@@ -454,7 +451,6 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should successfully create the (windows VM) server with the provided options.' do
-          pending 'run windows tests later'
           match_status("should succeed")
         end
       end
@@ -473,7 +469,6 @@ describe 'knife-openstack' , :if => is_config_present do
         get_winrm_credentials +
         append_openstack_creds_for_windows() }
         it 'should delete created (windows VM) server on bootstrap failure.' do
-          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -492,7 +487,6 @@ describe 'knife-openstack' , :if => is_config_present do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should throw validation message and stop execution.' do
-          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -554,7 +548,6 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds() + " --image-os-type windows" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'successfully create the (windows VM) server with the provided options and bootstrap.' do
-          pending 'run windows tests later'
           match_status("should succeed")
         end
       end
@@ -574,7 +567,6 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds() + " --image-os-type invalid" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'successfully create the (windows VM) server with the provided options and bootstrap.' do
-          pending 'run windows tests later'
           match_status("should fail")
         end
       end      
@@ -592,7 +584,6 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
-          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -613,7 +604,6 @@ describe 'knife-openstack' , :if => is_config_present do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should throw validation message and stop execution.' do
-          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -633,7 +623,6 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
-          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -653,7 +642,6 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
-          pending 'run windows tests later'
           match_status("should fail")
         end
       end
