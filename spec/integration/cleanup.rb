@@ -64,7 +64,7 @@ module CleanupTestResources
 		
 		# We use "os-integration-test-<platform>-<randomNumber>" pattern for server name during integration tests run. So use "os-integration-test-" pattern to find out servers created during integration tests run.
 		servers.each_line do |line|
-			if line.include?("os-integration-test-")
+			if line.include?("os-integration-test-") || (line.include?("openstack-") && line.include?("opscode-ci-ssh"))
 				# Extract and add instance id of server to delete_resources list.
 				delete_resources << line.split(" ").first
 			end
