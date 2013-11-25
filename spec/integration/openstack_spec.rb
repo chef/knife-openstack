@@ -41,12 +41,14 @@ end
 
 def get_ssh_credentials_for_windows_image
   " --ssh-user #{@os_windows_ssh_user}"+
-  " --ssh-password #{@os_windows_ssh_password}"
+  " --ssh-password #{@os_windows_ssh_password}"+
+  " --openstack-ssh-key-id #{@openstack_key_pair}"
 end
 
 def get_winrm_credentials
   " --winrm-user #{@os_winrm_user}"+
-  " --winrm-password #{@os_winrm_password}"
+  " --winrm-password #{@os_winrm_password}"+
+  " --openstack-ssh-key-id #{@openstack_key_pair}"
 end
 
 def rm_known_host
