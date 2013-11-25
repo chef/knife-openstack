@@ -186,7 +186,7 @@ describe 'knife-openstack' , :if => is_config_present do
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes --server-create-timeout 1800" +
-        " --chef-node-name-prefix test" +
+        " --chef-node-name-prefix os-integration-test-" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds + " --sudo"}
