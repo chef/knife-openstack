@@ -87,12 +87,13 @@ def init_openstack_test
     instance_variable_set("@#{os_config_opt.downcase}", (openstack_config[os_config_opt] if openstack_config) || ENV[os_config_opt])
   end
   begin
-    data_to_write = @openstack_pri_key
+    key_file_path = @openstack_pri_key
+    key_file_exist = File.exist?(File.expand_path(key_file_path, __FILE__))
+    data_to_write = File.read(File.expand_path(key_file_path, __FILE__)) if key_file_exist
     File.open("#{temp_dir}/openstack.pem", 'w') {|f| f.write(data_to_write)}
   rescue
     puts "Error while creating file - openstack.pem"
   end
-  
 end
 
 # TODO - we should use factory girl or fixtures for this as part of test utils.
