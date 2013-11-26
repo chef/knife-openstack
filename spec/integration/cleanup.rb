@@ -66,20 +66,20 @@ module CleanupTestResources
 		servers.each_line do |line|
 			if line.include?("os-integration-test-") || (line.include?("openstack-") && line.include?("opscode-ci-ssh"))
 				# Extract and add instance id of server to delete_resources list.
-				delete_resources << line.split(" ").first
+				delete_resources << {"id" => line.split(" ").first, "name" => line.split(" ")[1]}
 			end
 		end
 
 		# Delete servers
 		delete_resources.each do |resource|
-			delete_command = "knife openstack server delete #{resource} #{openstack_creds} --yes"
+			delete_command = "knife openstack server delete #{resource['id']} #{openstack_creds} --yes"
 			delete_output = run(delete_command)
 
 			# check command exitstatus. Non zero exitstatus indicates command execution fails.
 			if delete_output.exitstatus != 0
-				puts "Unable to delete server #{resource}. Error: #{delete_output.stderr}."
+				puts "Unable to delete server #{resource['name']}: #{resource['id']}. Error: #{delete_output.stderr}."
 			else
-				puts "Deleted server #{resource}."
+				puts "Deleted server #{resource['name']}: #{resource['id']}."
 			end
 		end
 	end
