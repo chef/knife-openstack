@@ -22,7 +22,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
 
     it "has custom_arguments as its option" do
-      expect(@instance.options.include? :custom_arguments).to be true
+      expect(@instance.options.include? :custom_attributes).to be true
      end
   end
 
