@@ -31,6 +31,7 @@ describe Chef::Knife::Cloud::OpenstackServerList do
         @node = TestResource.new({:id => "server-4", :name => "server-4", :chef_environment => "_default", :fqdn => "testfqdnnode.us", :run_list => [], :tags => [], :platform => "ubuntu", :platform_family => "debian"})
         Chef::Node.stub(:list).and_return({"server-4" => @node})
         instance.config[:chef_data] = true
+        @resources.each {|res| res.stub_chain(:attributes, :include?).and_return(true)}
       end
 
       it "lists formatted list of resources on chef data option set" do
