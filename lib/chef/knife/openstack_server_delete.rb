@@ -72,6 +72,7 @@ class Chef
             msg_pair("Image", server.image['id'])
             msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
             msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+            msg_pair("Availability Zone", server.availability_zone)
 
 
             puts "\n"
