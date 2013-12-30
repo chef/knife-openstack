@@ -58,6 +58,12 @@ class Chef
       :default => ["default"],
       :proc => Proc.new { |groups| groups.split(',') }
 
+      option :availability_zone,
+      :short => "-Z ZONE_NAME",
+      :long => "--availability_zone ZONE_NAME",
+      :description => "The availability zone for this server",
+      :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
+
       option :chef_node_name,
       :short => "-N NAME",
       :long => "--node-name NAME",
@@ -143,6 +149,12 @@ class Chef
       :description => "Comma separated list of roles/recipes to apply",
       :proc => lambda { |o| o.split(/[\s,]+/) },
       :default => []
+
+      option :environment,
+      :short => "-e CHEF_ENVIRONMENT",
+      :long => "--environment CHEF_ENVIRONMENT",
+      :description => "Chef environment for the bootstrapped node",
+      :default => "_default"
 
       option :host_key_verify,
       :long => "--[no-]host-key-verify",
@@ -265,46 +277,32 @@ class Chef
         # servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
-        # this really should be caught in Fog
-        if locate_config_value(:user_data).nil?
-          server_def = {
-            :name => node_name,
-            :image_ref => locate_config_value(:image),
-            :flavor_ref => locate_config_value(:flavor),
-            :security_groups => locate_config_value(:security_groups),
-            :key_name => locate_config_value(:openstack_ssh_key_id)
-          }
-        else
-          server_def = {
-            :name => node_name,
-            :image_ref => locate_config_value(:image),
-            :flavor_ref => locate_config_value(:flavor),
-            :security_groups => locate_config_value(:security_groups),
-            :key_name => locate_config_value(:openstack_ssh_key_id),
-            :user_data => locate_config_value(:user_data)
-          }
-        end
+       server_def = {
+        :name => node_name,
+        :image_ref => locate_config_value(:image),
+        :flavor_ref => locate_config_value(:flavor),
+        :security_groups => locate_config_value(:security_groups),
+        :availability_zone => locate_config_value(:availability_zone),
+        :environment => locate_config_value(:environment),
+        :key_name => locate_config_value(:openstack_ssh_key_id)
+      }
 
-        Chef::Log.debug("Name #{node_name}")
-        Chef::Log.debug("Image #{locate_config_value(:image)}")
-        Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
-        Chef::Log.debug("Requested Floating IP #{locate_config_value(:floating_ip)}")
-        Chef::Log.debug("Security Groups #{locate_config_value(:security_groups)}")
-        Chef::Log.debug("User Data #{locate_config_value(:user_data)}")
-        Chef::Log.debug("Creating server #{server_def}")
+      Chef::Log.debug("Name #{node_name}")
+      Chef::Log.debug("Image #{locate_config_value(:image)}")
+      Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
+      Chef::Log.debug("Availability zone #{locate_config_value(:availability_zone)}")
+      Chef::Log.debug("Requested Floating IP #{locate_config_value(:floating_ip)}")
+      Chef::Log.debug("Security Groups #{locate_config_value(:security_groups)}")
+      Chef::Log.debug("Creating server #{server_def}")
 
-        begin
-          server = connection.servers.create(server_def)
-        rescue Excon::Errors::BadRequest => e
-          response = Chef::JSONCompat.from_json(e.response.body)
-          if response['badRequest']['code'] == 400
-            if response['badRequest']['message'] =~ /Invalid flavorRef/
-              ui.fatal("Bad request (400): Invalid flavor specified: #{server_def[:flavor_ref]}")
-              exit 1
-            else
-              ui.fatal("Bad request (400): #{response['badRequest']['message']}")
-              exit 1
-            end
+      begin
+        server = connection.servers.create(server_def)
+      rescue Excon::Errors::BadRequest => e
+        response = Chef::JSONCompat.from_json(e.response.body)
+        if response['badRequest']['code'] == 400
+          if response['badRequest']['message'] =~ /Invalid flavorRef/
+            ui.fatal("Bad request (400): Invalid flavor specified: #{server_def[:flavor_ref]}")
+            exit 1
           else
             ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
             raise e
@@ -350,7 +348,6 @@ class Chef
           (server.addresses['public'] ||= []) << { "version" => 4, "addr" => floating_address }
           msg_pair("Floating IP Address", floating_address)
         end
-
         Chef::Log.debug("Addresses #{server.addresses}")
         Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
@@ -438,6 +435,19 @@ class Chef
         bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
         bootstrap_common_params(bootstrap, server.name)
       end
+      puts "\n"
+      msg_pair("Instance Name", server.name)
+      msg_pair("Instance ID", server.id)
+      msg_pair("Flavor", server.flavor['id'])
+      msg_pair("Image", server.image['id'])
+      msg_pair("SSH Keypair", server.key_name) if server.key_name
+      msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
+      msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
+      msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+      msg_pair("Availability zone", server.availability_zone)
+      msg_pair("Environment", config[:environment] || '_default')
+      msg_pair("Run List", config[:run_list].join(', '))
+    end
 
       def flavor
         @flavor ||= connection.flavors.get(locate_config_value(:flavor))
@@ -464,6 +474,12 @@ class Chef
         end
         # floating requested with value
         if addresses.find_index { |a| a.ip == address }
+      pool = server.availablity_zone
+      addresses = connection.addresses
+      return false if addresses.empty? #no floating IPs
+      #floating requested without value
+      if address.nil? && address.pool == pool
+        if addresses.find_index {|a| a.fixed_ip.nil?}
           return true
         else
           return false # requested floating IP does not exist
