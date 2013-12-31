@@ -150,12 +150,6 @@ class Chef
       :proc => lambda { |o| o.split(/[\s,]+/) },
       :default => []
 
-      option :environment,
-      :short => "-e CHEF_ENVIRONMENT",
-      :long => "--environment CHEF_ENVIRONMENT",
-      :description => "Chef environment for the bootstrapped node",
-      :default => "_default"
-
       option :host_key_verify,
       :long => "--[no-]host-key-verify",
       :description => "Verify host key, enabled by default",
@@ -283,7 +277,6 @@ class Chef
         :flavor_ref => locate_config_value(:flavor),
         :security_groups => locate_config_value(:security_groups),
         :availability_zone => locate_config_value(:availability_zone),
-        :environment => locate_config_value(:environment),
         :key_name => locate_config_value(:openstack_ssh_key_id)
       }
 
@@ -445,7 +438,6 @@ class Chef
       msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
       msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
       msg_pair("Availability zone", server.availability_zone)
-      msg_pair("Environment", config[:environment] || '_default')
       msg_pair("Run List", config[:run_list].join(', '))
     end
 
