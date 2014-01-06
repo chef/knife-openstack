@@ -35,9 +35,9 @@ class Chef
         server_list = [
           ui.color('Instance ID', :bold),
           ui.color('Name', :bold),
+          ui.color('Zone', :bold),
           ui.color('Public IP', :bold),
           ui.color('Private IP', :bold),
-          ui.color('Zone', :bold),
           ui.color('Flavor', :bold),
           ui.color('Image', :bold),
           ui.color('Keypair', :bold),
