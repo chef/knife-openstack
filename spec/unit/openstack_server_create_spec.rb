@@ -69,6 +69,7 @@ describe Chef::Knife::OpenstackServerCreate do
     it "ensures default options" do
       @options[:bootstrap_protocol][:default].should == nil
       @options[:distro][:default].should == 'chef-full'
+      @options[:availability_zone][:default].should == nil
       @options[:floating_ip][:default].should == '-1'
       @options[:host_key_verify][:default].should == true
       @options[:private_network][:default].should == false
