@@ -47,6 +47,7 @@ describe Chef::Knife::OpenstackServerCreate do
       :key_name => 'key_name',
       :flavor => 'flavor_id',
       :image => 'image_id',
+      :availability_zone => 'public',
       :addresses => {
         'public' => [{'addr' => '75.101.253.10'}],
         'private' => [{'addr' => '10.251.75.20'}]

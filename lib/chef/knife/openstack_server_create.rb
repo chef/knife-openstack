@@ -424,7 +424,7 @@ class Chef
       if address == '-1' #no floating IP requested
         return true
       end
-      pool = server.availablity_zone
+      pool = locate_config_value(:availablity_zone)
       addresses = connection.addresses
       return false if addresses.empty? #no floating IPs
       #floating requested without value
