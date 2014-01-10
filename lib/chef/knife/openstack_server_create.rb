@@ -97,7 +97,7 @@ class Chef
           super
           # Which IP address to bootstrap
           bootstrap_ip_address = primary_public_ip_address(server.addresses) if primary_public_ip_address(server.addresses)
-          bootstrap_ip_address = primary_private_ip_address(server.addresses) if config[:private_network]
+          bootstrap_ip_address = primary_private_ip_address(server.addresses) if config[:openstack_private_network]
           Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
           if bootstrap_ip_address.nil?
             error_message = "No IP address available for bootstrapping."
