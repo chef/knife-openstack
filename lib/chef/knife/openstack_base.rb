@@ -134,6 +134,16 @@ class Chef
         end
       end
 
+      def primary_fixed_ip_address(addresses)
+        addresses.each_value do |value|
+          value.each do |network|
+            if network.has_key? "OS-EXT-IPS:type" and network.has_value? "fixed"
+              return network['addr']
+            end
+          end
+        end
+      end
+
     end
   end
 end
