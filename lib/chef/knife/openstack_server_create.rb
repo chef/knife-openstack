@@ -76,6 +76,12 @@ class Chef
       :boolean => true,
       :default => false
 
+      option :fixed_network,
+      :long => "--fixed-network",
+      :description => "Use the fixed network IP for bootstrapping rather than the public IP",
+      :boolean => true,
+      :default => false
+
       option :ssh_key_name,
       :short => "-S KEY",
       :long => "--ssh-key KEY",
@@ -330,6 +336,10 @@ class Chef
       bootstrap_ip_address = primary_public_ip_address(server.addresses) if primary_public_ip_address(server.addresses)
       if config[:private_network]
         bootstrap_ip_address = primary_private_ip_address(server.addresses)
+      end
+
+      if config[:fixed_network]
+        bootstrap_ip_address = primary_fixed_ip_address(server.addresses)
       end
 
       Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
