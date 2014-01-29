@@ -150,6 +150,13 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
     end
 
+    it "set private-ip as a bootstrap-ip if openstack-private-network option set" do
+      @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      @instance.config[:openstack_private_network] = true
+      @instance.before_bootstrap
+      @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+    end
+
     it "raise error on nil bootstrap_ip" do
       @instance.ui.stub(:error)
       @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>nil}]})
