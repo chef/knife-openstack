@@ -18,11 +18,11 @@ class Chef
           ui.color('Tenant', :bold),
           ui.color('Shared', :bold),
         ]
-       network.networks.all.each do |network|
-	    net_list << network.name
-	    net_list << network.id
-            net_list << network.tenant_id
-            net_list << network.shared.to_s
+        network.networks.all.each do |network|
+          net_list << network.name
+          net_list << network.id
+          net_list << network.tenant_id
+          net_list << network.shared.to_s
         end
         puts ui.list(net_list, :uneven_columns_across, 4)
       end

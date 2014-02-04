@@ -262,9 +262,9 @@ class Chef
         :security_groups => locate_config_value(:security_groups),
         :key_name => locate_config_value(:openstack_ssh_key_id),
         :nics => locate_config_value(:network_ids).map do |nic|
-                     nici = { 'net_id' => nic }
-                     nici
-                 end
+          nic_id = { 'net_id' => nic }
+          nic_id
+        end
       }
 
       Chef::Log.debug("Name #{node_name}")
