@@ -59,6 +59,18 @@ class Chef
             :description => "Your OpenStack API endpoint",
             :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_auth_url] = endpoint }
 
+          option :openstack_private_network_name,
+            # Suggestion for short?
+            :long => "--openstack-private-network-name NAME",
+            :description => "The name of your private network",
+            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_private_network_name] = key }
+
+          option :openstack_public_network_name,
+            # Suggestion for short?
+            :long => "--openstack-public-network-name NAME",
+            :description => "The name of your public network",
+            :proc => Proc.new { |key| Chef::Config[:knife][:openstack_public_network_name] = key }
+
           option :openstack_insecure,
             :long => "--insecure",
             :description => "Ignore SSL certificate on the Auth URL",
@@ -122,15 +134,25 @@ class Chef
 
       # http://tickets.opscode.com/browse/KNIFE-248
       def primary_private_ip_address(addresses)
-        if addresses['private']
-          return addresses['private'].last['addr']
+        if Chef::Config[:knife][:openstack_private_network_name].nil?
+          network_name = 'private'
+        else
+          network_name = Chef::Config[:knife][:openstack_private_network_name]
+        end
+        if addresses[network_name]
+          return addresses[network_name].last['addr']
         end
       end
 
       #we use last since the floating IP goes there
       def primary_public_ip_address(addresses)
-        if addresses['public']
-          return addresses['public'].last['addr']
+        if Chef::Config[:knife][:openstack_public_network_name].nil?
+          network_name = 'public'
+        else
+          network_name = Chef::Config[:knife][:openstack_public_network_name]
+        end
+        if addresses[network_name]
+          return addresses[network_name].last['addr']
         end
       end
 
