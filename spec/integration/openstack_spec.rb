@@ -19,34 +19,34 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 def append_openstack_creds(is_list_cmd = false)
-  openstack_creds_cmd = " --openstack-username #{@openstack_config['os_creds']['openstack_username']} --openstack-password #{@openstack_config['os_creds']['openstack_password']} --openstack-api-endpoint #{@openstack_config['os_creds']['openstack_auth_url']}"
+  openstack_creds_cmd = " --openstack-username '#{ENV['OPENSTACK_USERNAME']}' --openstack-password '#{ENV['OPENSTACK_PASSWORD']}' --openstack-api-endpoint #{ENV['OPENSTACK_AUTH_URL']}"
   openstack_creds_cmd = openstack_creds_cmd + " -c #{temp_dir}/knife.rb"
   if(!is_list_cmd)
-    openstack_creds_cmd = openstack_creds_cmd + " --openstack-tenant #{@openstack_config['os_creds']['openstack_tenant']}"
+    openstack_creds_cmd = openstack_creds_cmd + " --openstack-tenant #{ENV['OPENSTACK_TENANT']}"
   end
   openstack_creds_cmd
 end
 
 def append_openstack_creds_for_windows
-  openstack_creds_cmd = " --openstack-username #{@openstack_config['os_creds']['openstack_username']} --openstack-password #{@openstack_config['os_creds']['openstack_password']} --openstack-api-endpoint #{@openstack_config['os_creds']['openstack_auth_url']} "
+  openstack_creds_cmd = " --openstack-username '#{ENV['OPENSTACK_USERNAME']}' --openstack-password '#{ENV['OPENSTACK_PASSWORD']}' --openstack-api-endpoint #{ENV['OPENSTACK_AUTH_URL']} "   
   openstack_creds_cmd = openstack_creds_cmd + " -c #{temp_dir}/knife.rb"
-  openstack_creds_cmd = openstack_creds_cmd + " --openstack-tenant #{@openstack_config['os_creds']['openstack_tenant']}"
+  openstack_creds_cmd = openstack_creds_cmd + " --openstack-tenant #{ENV['OPENSTACK_TENANT']}"
   openstack_creds_cmd
 end
 
 def get_ssh_credentials
-  " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user']}"+
-  " --openstack-ssh-key-id #{@openstack_config['os_ssh_params']['key_pair']}"
+  " --ssh-user #{@os_ssh_user}"+
+  " --openstack-ssh-key-id #{@openstack_key_pair}"
 end
 
 def get_ssh_credentials_for_windows_image
-  " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user_for_windows']}"+
-  " --ssh-password #{@openstack_config['os_ssh_params']['ssh_password_for_windows']}"
+  " --ssh-user #{@os_windows_ssh_user}"+
+  " --ssh-password #{@os_windows_ssh_password}"
 end
 
 def get_winrm_credentials
-  " --winrm-user #{@openstack_config['os_winrm_params']['winrm_user']}"+
-  " --winrm-password #{@openstack_config['os_winrm_params']['winrm_password']}"
+  " --winrm-user #{@os_winrm_user}"+
+  " --winrm-password #{@os_winrm_password}"
 end
 
 def rm_known_host
@@ -59,24 +59,17 @@ describe 'knife-openstack' , :if => is_config_present do
   include RSpec::KnifeTestUtils
 
   before(:all) do
-    @openstack_config = YAML.load(File.read(File.expand_path("../config/environment.yml", __FILE__)))
+    run('gem build knife-openstack.gemspec').exitstatus.should == 0
+    run("gem install #{get_gem_file_name}").exitstatus.should == 0
     init_openstack_test
   end
-  after(:all) { cleanup_test_data }
-  context 'gem' do
-    context 'build' do
-      let(:command) { "gem build knife-openstack.gemspec" }
-      it 'should successfully build the knife-openstack gem using knife-openstack.gemspec.' do
-        match_status("should succeed")
-      end
-    end
 
-    context 'install ' do
-      let(:command) { "gem install " + get_gem_file_name  }
-      it 'should successfully install the gem on the target system.' do
-        match_status("should succeed")
-      end
-    end
+  after(:all) do
+    run("gem uninstall knife-openstack -v '#{Knife::OpenStack::VERSION}'")
+    cleanup_test_data
+  end
+
+  context 'gem' do
 
     describe 'knife' do
       context 'openstack' do
@@ -130,10 +123,10 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds + " --sudo"}
@@ -153,10 +146,10 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'create server by using standard options and chef node name prefix default value(i.e openstack)' do
         cmd_out = ""
         let(:command) { "knife openstack server create "+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds + " --sudo"}
@@ -169,11 +162,11 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'create server by using standard options and chef node name prefix user specified value' do
         cmd_out = ""
         let(:command) { "knife openstack server create "+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
-        " --chef-node-name-prefix test" +
+        " --yes --server-create-timeout 1800" +
+        " --chef-node-name-prefix os-integration-test-" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds + " --sudo"}
@@ -187,10 +180,10 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         " --delete-server-on-failure" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem"+
@@ -205,10 +198,10 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         " --delete-server-on-failure" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/incorrect_openstack.pem"+
@@ -222,10 +215,10 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
-        " --yes" +
+        " --yes --server-create-timeout 1800" +
         get_ssh_credentials +
         " --identity-file #{temp_dir}/openstack.pem --sudo" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
@@ -238,7 +231,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -253,7 +246,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -271,7 +264,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{SecureRandom.hex(18)} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{SecureRandom.hex(18)} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -288,7 +281,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['invalid_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_invalid_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -305,11 +298,11 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
-        " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user']}"+
+        " --ssh-user #{@os_ssh_user}"+
         " --openstack-ssh-key-id #{SecureRandom.hex(6)}"+
         " --identity-file #{temp_dir}/openstack.pem"+
         append_openstack_creds() + " --sudo"}
@@ -323,12 +316,12 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
-        " --ssh-user #{@openstack_config['os_ssh_params']['ssh_user']}"+
-        " --openstack-ssh-key-id #{@openstack_config['os_ssh_params']['key_pair']}"+
+        " --ssh-user #{@os_ssh_user}"+
+        " --openstack-ssh-key-id #{@openstack_key_pair}"+
         " --identity-file #{temp_dir}/incorrect_openstack.pem"+
         append_openstack_creds() + " --sudo"}
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
@@ -341,7 +334,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -360,7 +353,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("linux") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['linux_image']} -f #{@openstack_config['os_params']['linux_flavor']} "+
+        " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
         " --template-file " + get_linux_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -382,8 +375,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@openstack_config['os_params']['windows_image']} " +
-        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -393,12 +386,14 @@ describe 'knife-openstack' , :if => is_config_present do
         after(:each)  { cmd_out = "#{cmd_stdout}" }
 
         it 'should successfully create the (windows VM) server with the provided options.' do
+          pending 'run windows tests later'
           match_status("should succeed")
         end
 
         context "delete server after create" do
           let(:command) { delete_instance_cmd(cmd_out) }
           it "should successfully delete the server." do
+            pending 'run windows tests later'
             match_status("should succeed")
           end
         end
@@ -407,8 +402,8 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'create server (for windows) with standard options and chef node name prefix default value(i.e openstack)' do
         cmd_out = ""
         let(:command) { "knife openstack server create " +
-        " -I #{@openstack_config['os_params']['windows_image']} " +
-        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -418,6 +413,7 @@ describe 'knife-openstack' , :if => is_config_present do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should successfully create the (windows VM) server with the provided options.' do
+          pending 'run windows tests later'
           match_status("should succeed")
         end
       end
@@ -425,8 +421,8 @@ describe 'knife-openstack' , :if => is_config_present do
       context 'create server (for windows) with standard options and chef node name prefix user specified value' do
         cmd_out = ""
         let(:command) { "knife openstack server create " +
-        " -I #{@openstack_config['os_params']['windows_image']} " +
-        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -436,6 +432,7 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should successfully create the (windows VM) server with the provided options.' do
+          pending 'run windows tests later'
           match_status("should succeed")
         end
       end
@@ -444,8 +441,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@openstack_config['os_params']['windows_image']} " +
-        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
@@ -455,6 +452,7 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should successfully create the (windows VM) server with the provided options.' do
+          pending 'run windows tests later'
           match_status("should succeed")
         end
       end
@@ -463,8 +461,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@openstack_config['os_params']['windows_image']} " +
-        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol invalid_bootstrap_protocol" +
@@ -473,6 +471,7 @@ describe 'knife-openstack' , :if => is_config_present do
         get_winrm_credentials +
         append_openstack_creds_for_windows() }
         it 'should delete created (windows VM) server on bootstrap failure.' do
+          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -481,8 +480,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@openstack_config['os_params']['windows_image']} " +
-        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889 --image-os-type windows" +
         " --bootstrap-protocol winrm" +
@@ -491,6 +490,7 @@ describe 'knife-openstack' , :if => is_config_present do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should throw validation message and stop execution.' do
+          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -499,14 +499,14 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@openstack_config['os_params']['windows_image']} " +
-        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
         " --yes --server-create-timeout 1800" +
         " --winrm-user #{SecureRandom.hex(6)}"+
-        " --winrm-password #{@openstack_config['os_winrm_params']['winrm_password']}" +
+        " --winrm-password #{@os_winrm_password}" +
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
@@ -520,13 +520,13 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@openstack_config['os_params']['windows_image']} " +
-        " -f #{@openstack_config['os_params']['windows_flavor']} " +
+        " -I #{@os_windows_image} " +
+        " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --bootstrap-protocol winrm" +
         " --yes  --server-create-timeout 1800" +
-        " --winrm-user #{@openstack_config['os_winrm_params']['winrm_user']}"+
+        " --winrm-user #{@os_winrm_user}"+
         " --winrm-password #{SecureRandom.hex(6)}" +
         append_openstack_creds_for_windows() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
@@ -541,17 +541,18 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['ssh_enabled_windows_image']}"+
-        " -f #{@openstack_config['os_params']['windows_flavor']} "+
+        " -I #{@os_windows_ssh_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes --server-create-timeout 1800" +
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --openstack-ssh-key-id #{@openstack_config['os_ssh_params']['key_pair']}"+
+        " --openstack-ssh-key-id #{@openstack_key_pair}"+
         get_ssh_credentials_for_windows_image+
         append_openstack_creds() + " --image-os-type windows" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'successfully create the (windows VM) server with the provided options and bootstrap.' do
+          pending 'run windows tests later'
           match_status("should succeed")
         end
       end
@@ -560,17 +561,18 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['ssh_enabled_windows_image']}"+
-        " -f #{@openstack_config['os_params']['windows_flavor']} "+
+        " -I #{@os_windows_ssh_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes --server-create-timeout 1800" +
         " --identity-file #{temp_dir}/openstack.pem"+
-        " --ssh-key #{@openstack_config['os_ssh_params']['key_pair']}"+
+        " --ssh-key #{@openstack_key_pair}"+
         get_ssh_credentials_for_windows_image+
         append_openstack_creds() + " --image-os-type invalid" }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'successfully create the (windows VM) server with the provided options and bootstrap.' do
+          pending 'run windows tests later'
           match_status("should fail")
         end
       end      
@@ -579,8 +581,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['ssh_enabled_windows_image']}"+
-        " -f #{@openstack_config['os_params']['windows_flavor']} "+
+        " -I #{@os_windows_ssh_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889 --image-os-type windows" +
         " --yes" +
@@ -588,6 +590,7 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
+          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -596,8 +599,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['windows_image']}"+
-        " -f #{@openstack_config['os_params']['windows_flavor']} "+
+        " -I #{@os_windows_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -608,6 +611,7 @@ describe 'knife-openstack' , :if => is_config_present do
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
 
         it 'should throw validation message and stop execution.' do
+          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -617,7 +621,7 @@ describe 'knife-openstack' , :if => is_config_present do
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
         " -I #{SecureRandom.hex(18)}"+
-        " -f #{@openstack_config['os_params']['windows_flavor']} "+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -627,6 +631,7 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
+          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -635,8 +640,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['windows_image']}"+
-        " -f #{@openstack_config['os_params']['invalid_flavor']} "+
+        " -I #{@os_windows_image}"+
+        " -f #{@os_invalid_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -646,6 +651,7 @@ describe 'knife-openstack' , :if => is_config_present do
         append_openstack_creds() }
         after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
         it 'should throw validation message and stop execution.' do
+          pending 'run windows tests later'
           match_status("should fail")
         end
       end
@@ -654,8 +660,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['windows_image']}"+
-        " -f #{@openstack_config['os_params']['windows_flavor']} "+
+        " -I #{@os_windows_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889 " +
         " --yes" +
@@ -675,8 +681,8 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}"+
-        " -I #{@openstack_config['os_params']['windows_image']}"+
-        " -f #{@openstack_config['os_params']['windows_flavor']} "+
+        " -I #{@os_windows_image}"+
+        " -f #{@os_windows_flavor} "+
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
         " --yes" +
@@ -699,24 +705,27 @@ describe 'knife-openstack' , :if => is_config_present do
           match_status("should succeed")
         end
       end
- 
+
       context 'server list and chef-data' do
-        let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data" }
+        let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data" }
         it 'should successfully list all the servers.' do
+          pending('setup a chef-zero on workspace node')
           match_status("should succeed")
         end
       end
 
       context 'server list and chef-data option with valid chef-node-attribute' do
-        let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute platform_family" }
+        let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute platform_family" }
         it 'should successfully list all the servers.' do
+          pending('setup a chef-zero on workspace node')
           match_status("should succeed")
         end
       end
 
       context 'server list and chef-data option with invalid chef-node-attribute' do
-        let(:command) { "knife openstack server list" + asppend_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute invalid" }
+        let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute invalid" }
         it 'should successfully list all the servers.' do
+          pending('setup a chef-zero on workspace node')
           match_status("should fail")
         end
       end
@@ -742,11 +751,5 @@ describe 'knife-openstack' , :if => is_config_present do
         end
       end
 
-    context 'uninstall ' do
-      let(:command) { "gem uninstall knife-openstack -v '#{Knife::OpenStack::VERSION}'" }
-      it 'should successfully uninstall the gem from the system.' do
-        match_status("should succeed")
-      end
-    end
   end
 end
