@@ -477,4 +477,4 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       run_cmd_check_status_and_output("fail", "ERROR: You must provide --image-os-type option [windows/linux]")
     end
   end
-end 
+end  
