@@ -77,6 +77,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         @bootstrapper.stub(:bootstrap).and_call_original
         @bootstrapper.should_receive(:create_bootstrap_protocol).and_return(@ssh_bootstrap_protocol)
         @bootstrapper.should_receive(:create_bootstrap_distribution).and_return(@unix_distribution)
+        @openstack_service.should_receive(:server_summary).exactly(2).times
         @knife_openstack_create.run
       end
     end
@@ -97,6 +98,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         @bootstrapper.should_receive(:create_bootstrap_protocol).and_return(@winrm_bootstrap_protocol)
         @bootstrapper.should_receive(:create_bootstrap_distribution).and_return(@windows_distribution)
         @winrm_bootstrap_protocol.stub(:send_bootstrap_command)
+        @openstack_service.should_receive(:server_summary).exactly(2).times
         @knife_openstack_create.run
       end
     end
