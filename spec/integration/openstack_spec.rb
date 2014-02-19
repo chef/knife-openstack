@@ -54,6 +54,26 @@ def rm_known_host
   FileUtils.rm_rf(known_hosts)
 end
 
+# get openstack active instance_id for knife openstack show command run
+def get_active_instance_id
+  server_list_output = run("knife openstack server list " + append_openstack_creds(is_list_cmd = true))
+  # Check command exitstatus. Non zero exitstatus indicates command execution fails.
+  if server_list_output.exitstatus != 0
+    puts "Please check Openstack user name, password and auth url are correct. Error: #{list_output.stderr}."
+    return false
+  else
+    servers = server_list_output.stdout
+  end
+  
+  servers.each_line do |line|
+    if line.include?("ACTIVE")
+      instance_id = line.split(" ").first
+      return instance_id
+    end
+  end
+  return false
+end
+
 describe 'knife-openstack' , :if => is_config_present do
   include KnifeTestBed
   include RSpec::KnifeTestUtils
@@ -739,6 +759,23 @@ describe 'knife-openstack' , :if => is_config_present do
         let(:command) { "knife openstack group list" + append_openstack_creds(is_list_cmd = true) }
         it 'should successfully list all the available security groups.' do
           match_status("should succeed")
+        end
+      end
+
+      context 'server show' do
+        before(:each) do
+          @instance_id = get_active_instance_id
+        end
+        let(:command) { "knife openstack server show #{@instance_id}" + append_openstack_creds(is_list_cmd = true) }
+        it 'should successfully display server details.' do
+          match_status("should succeed")
+        end
+      end
+
+      context 'server show' do
+        let(:command) { "knife openstack server show invalid_instance_id" + append_openstack_creds(is_list_cmd = true) }
+        it 'should fail on invalid instance_id' do
+          match_status("should fail")
         end
       end
 
