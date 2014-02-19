@@ -92,7 +92,6 @@ describe 'knife-openstack' , :if => is_config_present do
   end
 
   context 'gem' do
-
     describe 'knife' do
       context 'openstack' do
         context 'flavor list --help' do
@@ -397,7 +396,7 @@ describe 'knife-openstack' , :if => is_config_present do
         cmd_out = ""
         before(:each) { create_node_name("windows") }
         let(:command) { "knife openstack server create -N #{@name_node}" +
-        " -I #{@os_windows_image} " +
+        " -I #{@os_windows_image} -VV " +
         " -f #{@os_windows_flavor} " +
         " --template-file " + get_windows_msi_template_file_path +
         " --server-url http://localhost:8889" +
@@ -414,7 +413,6 @@ describe 'knife-openstack' , :if => is_config_present do
         context "delete server after create" do
           let(:command) { delete_instance_cmd(cmd_out) }
           it "should successfully delete the server." do
-            pending 'run windows tests later'
             match_status("should succeed")
           end
         end
@@ -709,59 +707,60 @@ describe 'knife-openstack' , :if => is_config_present do
       end
     end
 
-      context 'server list' do
-        let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) }
-        it 'should successfully list all the servers.' do
-          match_status("should succeed")
-        end
+    context 'server list' do
+      let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) }
+      it 'should successfully list all the servers.' do
+        match_status("should succeed")
       end
+    end
 
-      context 'server list and chef-data' do
-        let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data" }
-        it 'should successfully list all the servers.' do
-          pending('setup a chef-zero on workspace node')
-          match_status("should succeed")
-        end
+    context 'server list and chef-data' do
+      let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data" }
+      it 'should successfully list all the servers.' do
+        pending('setup a chef-zero on workspace node')
+        match_status("should succeed")
       end
+    end
 
-      context 'server list and chef-data option with valid chef-node-attribute' do
-        let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute platform_family" }
-        it 'should successfully list all the servers.' do
-          pending('setup a chef-zero on workspace node')
-          match_status("should succeed")
-        end
+    context 'server list and chef-data option with valid chef-node-attribute' do
+      let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute platform_family" }
+      it 'should successfully list all the servers.' do
+        pending('setup a chef-zero on workspace node')
+        match_status("should succeed")
       end
+    end
 
-      context 'server list and chef-data option with invalid chef-node-attribute' do
-        let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute invalid" }
-        it 'should successfully list all the servers.' do
-          pending('setup a chef-zero on workspace node')
-          match_status("should fail")
-        end
+    context 'server list and chef-data option with invalid chef-node-attribute' do
+      let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute invalid" }
+      it 'should successfully list all the servers.' do
+        pending('setup a chef-zero on workspace node')
+        match_status("should fail")
       end
+    end
 
-      context 'flavor list' do
-        let(:command) { "knife openstack flavor list" + append_openstack_creds(is_list_cmd = true) }
-        it 'should successfully list all the available flavors.' do
-          match_status("should succeed")
-        end
+    context 'flavor list' do
+      let(:command) { "knife openstack flavor list" + append_openstack_creds(is_list_cmd = true) }
+      it 'should successfully list all the available flavors.' do
+        match_status("should succeed")
       end
+    end
 
-      context 'image list' do
-        let(:command) { "knife openstack image list" + append_openstack_creds(is_list_cmd = true) }
-        it 'should successfully list all the available images.' do
-          match_status("should succeed")
-        end
+    context 'image list' do
+      let(:command) { "knife openstack image list" + append_openstack_creds(is_list_cmd = true) }
+      it 'should successfully list all the available images.' do
+        match_status("should succeed")
       end
+    end
 
-      context 'group  list' do
-        let(:command) { "knife openstack group list" + append_openstack_creds(is_list_cmd = true) }
-        it 'should successfully list all the available security groups.' do
-          match_status("should succeed")
-        end
+    context 'group  list' do
+      let(:command) { "knife openstack group list" + append_openstack_creds(is_list_cmd = true) }
+      it 'should successfully list all the available security groups.' do
+        match_status("should succeed")
       end
+    end
 
-      context 'server show' do
+    describe 'server show' do
+      context 'with valid instance_id' do
         before(:each) do
           @instance_id = get_active_instance_id
         end
@@ -771,12 +770,11 @@ describe 'knife-openstack' , :if => is_config_present do
         end
       end
 
-      context 'server show' do
+      context 'with invalid instance_id' do
         let(:command) { "knife openstack server show invalid_instance_id" + append_openstack_creds(is_list_cmd = true) }
-        it 'should fail on invalid instance_id' do
-          match_status("should fail")
-        end
+        
+        it { match_status("should fail") }
       end
-
+    end
   end
 end
