@@ -17,7 +17,7 @@ require 'server_command_common_spec_helper'
 def find_instance_id(instance_name, file)
   file.lines.each do |line|
     if line.include?("#{instance_name}")
-      return "#{line}".split(': ')[1].strip
+      return "#{line}".split(" ")[2].strip
     end
   end
 end
@@ -64,7 +64,7 @@ def get_gem_file_name
 end
 
 def delete_instance_cmd(stdout)
-  "knife openstack server delete " + find_instance_id("Instance ID:", stdout) +
+  "knife openstack server delete " + find_instance_id("Instance ID", stdout) +
   append_openstack_creds(is_list_cmd = true) + " --yes"
 end
 
