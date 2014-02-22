@@ -38,6 +38,10 @@ If your OpenStack deployment is over SSL, but does not have a valid certificate,
 
     knife[:openstack_insecure] = true
 
+If you need to use alternate service endpoints for communicating with OpenStack, you can set the following option:
+
+    knife[:openstack_endpoint_type] = "internalURL"
+
 You also have the option of passing your OpenStack API Username/Password into the individual knife subcommands using the `-A` (or `--openstack-username`) `-K` (or `--openstack-password`) command options
 
     # provision a new image named kb01

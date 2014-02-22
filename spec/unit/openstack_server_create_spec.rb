@@ -77,6 +77,10 @@ describe Chef::Knife::OpenstackServerCreate do
       @options[:ssh_port][:default].should == '22'
       @options[:ssh_user][:default].should == 'root'
     end
+
+    it "doesn't set an OpenStack endpoint type by default" do
+        Chef::Config[:knife][:openstack_endpoint_type].should == nil
+    end
   end
 
   describe "run" do
