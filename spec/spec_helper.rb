@@ -11,6 +11,8 @@ require "securerandom"
 require 'knife-openstack/version'
 require 'test/knife-utils/test_bed'
 require 'resource_spec_helper'
+require 'server_command_common_spec_helper'
+
 
 def find_instance_id(instance_name, file)
   file.lines.each do |line|
