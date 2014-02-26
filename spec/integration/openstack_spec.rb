@@ -437,7 +437,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       " --winrm-user #{@os_winrm_user}"+
       " --winrm-password #{SecureRandom.hex(6)}" +
       append_openstack_creds_for_windows() }
-      after(:each)  { run(delete_instance_cmd("#{cmd_stdout}")) }
+      after(:each)  { run(delete_instance_cmd("#{cmd_output}")) }
 
       it { pending "Fails due to OC-9708 bug in knife-windows." }
     end
