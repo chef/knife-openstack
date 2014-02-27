@@ -59,6 +59,12 @@ class Chef
       :default => ["default"],
       :proc => Proc.new { |groups| groups.split(',') }
 
+      option :metadata,
+      :short => "-M X=1,Y=2,Z=3",
+      :long => "--metadata X=1,Y=2,Z=3",
+      :description => "The metdata information for this server",
+      :proc => Proc.new { |metadata| Hash[*metadata.split(/=|,/)] }
+
       option :chef_node_name,
       :short => "-N NAME",
       :long => "--node-name NAME",
@@ -255,6 +261,7 @@ class Chef
         :image_ref => locate_config_value(:image),
         :flavor_ref => locate_config_value(:flavor),
         :security_groups => locate_config_value(:security_groups),
+        :metadata => locate_config_value(:metadata),
         :key_name => locate_config_value(:openstack_ssh_key_id)
       }
 
@@ -263,6 +270,7 @@ class Chef
       Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
       Chef::Log.debug("Requested Floating IP #{locate_config_value(:floating_ip)}")
       Chef::Log.debug("Security Groups #{locate_config_value(:security_groups)}")
+      Chef::Log.debug("Metadata #{locate_config_value(:metadata)}")
       Chef::Log.debug("Creating server #{server_def}")
 
       begin
