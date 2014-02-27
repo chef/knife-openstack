@@ -163,6 +163,12 @@ class Chef
       :proc => lambda { |o| JSON.parse(o) },
       :default => {}
 
+      option :user_data,
+      :short => "-u USER_DATA",
+      :long => "--user-data USER_DATA",
+      :description => "The file path containing user data information for this server",
+      :proc => Proc.new { |user_data| open(user_data) { |f| f.read }  }
+
       def tcp_test_ssh(hostname, port)
         tcp_socket = TCPSocket.new(hostname, port)
         readable = IO.select([tcp_socket], nil, nil, 5)
@@ -255,7 +261,8 @@ class Chef
         :image_ref => locate_config_value(:image),
         :flavor_ref => locate_config_value(:flavor),
         :security_groups => locate_config_value(:security_groups),
-        :key_name => locate_config_value(:openstack_ssh_key_id)
+        :key_name => locate_config_value(:openstack_ssh_key_id),
+        :user_data => locate_config_value(:user_data)
       }
 
       Chef::Log.debug("Name #{node_name}")
@@ -263,6 +270,7 @@ class Chef
       Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
       Chef::Log.debug("Requested Floating IP #{locate_config_value(:floating_ip)}")
       Chef::Log.debug("Security Groups #{locate_config_value(:security_groups)}")
+      Chef::Log.debug("User Data #{locate_config_value(:user_data)}")
       Chef::Log.debug("Creating server #{server_def}")
 
       begin
