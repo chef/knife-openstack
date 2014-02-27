@@ -132,6 +132,8 @@ class Chef
       def primary_private_ip_address(addresses)
         if addresses['private']
           return addresses['private'].last['addr']
+        else
+	        return any_address(addresses)
         end
       end
 
@@ -139,8 +141,23 @@ class Chef
       def primary_public_ip_address(addresses)
         if addresses['public']
           return addresses['public'].last['addr']
+        else
+	        return any_address(addresses)
         end
       end
+
+      # Grab the first address
+      def any_address(addresses)
+	      # Check if any addesses are available.
+	      if addresses.empty?
+		      Chef::Log.warn("No IPs available")
+		      return nil
+	      else
+		      # Grab first available address
+		      addresses[addresses.keys[0]].last['addr']
+	      end
+      end
+
 
     end
   end
