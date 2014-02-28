@@ -69,6 +69,12 @@ class Chef
       :default => "-1",
       :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project. Specific IP is optional."
 
+      option :network,
+      :long => "--no-network",
+      :boolean => true,
+      :default => true,
+      :description => "Use first available network for bootstrapping if 'public' and 'private' are unavailable."
+
       option :private_network,
       :long => "--private-network",
       :description => "Use the private IP for bootstrapping rather than the public IP",
@@ -305,6 +311,7 @@ class Chef
         msg_pair("SSH Keypair", server.key_name) if server.key_name
         msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
         Chef::Log.debug("Addresses #{server.addresses}")
+
         msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
 
         floating_address = locate_config_value(:floating_ip)
@@ -331,11 +338,17 @@ class Chef
         Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
         msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+        msg_pair("Addresses: #{server.addresses.join(", ")}") unless primary_private_ip_address(server.addresses) || primary_private_ip_address(server.addresses)
 
         # which IP address to bootstrap
-        bootstrap_ip_address = primary_public_ip_address(server.addresses) if primary_public_ip_address(server.addresses)
         if config[:private_network]
           bootstrap_ip_address = primary_private_ip_address(server.addresses)
+        elsif !config[:network] # --no-network
+          bootstrap_ip_address = primary_private_ip_address(server.addresses) ||
+            primary_private_ip_address(server.addresses) ||
+            server.addresses.first
+        elsif primary_public_ip_address(server.addresses)
+          bootstrap_ip_address = primary_public_ip_address(server.addresses)
         end
 
         Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
