@@ -1,4 +1,8 @@
+## v0.9.0
+
+Changes for https://github.com/mattray/chef-rfc/blob/openstack-network/rfc003-openstack-network.md
 * KNIFE-310 "knife openstack server list" will fail with boot from volume instances
+* KNIFE-231 added ability to specify arbitrary network ID
 
 ## v0.8.1
 
