@@ -69,6 +69,11 @@ class Chef
       :default => "-1",
       :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project. Specific IP is optional."
 
+      option :bootstrap_network,
+      :long => '--bootstrap-network',
+      :default => 'public',
+      :description => "Specify network for bootstrapping. Default is 'public'."
+
       option :network,
       :long => "--no-network",
       :boolean => true,
@@ -331,15 +336,17 @@ class Chef
         Chef::Log.debug("Addresses #{server.addresses}")
         Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
-        # which IP address to bootstrap
-        if config[:private_network]
-          bootstrap_ip_address = primary_private_ip_address(server.addresses)
-        elsif !config[:network] # --no-network
+        # private_network means bootstrap_network = 'private'
+        config[:bootstrap_network] = 'private' if config[:private_network]
+
+        unless config[:network] # --no-network
           bootstrap_ip_address = primary_public_ip_address(server.addresses) ||
             primary_private_ip_address(server.addresses) ||
             server.addresses.first
-        elsif primary_public_ip_address(server.addresses)
-          bootstrap_ip_address = primary_public_ip_address(server.addresses)
+          Chef::Log.debug("No Bootstrap Network: #{config[:bootstrap_network]}")
+        else
+          bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network])
+          Chef::Log.debug("Bootstrap Network: #{config[:bootstrap_network]}")
         end
 
         Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
