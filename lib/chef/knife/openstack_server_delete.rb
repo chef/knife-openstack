@@ -70,9 +70,10 @@ class Chef
             msg_pair("Instance ID", server.id)
             msg_pair("Flavor", server.flavor['id'])
             msg_pair("Image", server.image['id'])
-            msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
-            msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
-
+            server.addresses.each do |name,addr|
+              msg_pair("Network", name)
+              msg_pair("  IP Address", addr[0]['addr'])
+            end
 
             puts "\n"
             confirm("Do you really want to delete this server")
