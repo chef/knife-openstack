@@ -70,7 +70,7 @@ class Chef
       :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project. Specific IP is optional."
 
       option :bootstrap_network,
-      :long => '--bootstrap-network',
+      :long => '--bootstrap-network NAME',
       :default => 'public',
       :description => "Specify network for bootstrapping. Default is 'public'."
 
