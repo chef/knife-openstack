@@ -1,16 +1,18 @@
+## v0.9.0
+* KNIFE-231 added ability to specify arbitrary bootstrap network ID
+* KNIFE-277 knife openstack "ERROR: No IP address available for bootstrapping."
 * KNIFE-310 "knife openstack server list" will fail with boot from volume instances
+* KNIFE-435 Support user data for OpenStack server create
+* https://github.com/opscode/chef-rfc/pull/7/
 
 ## v0.8.1
-
 * KNIFE-296 knife-windows overrides -i, -p, -P and -x options with winrm values
 * KNIFE-304 enable setting the ssh port for knife-openstack
 
 ## v0.8.0
-
 * KNIFE-221 Windows bootstrapping (winrm-based) support for knife-openstack (Chirag Jog)
 
 ## v0.7.1
-
 * KNIFE-261 file permissions fixed
 
 ## v0.7.0
