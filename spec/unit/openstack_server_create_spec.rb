@@ -71,6 +71,8 @@ describe Chef::Knife::OpenstackServerCreate do
       @options[:floating_ip][:default].should == '-1'
       @options[:host_key_verify][:default].should == true
       @options[:private_network][:default].should == false
+      @options[:network][:default].should == true
+      @options[:bootstrap_network][:default].should == 'public'
       @options[:run_list][:default].should == []
       @options[:security_groups][:default].should == ['default']
       @options[:server_create_timeout][:default].should == 600
@@ -80,6 +82,10 @@ describe Chef::Knife::OpenstackServerCreate do
 
     it "doesn't set an OpenStack endpoint type by default" do
         Chef::Config[:knife][:openstack_endpoint_type].should == nil
+    end
+
+    it "user_data should be empty" do
+        Chef::Config[:knife][:user_data].should == nil
     end
   end
 
