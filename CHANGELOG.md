@@ -1,3 +1,6 @@
+## v0.9.1
+* KNIFE-462 missing user_data throws stack
+
 ## v0.9.0
 * KNIFE-231 added ability to specify arbitrary bootstrap network ID
 * KNIFE-264 Add support for --json-attributes

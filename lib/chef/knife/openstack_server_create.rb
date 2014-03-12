@@ -265,14 +265,25 @@ class Chef
         # servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
-        server_def = {
-          :name => node_name,
-          :image_ref => locate_config_value(:image),
-          :flavor_ref => locate_config_value(:flavor),
-          :security_groups => locate_config_value(:security_groups),
-          :key_name => locate_config_value(:openstack_ssh_key_id),
-          :user_data => locate_config_value(:user_data)
-        }
+        # this really should be caught in Fog
+        if locate_config_value(:user_data).nil?
+          server_def = {
+            :name => node_name,
+            :image_ref => locate_config_value(:image),
+            :flavor_ref => locate_config_value(:flavor),
+            :security_groups => locate_config_value(:security_groups),
+            :key_name => locate_config_value(:openstack_ssh_key_id)
+          }
+        else
+          server_def = {
+            :name => node_name,
+            :image_ref => locate_config_value(:image),
+            :flavor_ref => locate_config_value(:flavor),
+            :security_groups => locate_config_value(:security_groups),
+            :key_name => locate_config_value(:openstack_ssh_key_id),
+            :user_data => locate_config_value(:user_data)
+          }
+        end
 
         Chef::Log.debug("Name #{node_name}")
         Chef::Log.debug("Image #{locate_config_value(:image)}")
