@@ -448,7 +448,29 @@ class Chef
       def image
         @image ||= connection.images.get(locate_config_value(:image))
       end
-      <<<<<<< HEAD
+      puts "\n"
+      msg_pair("Instance Name", server.name)
+      msg_pair("Instance ID", server.id)
+      msg_pair("Flavor", server.flavor['id'])
+      msg_pair("Image", server.image['id'])
+      msg_pair("SSH Keypair", server.key_name) if server.key_name
+      msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
+      msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
+      msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+      msg_pair("Environment", config[:environment] || '_default')
+      msg_pair("Availability zone", server.availability_zone)
+      msg_pair("Run List", config[:run_list].join(', '))
+    end
+
+    def bootstrap_for_windows_node(server, bootstrap_ip_address)
+      bootstrap = Chef::Knife::BootstrapWindowsWinrm.new
+      bootstrap.name_args = [bootstrap_ip_address]
+      bootstrap.config[:winrm_user] = locate_config_value(:winrm_user) || 'Administrator'
+      bootstrap.config[:winrm_password] = locate_config_value(:winrm_password)
+      bootstrap.config[:winrm_transport] = locate_config_value(:winrm_transport)
+      bootstrap.config[:winrm_port] = locate_config_value(:winrm_port)
+      bootstrap_common_params(bootstrap, server.name)
+    end
 
       def is_floating_ip_valid
         address = locate_config_value(:floating_ip)
