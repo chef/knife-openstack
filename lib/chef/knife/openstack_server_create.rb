@@ -369,6 +369,7 @@ class Chef
       msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
       msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
       msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+      msg_pair("Environment", config[:environment] || '_default')
       msg_pair("Availability zone", server.availability_zone)
       msg_pair("Run List", config[:run_list].join(', '))
     end
