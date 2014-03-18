@@ -76,6 +76,7 @@ class Chef
             end
             msg_pair("Availability Zone", server.availability_zone)
 
+
             puts "\n"
             confirm("Do you really want to delete this server")
 

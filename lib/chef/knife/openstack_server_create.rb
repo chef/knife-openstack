@@ -64,6 +64,12 @@ class Chef
         :description => "The availability zone for this server",
         :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
 
+      option :availability_zone,
+      :short => "-Z ZONE_NAME",
+      :long => "--availability-zone ZONE_NAME",
+      :description => "The availability zone for this server",
+      :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
+
       option :chef_node_name,
         :short => "-N NAME",
         :long => "--node-name NAME",
@@ -271,14 +277,45 @@ class Chef
         # servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
-        server_def = {
-          :name => node_name,
-          :image_ref => locate_config_value(:image),
-          :flavor_ref => locate_config_value(:flavor),
-          :security_groups => locate_config_value(:security_groups),
-          :availability_zone => locate_config_value(:availability_zone),
-          :key_name => locate_config_value(:openstack_ssh_key_id)
-        }
+      server_def = {
+        :name => node_name,
+        :image_ref => locate_config_value(:image),
+        :flavor_ref => locate_config_value(:flavor),
+        :security_groups => locate_config_value(:security_groups),
+        :availability_zone => locate_config_value(:availability_zone),
+        :key_name => locate_config_value(:openstack_ssh_key_id)
+      }
+
+      Chef::Log.debug("Name #{node_name}")
+      Chef::Log.debug("Image #{locate_config_value(:image)}")
+      Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
+      Chef::Log.debug("Availability zone #{locate_config_value(:availability_zone)}")
+      Chef::Log.debug("Requested Floating IP #{locate_config_value(:floating_ip)}")
+      Chef::Log.debug("Security Groups #{locate_config_value(:security_groups)}")
+      Chef::Log.debug("Creating server #{server_def}")
+
+      begin
+        server = connection.servers.create(server_def)
+      rescue Excon::Errors::BadRequest => e
+        response = Chef::JSONCompat.from_json(e.response.body)
+        if response['badRequest']['code'] == 400
+          if response['badRequest']['message'] =~ /Invalid flavorRef/
+            ui.fatal("Bad request (400): Invalid flavor specified: #{server_def[:flavor_ref]}")
+            exit 1
+          else
+            ui.fatal("Bad request (400): #{response['badRequest']['message']}")
+            exit 1
+          end
+        else
+          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          raise e
+        end
+      end
+
+      msg_pair("Instance Name", server.name)
+      msg_pair("Instance ID", server.id)
+      msg_pair("Availability zone", server.availability_zone)
+
 
         Chef::Log.debug("Name #{node_name}")
         Chef::Log.debug("Image #{locate_config_value(:image)}")
@@ -490,6 +527,48 @@ class Chef
         # floating requested with value
         if addresses.find_index { |a| a.ip == address }
           pool = server.availablity_zone
+    def bootstrap_common_params(bootstrap, server_name)
+      bootstrap.config[:chef_node_name] = config[:chef_node_name] || server_name
+      bootstrap.config[:run_list] = config[:run_list]
+      bootstrap.config[:prerelease] = config[:prerelease]
+      bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
+      bootstrap.config[:distro] = locate_config_value(:distro)
+      bootstrap.config[:template_file] = locate_config_value(:template_file)
+      bootstrap.config[:bootstrap_proxy] = locate_config_value(:bootstrap_proxy)
+      bootstrap.config[:environment] = config[:environment]
+      bootstrap.config[:encrypted_data_bag_secret] = config[:encrypted_data_bag_secret]
+      bootstrap.config[:encrypted_data_bag_secret_file] = config[:encrypted_data_bag_secret_file]
+      # let ohai know we're using OpenStack
+      Chef::Config[:knife][:hints] ||= {}
+      Chef::Config[:knife][:hints]['openstack'] ||= {}
+      bootstrap
+    end
+
+    def bootstrap_for_node(server, bootstrap_ip_address)
+      bootstrap = Chef::Knife::Bootstrap.new
+      bootstrap.name_args = [bootstrap_ip_address]
+      bootstrap.config[:ssh_user] = config[:ssh_user]
+      bootstrap.config[:ssh_port] = config[:ssh_port]
+      bootstrap.config[:identity_file] = config[:identity_file]
+      bootstrap.config[:host_key_verify] = config[:host_key_verify]
+      bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
+      bootstrap_common_params(bootstrap, server.name)
+    end
+
+    def flavor
+      @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+    end
+
+    def image
+      @image ||= connection.images.get(locate_config_value(:image))
+    end
+
+    def is_floating_ip_valid
+      address = locate_config_value(:floating_ip)
+      if address == '-1' #no floating IP requested
+        return true
+      end
+>>>>>>> 5e05006ba084b8c238391ddea69f30d6f3e8197c
       pool = locate_config_value(:availablity_zone)
       addresses = connection.addresses
       return false if addresses.empty? #no floating IPs
