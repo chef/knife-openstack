@@ -35,6 +35,7 @@ class Chef
         server_list = [
           ui.color('Instance ID', :bold),
           ui.color('Name', :bold),
+          ui.color('Zone', :bold),
           ui.color('Public IP', :bold),
           ui.color('Private IP', :bold),
           ui.color('Flavor', :bold),
@@ -47,6 +48,7 @@ class Chef
           connection.servers.all.sort_by(&:id).each do |server|
             server_list << server.id.to_s
             server_list << server.name
+            server_list << server.availability_zone
             if primary_public_ip_address(server.addresses)
               server_list << primary_public_ip_address(server.addresses)
             else
@@ -81,7 +83,7 @@ class Chef
           ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
           raise e
         end
-        puts ui.list(server_list, :uneven_columns_across, 8)
+        puts ui.list(server_list, :uneven_columns_across, 9)
 
       end
     end

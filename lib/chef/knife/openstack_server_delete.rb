@@ -74,6 +74,8 @@ class Chef
               msg_pair("Network", name)
               msg_pair("  IP Address", addr[0]['addr'])
             end
+            msg_pair("Availability Zone", server.availability_zone)
+
 
             puts "\n"
             confirm("Do you really want to delete this server")
