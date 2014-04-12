@@ -130,6 +130,7 @@ describe Chef::Knife::OpenstackServerCreate do
       @knife_openstack_create.config[:chef_node_name] = "blarf"
       @knife_openstack_create.config[:template_file] = '~/.chef/templates/my-bootstrap.sh.erb'
       @knife_openstack_create.config[:distro] = 'ubuntu-10.04-magic-sparkles'
+      @knife_openstack_create.config[:first_boot_attributes] = {'some_var' => true}
       @knife_openstack_create.config[:run_list] = ['role[base]']
 
       @bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
@@ -184,6 +185,10 @@ describe Chef::Knife::OpenstackServerCreate do
 
     it "configures the bootstrap to use sudo" do
       @bootstrap.config[:use_sudo].should be_true
+    end
+
+    it "configures the bootstrap with json attributes" do
+      @bootstrap.config[:first_boot_attributes]['some_var'].should be_true
     end
 
     it "configured the bootstrap to use the desired template" do
