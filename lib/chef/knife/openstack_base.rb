@@ -102,6 +102,28 @@ class Chef
                         end
       end
 
+      def network_connection
+        @network_connection ||= begin
+          network_connection = Fog::Network.new(
+            :provider => 'OpenStack',
+            :openstack_username => Chef::Config[:knife][:openstack_username],
+            :openstack_api_key => Chef::Config[:knife][:openstack_password],
+            :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
+            :openstack_endpoint_type => Chef::Config[:knife][:openstack_endpoint_type],
+            :openstack_tenant => Chef::Config[:knife][:openstack_tenant],
+            :connection_options => {
+              :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
+            }
+            )
+                        rescue Excon::Errors::Unauthorized => e
+                          ui.fatal("Network connection failure, please check your OpenStack username and password.")
+                          exit 1
+                        rescue Excon::Errors::SocketError => e
+                          ui.fatal("Network connection failure, please check your OpenStack authentication URL.")
+                          exit 1
+                        end
+      end
+
       def locate_config_value(key)
         key = key.to_sym
         Chef::Config[:knife][key] || config[key]
@@ -128,13 +150,77 @@ class Chef
         end
       end
 
+      def private_network
+        @private_network ||= begin 
+          networks = network_connection.list_networks
+          private_network = nil
+          unless networks.data.nil? || networks.data[:body].nil? || networks.data[:body]['networks'].nil?
+            # see if we have a network named 'private' first
+            networks.data[:body]['networks'].each do |net|
+              if net['name'] == 'private'
+                private_network = net
+                break
+              end
+            end
+            # if not, find the first one that is not router:external or shared
+            if private_network.nil?
+              networks.data[:body]['networks'].each do |net|
+                if net['shared'] == false && net['router:external'] == false
+                  private_network = net
+                  break
+                end
+              end
+            end
+          end
+          private_network
+                        rescue Excon::Errors::Unauthorized => e
+                          ui.fatal("Network connection failure, please check your OpenStack username and password.")
+                          exit 1
+                        rescue Excon::Errors::SocketError => e
+                          ui.fatal("Network connection failure, please check your OpenStack authentication URL.")
+                          exit 1
+                        end
+      end 
+
+      def public_network
+        @public_network ||= begin 
+          networks = network_connection.list_networks
+          public_network = nil
+          unless networks.data.nil? || networks.data[:body].nil? || networks.data[:body]['networks'].nil?
+            # see if we have a network named 'private' first
+            networks.data[:body]['networks'].each do |net|
+              if net['name'] == 'public'
+                public_network = net
+                break
+              end
+            end
+            # if not, find the first one that is router:external
+            if public_network.nil?
+              networks.data[:body]['networks'].each do |net|
+                if net['router:external'] == true
+                  public_network = net
+                  break
+                end
+              end
+            end
+          end
+          public_network
+                        rescue Excon::Errors::Unauthorized => e
+                          ui.fatal("Network connection failure, please check your OpenStack username and password.")
+                          exit 1
+                        rescue Excon::Errors::SocketError => e
+                          ui.fatal("Network connection failure, please check your OpenStack authentication URL.")
+                          exit 1
+                        end
+      end
+
       def primary_private_ip_address(addresses)
-        primary_network_ip_address(addresses, 'private')
+        primary_network_ip_address(addresses, private_network['name'])
       end
 
       #we use last since the floating IP goes there
       def primary_public_ip_address(addresses)
-        primary_network_ip_address(addresses, 'public')
+        primary_network_ip_address(addresses, public_network['name'])
       end
 
       def primary_network_ip_address(addresses, network_name)
