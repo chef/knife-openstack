@@ -152,24 +152,15 @@ class Chef
 
       def private_network
         @private_network ||= begin 
-          networks = network_connection.list_networks
+          tenant_id = network_connection.current_tenant['id']
+          networks = network_connection.list_networks(:tenant_id => tenant_id) 
           private_network = nil
           unless networks.data.nil? || networks.data[:body].nil? || networks.data[:body]['networks'].nil?
             # see if we have a network named 'private' first
-            networks.data[:body]['networks'].each do |net|
-              if net['name'] == 'private'
-                private_network = net
-                break
-              end
-            end
+            private_network = networks.data[:body]['networks'].find {|net| net['name'] == 'private'}
             # if not, find the first one that is not router:external or shared
             if private_network.nil?
-              networks.data[:body]['networks'].each do |net|
-                if net['shared'] == false && net['router:external'] == false
-                  private_network = net
-                  break
-                end
-              end
+              private_network = networks.data[:body]['networks'].find {|net| net['shared'] == false and net['router:external'] == false}
             end
           end
           private_network
@@ -188,20 +179,10 @@ class Chef
           public_network = nil
           unless networks.data.nil? || networks.data[:body].nil? || networks.data[:body]['networks'].nil?
             # see if we have a network named 'private' first
-            networks.data[:body]['networks'].each do |net|
-              if net['name'] == 'public'
-                public_network = net
-                break
-              end
-            end
+            public_network = networks.data[:body]['networks'].find {|net| net['name'] == 'public'}
             # if not, find the first one that is router:external
             if public_network.nil?
-              networks.data[:body]['networks'].each do |net|
-                if net['router:external'] == true
-                  public_network = net
-                  break
-                end
-              end
+              public_network = networks.data[:body]['networks'].find {|net| net['router:external'] == true}
             end
           end
           public_network
