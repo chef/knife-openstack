@@ -59,18 +59,25 @@ class Chef
             :description => "Your OpenStack API endpoint",
             :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_auth_url] = endpoint }
 
+          option :openstack_endpoint_type,
+            :long => "--openstack-endpoint-type ENDPOINT_TYPE",
+            :description => "OpenStack endpoint type to use (publicURL, internalURL, adminURL)",
+            :proc => Proc.new { |type| Chef::Config[:knife][:openstack_endpoint_type] = type }
+
           option :openstack_insecure,
             :long => "--insecure",
             :description => "Ignore SSL certificate on the Auth URL",
             :boolean => true,
             :default => false,
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_insecure] = key }
+
         end
       end
 
       def connection
         Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
         Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
+        Chef::Log.debug("openstack_endpoint_type #{Chef::Config[:knife][:openstack_endpoint_type] || 'publicURL' }")
         Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
         Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure].to_s}")
 
@@ -80,6 +87,7 @@ class Chef
             :openstack_username => Chef::Config[:knife][:openstack_username],
             :openstack_api_key => Chef::Config[:knife][:openstack_password],
             :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
+            :openstack_endpoint_type => Chef::Config[:knife][:openstack_endpoint_type],
             :openstack_tenant => Chef::Config[:knife][:openstack_tenant],
             :connection_options => {
               :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
@@ -146,22 +154,21 @@ class Chef
         end
       end
 
-      # http://tickets.opscode.com/browse/KNIFE-248
       def primary_private_ip_address(addresses)
-        if addresses['private']
-          return addresses['private'].last['addr']
-        end
+        primary_network_ip_address(addresses, 'private')
       end
 
       #we use last since the floating IP goes there
       def primary_public_ip_address(addresses)
-        if addresses['public']
-          return addresses['public'].last['addr']
+        primary_network_ip_address(addresses, 'public')
+      end
+
+      def primary_network_ip_address(addresses, network_name)
+        if addresses[network_name]
+          return addresses[network_name].last['addr']
         end
       end
 
     end
   end
 end
-
-
