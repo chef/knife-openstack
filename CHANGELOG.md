@@ -1,3 +1,6 @@
+## v0.9.2
+* KNIFE-467 --no-network fails to find first network IP address
+
 ## v0.9.1
 * KNIFE-462 missing user_data throws stack
 
