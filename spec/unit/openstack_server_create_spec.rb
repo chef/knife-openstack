@@ -83,6 +83,15 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.before_exec_command
       @instance.create_options[:server_def].should_not include(:user_data)
     end
+
+    it "sets user data" do
+      user_data = "echo 'hello world' >> /tmp/user_data.txt"
+      Chef::Config[:knife][:user_data] = user_data
+      @instance.service = double
+      @instance.service.should_receive(:create_server_dependencies)
+      @instance.before_exec_command
+      @instance.create_options[:server_def][:user_data].should == user_data
+    end
   end
 
   describe "#after_exec_command" do
