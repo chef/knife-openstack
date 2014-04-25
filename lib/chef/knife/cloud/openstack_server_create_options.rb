@@ -11,7 +11,7 @@ class Chef
             include ServerCreateOptions
 
             # Openstack Server create params.
-            option :openstack_private_network,
+            option :private_network,
             :long => "--openstack-private-network",
             :description => "Use the private IP for bootstrapping rather than the public IP",
             :boolean => true,
@@ -35,6 +35,11 @@ class Chef
             :long => "--openstack-ssh-key-id KEY",
             :description => "The OpenStack SSH keypair id",
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
+
+            option :bootstrap_network,
+            :long => '--bootstrap-network NAME',
+            :default => 'public',
+            :description => "Specify network for bootstrapping. Default is 'public'."
 
           end
         end
