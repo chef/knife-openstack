@@ -1,6 +1,6 @@
 #
 # Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.
 
 require File.expand_path('../../spec_helper', __FILE__)
 require 'fog'
@@ -38,7 +38,6 @@ describe Chef::Knife::OpenstackServerCreate do
     @knife_openstack_create.stub(:puts)
     @knife_openstack_create.stub(:print)
 
-
     @openstack_servers = double()
     @new_openstack_server = double()
 
@@ -49,12 +48,12 @@ describe Chef::Knife::OpenstackServerCreate do
       :image => 'image_id',
       :availability_zone => 'public',
       :addresses => {
+        'foo' => [{'addr' => '34.56.78.90'}],
         'public' => [{'addr' => '75.101.253.10'}],
         'private' => [{'addr' => '10.251.75.20'}]
       },
       :password => 'password'
     }
-
 
     @openstack_server_attribs.each_pair do |attrib, value|
       @new_openstack_server.stub(attrib).and_return(value)
@@ -80,6 +79,7 @@ describe Chef::Knife::OpenstackServerCreate do
       @options[:server_create_timeout][:default].should == 600
       @options[:ssh_port][:default].should == '22'
       @options[:ssh_user][:default].should == 'root'
+      @options[:first_boot_attributes][:default].should == {}
     end
 
     it "doesn't set an OpenStack endpoint type by default" do
@@ -197,4 +197,42 @@ describe Chef::Knife::OpenstackServerCreate do
     end
   end
 
+  describe "when configuring the bootstrap process with private networks" do
+    before do
+      @knife_openstack_create.config[:private_network] = true
+
+      @bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
+        @new_openstack_server.addresses['private'].last['addr'])
+    end
+
+    it "configures the bootstrap to use private network" do
+      @bootstrap.name_args.should == ['10.251.75.20']
+    end
+  end
+
+  describe "when configuring the bootstrap process with alternate networks" do
+    before do
+      @knife_openstack_create.config[:bootstrap_network] = 'foo'
+
+      @bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
+        @new_openstack_server.addresses['foo'].last['addr'])
+    end
+
+    it "configures the bootstrap to use alternate network" do
+      @bootstrap.name_args.should == ['34.56.78.90']
+    end
+  end
+
+  describe "when configuring the bootstrap process with no networks" do
+    before do
+      @knife_openstack_create.config[:network] = false
+
+      @bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
+        @new_openstack_server.addresses['public'].last['addr'])
+    end
+
+    it "configures the bootstrap to use public network since none specified" do
+      @bootstrap.name_args.should == ['75.101.253.10']
+    end
+  end
 end
