@@ -1,7 +1,7 @@
 #
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
 #
 
 require 'chef/knife/cloud/fog/service'
