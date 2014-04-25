@@ -1,4 +1,7 @@
-## v0.9.2
+## v0.10.0
+* KNIFE-368 Ability to specify metadata during OpenStack server create
+* KNIFE-423 Add ability for knife-openstack to specify network IDs to attach
+* KNIFE-428 Added Availability zone to knife openstack
 * KNIFE-467 --no-network fails to find first network IP address
 
 ## v0.9.1
