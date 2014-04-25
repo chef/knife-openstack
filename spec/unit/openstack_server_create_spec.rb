@@ -142,6 +142,10 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
       @instance.server = double
+      # default bootstrap_network is public
+      @instance.config[:bootstrap_network] = "public"
+      # default no network is true
+      @instance.config[:network] = true
     end
 
     it "set bootstrap_ip" do
@@ -150,17 +154,25 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
     end
 
-    it "set private-ip as a bootstrap-ip if openstack-private-network option set" do
-      @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
-      @instance.config[:openstack_private_network] = true
+    it "set private-ip as a bootstrap-ip if private-network option set" do
+      @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
+      @instance.config[:private_network] = true
       @instance.before_bootstrap
       @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
     end
 
     it "raise error on nil bootstrap_ip" do
       @instance.ui.stub(:error)
+
       @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>nil}]})
       expect { @instance.before_bootstrap }.to raise_error(Chef::Knife::Cloud::CloudExceptions::BootstrapError, "No IP address available for bootstrapping.")
-    end    
+    end
+    
+    it "set public ip as default bootstrap network is public" do
+      @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
+      @instance.before_bootstrap
+      @instance.config[:bootstrap_ip_address].should == "127.0.0.2"
+    end
+
   end
 end
