@@ -35,6 +35,11 @@ class Chef
             :long => "--openstack-ssh-key-id KEY",
             :description => "The OpenStack SSH keypair id",
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
+            
+            option :user_data,
+            :long => "--user-data USER_DATA",
+            :description => "The file path containing user data information for this server",
+            :proc => Proc.new { |user_data| open(user_data) { |f| f.read }  }
 
           end
         end
