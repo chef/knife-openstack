@@ -27,12 +27,6 @@ class Chef
 
       banner "knife openstack flavor list (options)"
 
-      option :availability_zone,
-      :short => "-Z ZONE_NAME",
-      :long => "--availability-zone ZONE_NAME",
-      :description => "The availability zone for this server",
-      :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
-
       def run
 
         validate!
