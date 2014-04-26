@@ -1,7 +1,7 @@
 Knife OpenStack
 ===============
 
-This is the official Opscode Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Grizzly` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
+This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Grizzly` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
 Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issues.
 
@@ -107,13 +107,13 @@ Outputs a list of the security groups available to the currently configured Open
 
 # License #
 
-Author:: Seth Chisamore (<schisamo@opscode.com>)
+Author:: Seth Chisamore (<schisamo@getchef.com>)
 
-Author:: Matt Ray (<matt@opscode.com>)
+Author:: Matt Ray (<matt@getchef.com>)
 
 Author:: Chirag Jog (<chirag@clogeny.com>)
 
-Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
+Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
 
 License:: Apache License, Version 2.0
 
