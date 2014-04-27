@@ -4,6 +4,7 @@
 * KNIFE-428 Added Availability zone to knife openstack
 * KNIFE-467 --no-network fails to find first network IP address
 * KNIFE-474 knife openstack group list throws a fog deprecation warning
+* KNIFE-475 json-attributes option wasnt actually getting passed to bootstrap
 
 ## v0.9.1
 * KNIFE-462 missing user_data throws stack
