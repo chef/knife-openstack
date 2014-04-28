@@ -1,7 +1,7 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
+# Author:: Seth Chisamore (<schisamo@getchef.com>)
+# Author:: Matt Ray (<matt@getchef.com>)
+# Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,6 +71,11 @@ class Chef
             :default => false,
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_insecure] = key }
 
+          option :availability_zone,
+            :short => "-Z ZONE_NAME",
+            :long => "--availability-zone ZONE_NAME",
+            :description => "The availability zone for this server",
+            :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
         end
       end
 
