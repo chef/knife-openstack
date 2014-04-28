@@ -49,8 +49,10 @@ class Chef
               },
               :server_create_timeout => locate_config_value(:server_create_timeout)
             }
-            Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
 
+            @create_options[:server_def].merge!({:user_data => locate_config_value(:user_data)}) if locate_config_value(:user_data)
+
+            Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
             #set columns_with_info map
             @columns_with_info = [
             {:label => 'Instance ID', :key => 'id'},

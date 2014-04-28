@@ -76,6 +76,20 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.create_options[:server_def][:flavor_ref].should == Chef::Config[:knife][:flavor]
       @instance.create_options[:server_create_timeout].should == Chef::Config[:knife][:server_create_timeout]
     end
+
+    it "doesn't set user data in server_def if user_data not specified" do
+      @instance.service = double("Chef::Knife::Cloud::OpenstackService", :create_server_dependencies => nil)
+      @instance.before_exec_command
+      @instance.create_options[:server_def].should_not include(:user_data)
+    end
+
+    it "sets user data" do
+      user_data = "echo 'hello world' >> /tmp/user_data.txt"
+      Chef::Config[:knife][:user_data] = user_data
+      @instance.service = double("Chef::Knife::Cloud::OpenstackService", :create_server_dependencies => nil)
+      @instance.before_exec_command
+      @instance.create_options[:server_def][:user_data].should == user_data
+    end
   end
 
   describe "#after_exec_command" do
