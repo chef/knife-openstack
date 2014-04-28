@@ -11,7 +11,7 @@ class Chef
             include ServerCreateOptions
 
             # Openstack Server create params.
-            option :openstack_private_network,
+            option :private_network,
             :long => "--openstack-private-network",
             :description => "Use the private IP for bootstrapping rather than the public IP",
             :boolean => true,
@@ -40,6 +40,11 @@ class Chef
             :long => "--user-data USER_DATA",
             :description => "The file path containing user data information for this server",
             :proc => Proc.new { |user_data| open(user_data) { |f| f.read }  }
+
+            option :bootstrap_network,
+            :long => '--bootstrap-network NAME',
+            :default => 'public',
+            :description => "Specify network for bootstrapping. Default is 'public'."
 
           end
         end

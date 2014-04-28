@@ -113,9 +113,20 @@ class Chef
 
         def before_bootstrap
           super
+          # private_network means bootstrap_network = 'private'
+          config[:bootstrap_network] = 'private' if config[:private_network]
+
           # Which IP address to bootstrap
-          bootstrap_ip_address = primary_public_ip_address(server.addresses) if primary_public_ip_address(server.addresses)
-          bootstrap_ip_address = primary_private_ip_address(server.addresses) if config[:openstack_private_network]
+          unless config[:network] # --no-network
+            bootstrap_ip_address = primary_public_ip_address(server.addresses) ||
+              primary_private_ip_address(server.addresses) ||
+              server.addresses.first
+            Chef::Log.debug("No Bootstrap Network: #{config[:bootstrap_network]}")
+          else
+            bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network])
+            Chef::Log.debug("Bootstrap Network: #{config[:bootstrap_network]}")
+          end
+
           Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
           if bootstrap_ip_address.nil?
             error_message = "No IP address available for bootstrapping."

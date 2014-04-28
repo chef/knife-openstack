@@ -6,12 +6,15 @@ class Chef
       module OpenstackHelpers
 
         def primary_private_ip_address(addresses)
-          return addresses['private'].last['addr'] if addresses['private'] && !addresses['private'].empty?
+          primary_network_ip_address(addresses, 'private')
         end
 
-        #we use last since the floating IP goes there
         def primary_public_ip_address(addresses)
-          return addresses['public'].last['addr'] if addresses['public'] && !addresses['public'].empty?
+          primary_network_ip_address(addresses, 'public')
+        end
+
+        def primary_network_ip_address(addresses, network_name)
+          return addresses[network_name].last['addr'] if addresses[network_name] && !addresses[network_name].empty?
         end
 
         def create_service_instance
