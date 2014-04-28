@@ -46,6 +46,12 @@ class Chef
             :default => 'public',
             :description => "Specify network for bootstrapping. Default is 'public'."
 
+            option :network,
+            :long => "--no-network",
+            :boolean => true,
+            :default => true,
+            :description => "Use first available network for bootstrapping if 'public' and 'private' are unavailable."
+
           end
         end
       end

@@ -73,10 +73,9 @@ class Chef
 
         # Setup the floating ip after server creation.
         def after_exec_command
-          msg_pair("Flavor", server.flavor['id'])
-          msg_pair("Image", server.image['id'])
           Chef::Log.debug("Addresses #{server.addresses}")
           msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
+          msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
 
           floating_address = locate_config_value(:openstack_floating_ip)
           Chef::Log.debug("Floating IP Address requested #{floating_address}")
