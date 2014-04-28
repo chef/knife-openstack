@@ -451,7 +451,7 @@ class Chef
       @image ||= connection.images.get(locate_config_value(:image))
     end
 
-    def is_floating_ip_valid
+    def is_floating_ip_valid_not_valid
       address = locate_config_value(:floating_ip)
       pool = locate_config_value(:availablity_zone)
       addresses = connection.addresses
@@ -459,9 +459,9 @@ class Chef
       #floating requested without value
       if address.nil? && address.pool == pool
         if addresses.find_index {|a| a.fixed_ip.nil?}
-          return true
+          return true # requested floating IP does not exist
         else
-          return false # requested floating IP does not exist
+          return false
         end
       end
     end
@@ -479,7 +479,7 @@ class Chef
         exit 1
       end
 
-      if !is_floating_ip_valid
+      if is_floating_ip_valid_not_valid
         ui.error("You have either requested an invalid floating IP address or none are available.")
         exit 1
       end
