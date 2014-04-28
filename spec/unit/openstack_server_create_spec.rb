@@ -1,7 +1,7 @@
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
-# Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.
 
 require File.expand_path('../../spec_helper', __FILE__)
 require 'chef/knife/openstack_server_create'
