@@ -31,6 +31,11 @@ class Chef
               :description => "Your OpenStack API endpoint",
               :proc => Proc.new { |endpoint| Chef::Config[:knife][:openstack_auth_url] = endpoint }
 
+            option :openstack_endpoint_type,
+              :long => "--openstack-endpoint-type ENDPOINT_TYPE",
+              :description => "OpenStack endpoint type to use (publicURL, internalURL, adminURL)",
+              :proc => Proc.new { |type| Chef::Config[:knife][:openstack_endpoint_type] = type }
+
             option :openstack_insecure,
               :long => "--insecure",
               :description => "Ignore SSL certificate on the Auth URL",

@@ -43,5 +43,9 @@ describe Chef::Knife::Cloud::OpenstackService do
       @instance.instance_variable_get(:@auth_params)[:openstack_auth_url].should_not == @api_endpoint
       @instance.instance_variable_get(:@auth_params)[:openstack_auth_url].should == nil
     end
+
+    it "doesn't set an OpenStack endpoint type by default" do
+      Chef::Config[:knife][:openstack_endpoint_type].should == nil
+    end
   end
 end
