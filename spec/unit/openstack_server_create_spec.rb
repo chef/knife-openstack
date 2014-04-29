@@ -114,8 +114,6 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_floating_ip] = "-1"
       @instance.service = Chef::Knife::Cloud::Service.new
       @instance.server = double
-      @instance.server.should_receive(:flavor).and_return({"id" => "2"})
-      @instance.server.should_receive(:image).and_return({"id" => "image_id"})
       @instance.server.should_not_receive(:associate_address)
       @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
       @instance.should_receive(:bootstrap)
@@ -126,8 +124,6 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_floating_ip] = nil
       @instance.service = Chef::Knife::Cloud::Service.new
       @instance.server = double
-      @instance.server.should_receive(:flavor).and_return({"id" => "2"})
-      @instance.server.should_receive(:image).and_return({"id" => "image_id"})
       @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
       @instance.should_receive(:bootstrap)
       connection = double
@@ -145,8 +141,6 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.service = Chef::Knife::Cloud::Service.new
       @instance.ui.stub(:fatal)
       @instance.server = double
-      @instance.server.should_receive(:flavor).and_return({"id" => "2"})
-      @instance.server.should_receive(:image).and_return({"id" => "image_id"})
       @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
       @instance.should_not_receive(:bootstrap)
       connection = double

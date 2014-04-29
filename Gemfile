@@ -9,8 +9,6 @@ group :development do
   gem 'rspec_junit_formatter'
   gem 'rake'
   gem 'mixlib-shellout'
-  gem 'active_support'
-  gem 'activesupport'
   gem 'knife-cloud', :git => 'https://github.com/opscode/knife-cloud.git'
   gem 'knife-windows', :git => 'https://github.com/opscode/knife-windows.git'
 end
