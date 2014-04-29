@@ -12,7 +12,7 @@ require 'knife-openstack/version'
 require 'test/knife-utils/test_bed'
 require 'resource_spec_helper'
 require 'server_command_common_spec_helper'
-
+require 'tempfile'
 
 def find_instance_id(instance_name, file)
   file.lines.each do |line|
@@ -100,3 +100,14 @@ def init_openstack_test
   end
 end
 
+def create_sh_user_data_file
+  file = Tempfile.new(['test_user_data', '.sh'])
+  file.write("echo 'sample user data file created' >> #{Dir.tmpdir}/testuserdata.txt")
+  file.rewind
+  file
+end
+
+def delete_sh_user_data_file(file)
+  file.close
+  file.unlink
+end

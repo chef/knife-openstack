@@ -379,6 +379,64 @@ describe 'knife-openstack integration test' , :if => is_config_present do
 
       it {pending 'empty floating ip pool'}
     end
+
+    context 'when standard options and user data specified' do
+      before(:each) do 
+        create_node_name("linux")
+        @user_data_file = create_sh_user_data_file
+      end
+
+      after do
+        # check user_data exists in server def
+        cmd_output.should include("user_data=>#{@user_data_file.read}")
+        delete_sh_user_data_file(@user_data_file)
+        run(delete_instance_cmd("#{cmd_output}"))
+      end
+
+      let(:command) { "knife openstack server create -N #{@name_node}"+
+      " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
+      " --template-file " + get_linux_template_file_path +
+      " --server-url http://localhost:8889" +
+      " --yes --server-create-timeout 1800" +
+      get_ssh_credentials +
+      " --identity-file #{temp_dir}/openstack.pem" +
+      " --user-data #{@user_data_file.path}" +
+      append_openstack_creds + " --sudo -VV"}
+
+      run_cmd_check_status_and_output("succeed", "#{@name_node}")
+    end
+
+    context 'when standard options and no network option specified' do
+      server_create_common_bfr_aftr
+
+      let(:command) { "knife openstack server create -N #{@name_node}"+
+      " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
+      " --template-file " + get_linux_template_file_path +
+      " --server-url http://localhost:8889" +
+      " --yes --server-create-timeout 1800" +
+      " --no-network" +
+      get_ssh_credentials +
+      " --identity-file #{temp_dir}/openstack.pem"+
+      append_openstack_creds + " --sudo"}
+
+      run_cmd_check_status_and_output("succeed", "#{@name_node}")
+    end
+
+    context 'when standard options and openstack endpoint type option is specified' do
+      server_create_common_bfr_aftr
+
+      let(:command) { "knife openstack server create -N #{@name_node}"+
+      " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
+      " --template-file " + get_linux_template_file_path +
+      " --server-url http://localhost:8889" +
+      " --yes --server-create-timeout 1800" +
+      " --openstack-endpoint-type publicURL" +
+      get_ssh_credentials +
+      " --identity-file #{temp_dir}/openstack.pem"+
+      append_openstack_creds + " --sudo"}
+
+      run_cmd_check_status_and_output("succeed", "#{@name_node}")
+    end
   end
 
   describe 'create and bootstrap Windows Server'  do
@@ -390,7 +448,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       before(:each) { create_node_name("windows") }
       
       let(:command) { "knife openstack server create -N #{@name_node}" +
-      " -I #{@os_windows_image} -VV " +
+      " -I #{@os_windows_image} " +
       " -f #{@os_windows_flavor} " +
       " --template-file " + get_windows_msi_template_file_path +
       " --server-url http://localhost:8889" +
