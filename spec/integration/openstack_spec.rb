@@ -388,7 +388,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
 
       after do
         # check user_data exists in server def
-        cmd_output.should include("user_data=>#{@user_data_file.read}")
+        cmd_output.should include("user_data=>\"#{@user_data_file.read}\"")
         delete_sh_user_data_file(@user_data_file)
         run(delete_instance_cmd("#{cmd_output}"))
       end
