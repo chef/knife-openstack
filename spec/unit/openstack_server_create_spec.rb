@@ -160,6 +160,19 @@ describe Chef::Knife::OpenstackServerCreate do
       @bootstrap.config[:chef_node_name].should == 'blarf'
     end
 
+    it "configures the bootstrap to use the server password" do
+      @bootstrap.config[:ssh_password].should == 'password'
+    end
+
+    it "configures the bootstrap to use the server password" do
+      @knife_openstack_create.config[:ssh_password] = 'testing123'
+
+      bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
+        @new_openstack_server.addresses['public'].last['addr'])
+
+      bootstrap.config[:ssh_password].should == 'testing123'
+    end
+
     it "configures the bootstrap to use the OpenStack server id if no explicit node name is set" do
       @knife_openstack_create.config[:chef_node_name] = nil
 
