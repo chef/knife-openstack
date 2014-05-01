@@ -272,6 +272,7 @@ class Chef
             :image_ref => locate_config_value(:image),
             :flavor_ref => locate_config_value(:flavor),
             :security_groups => locate_config_value(:security_groups),
+            :availability_zone => locate_config_value(:availability_zone),
             :key_name => locate_config_value(:openstack_ssh_key_id)
           }
         else
@@ -280,12 +281,14 @@ class Chef
             :image_ref => locate_config_value(:image),
             :flavor_ref => locate_config_value(:flavor),
             :security_groups => locate_config_value(:security_groups),
+            :availability_zone => locate_config_value(:availability_zone),
             :key_name => locate_config_value(:openstack_ssh_key_id),
             :user_data => locate_config_value(:user_data)
           }
         end
 
         Chef::Log.debug("Name #{node_name}")
+        Chef::Log.debug("Availability Zone #{locate_config_value(:availability_zone)}")
         Chef::Log.debug("Image #{locate_config_value(:image)}")
         Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
         Chef::Log.debug("Requested Floating IP #{locate_config_value(:floating_ip)}")
@@ -313,6 +316,7 @@ class Chef
 
         msg_pair("Instance Name", server.name)
         msg_pair("Instance ID", server.id)
+        msg_pair("Availability zone", server.availability_zone)
 
         print "\n#{ui.color("Waiting for server", :magenta)}"
 
@@ -326,8 +330,8 @@ class Chef
         msg_pair("SSH Identity File", config[:identity_file])
         msg_pair("SSH Keypair", server.key_name) if server.key_name
         msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
-        Chef::Log.debug("Addresses #{server.addresses}")
 
+        Chef::Log.debug("Addresses #{server.addresses}")
         msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
         msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
 
@@ -463,12 +467,13 @@ class Chef
           else
             return false # no floating IPs available
           end
-        end
-        # floating requested with value
-        if addresses.find_index { |a| a.ip == address }
-          return true
         else
-          return false # requested floating IP does not exist
+          # floating requested with value
+          if addresses.find_index { |a| a.ip == address }
+            return true
+          else
+            return false # requested floating IP does not exist
+          end
         end
       end
 
