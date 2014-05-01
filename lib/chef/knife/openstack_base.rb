@@ -71,6 +71,11 @@ class Chef
             :default => false,
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_insecure] = key }
 
+          option :availability_zone,
+            :short => "-Z ZONE_NAME",
+            :long => "--availability-zone ZONE_NAME",
+            :description => "The availability zone for this server",
+            :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
         end
       end
 

@@ -46,6 +46,7 @@ describe Chef::Knife::OpenstackServerCreate do
       :key_name => 'key_name',
       :flavor => 'flavor_id',
       :image => 'image_id',
+      :availability_zone => 'zone1',
       :addresses => {
         'foo' => [{'addr' => '34.56.78.90'}],
         'public' => [{'addr' => '75.101.253.10'}],
@@ -67,6 +68,7 @@ describe Chef::Knife::OpenstackServerCreate do
     it "ensures default options" do
       @options[:bootstrap_protocol][:default].should == nil
       @options[:distro][:default].should == 'chef-full'
+      @options[:availability_zone][:default].should == nil
       @options[:floating_ip][:default].should == '-1'
       @options[:host_key_verify][:default].should == true
       @options[:private_network][:default].should == false
