@@ -164,7 +164,7 @@ describe Chef::Knife::OpenstackServerCreate do
       @bootstrap.config[:ssh_password].should == 'password'
     end
 
-    it "configures the bootstrap to use the server password" do
+    it "configures the bootstrap to use the config ssh password" do
       @knife_openstack_create.config[:ssh_password] = 'testing123'
 
       bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
