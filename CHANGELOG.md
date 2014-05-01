@@ -5,13 +5,13 @@ NEXT
 * KNIFE-469 Error when 2 shared tenant network: FATAL: Bad request (400): Multiple possible networks found, use a Network ID to be more specific.
 * KNIFE-471 Explicitly define NIC for private network when creating server
 * KNIFE-477 Delete openstack instance by name
-* KNIFE-478 Generated SSH password not passed to bootstrap
 
 DONE
 * KNIFE-428 Added Availability zone to knife openstack
 * KNIFE-467 --no-network fails to find first network IP address
 * KNIFE-474 knife openstack group list throws a fog deprecation warning
 * KNIFE-475 json-attributes option wasnt actually getting passed to bootstrap
+* KNIFE-478 Generated SSH password not passed to bootstrap
 
 ## v0.9.1
 * KNIFE-462 missing user_data throws stack
