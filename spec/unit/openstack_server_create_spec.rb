@@ -11,13 +11,15 @@ describe Chef::Knife::OpenstackServerCreate do
   before do
 
     @openstack_connection = double(Fog::Compute::OpenStack)
-    @openstack_connection.stub_chain(:flavors, :get).and_return ('flavor_id')
-    @openstack_connection.stub_chain(:images, :get).and_return double('image_id')
+    @openstack_connection.stub_chain(:flavors, :find).and_return double('flavor', {:id => 'flavor_id'})
+    @openstack_connection.stub_chain(:images, :find).and_return double('image', {:id => 'image_id'})
     @openstack_connection.stub_chain(:addresses).and_return [double('addresses', {
           :instance_id => nil,
           :ip => '111.111.111.111',
           :fixed_ip => true
         })]
+
+    @openstack_network_connection = double(Fog::Network::OpenStack)
 
     @knife_openstack_create = Chef::Knife::OpenstackServerCreate.new
     @knife_openstack_create.initial_sleep_delay = 0
@@ -39,7 +41,11 @@ describe Chef::Knife::OpenstackServerCreate do
     @knife_openstack_create.stub(:print)
 
 
+    @openstack_current_tenant = double('tenant', {'id' => double()})
+    @openstack_network_connection.stub(:current_tenant).and_return(@openstack_current_tenant)
     @openstack_servers = double()
+    @openstack_networks = double()
+    @openstack_networks.stub_chain(:data).and_return( {:body => {'networks' => [{'name' => 'private'}, {'name' => 'public'}]}})
     @new_openstack_server = double()
 
     @openstack_server_attribs = { :name => 'Mock Server',
@@ -93,7 +99,12 @@ describe Chef::Knife::OpenstackServerCreate do
     before do
       @openstack_servers.should_receive(:create).and_return(@new_openstack_server)
       @openstack_connection.should_receive(:servers).and_return(@openstack_servers)
+      @openstack_network_connection.should_receive(:current_tenant).and_return(@openstack_current_tenant)
+      @openstack_network_connection.should_receive(:list_networks).and_return(@openstack_networks)
+      @openstack_network_connection.should_receive(:list_networks).and_return(@openstack_networks)
+      @openstack_current_tenant.should_receive(:[]).and_return(double())
       Fog::Compute::OpenStack.should_receive(:new).and_return(@openstack_connection)
+      Fog::Network::OpenStack.should_receive(:new).and_return(@openstack_network_connection)
       @bootstrap = Chef::Knife::Bootstrap.new
       Chef::Knife::Bootstrap.stub(:new).and_return(@bootstrap)
       @bootstrap.should_receive(:run)

@@ -40,15 +40,15 @@ class Chef
       attr_accessor :initial_sleep_delay
 
       option :flavor,
-      :short => "-f FLAVOR_ID",
-      :long => "--flavor FLAVOR_ID",
-      :description => "The flavor ID of server (m1.small, m1.medium, etc)",
+      :short => "-f FLAVOR",
+      :long => "--flavor FLAVOR",
+      :description => "The flavor name or ID of server (m1.small, m1.medium, etc)",
       :proc => Proc.new { |f| Chef::Config[:knife][:flavor] = f }
 
       option :image,
-      :short => "-I IMAGE_ID",
-      :long => "--image IMAGE_ID",
-      :description => "The image ID for the server",
+      :short => "-I IMAGE",
+      :long => "--image IMAGE",
+      :description => "A regexp that matches of the name of an image or an image ID for the server",
       :proc => Proc.new { |i| Chef::Config[:knife][:image] = i }
 
       option :security_groups,
@@ -72,7 +72,7 @@ class Chef
       option :bootstrap_network,
       :long => '--bootstrap-network NAME',
       :default => 'public',
-      :description => "Specify network for bootstrapping. Default is 'public'."
+      :description => "Specify network for bootstrapping. Default is 'public' or the first address on a network that is router:external."
 
       option :network,
       :long => "--no-network",
@@ -269,21 +269,26 @@ class Chef
         if locate_config_value(:user_data).nil?
           server_def = {
             :name => node_name,
-            :image_ref => locate_config_value(:image),
-            :flavor_ref => locate_config_value(:flavor),
+            :image_ref => image.id,
+            :flavor_ref => flavor.id,
             :security_groups => locate_config_value(:security_groups),
             :key_name => locate_config_value(:openstack_ssh_key_id)
           }
         else
           server_def = {
             :name => node_name,
-            :image_ref => locate_config_value(:image),
-            :flavor_ref => locate_config_value(:flavor),
+            :image_ref => image.id,
+            :flavor_ref => flavor.id,
             :security_groups => locate_config_value(:security_groups),
             :key_name => locate_config_value(:openstack_ssh_key_id),
             :user_data => locate_config_value(:user_data)
           }
         end
+
+        # explicitly define the private network to add an interface on
+        # since there may be more than one candidate. 
+        private_nic = {:net_id => private_network['id']} unless private_network.nil?
+        server_def[:nics] = [private_nic] unless private_nic.nil?
 
         Chef::Log.debug("Name #{node_name}")
         Chef::Log.debug("Image #{locate_config_value(:image)}")
@@ -355,7 +360,11 @@ class Chef
         Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
         # private_network means bootstrap_network = 'private'
-        config[:bootstrap_network] = 'private' if config[:private_network]
+        config[:bootstrap_network] = private_network['name'] if config[:private_network]
+        
+        # change bootstrap_network to name of public_network if set to 'public'
+        config[:bootstrap_network] = public_network['name'] if config[:bootstrap_network] == 'public' && public_network['name'] != 'public'
+        Chef::Log.debug("Bootstrap Network is now #{config[:bootstrap_network]}")
 
         unless config[:network] # --no-network
           bootstrap_ip_address = primary_public_ip_address(server.addresses) ||
@@ -363,7 +372,11 @@ class Chef
             server.addresses.first
           Chef::Log.debug("No Bootstrap Network: #{config[:bootstrap_network]}")
         else
-          bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network])
+          # if using a floating_ip, server.addresses will include that IP in a 
+          # network named 'public' no matter what the name of the network it 
+          # came from is actually named, so we'll try 'public' explicitly.
+          bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network]) ||
+            primary_network_ip_address(server.addresses, 'public')
           Chef::Log.debug("Bootstrap Network: #{config[:bootstrap_network]}")
         end
 
@@ -441,11 +454,11 @@ class Chef
       end
 
       def flavor
-        @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+        @flavor ||= connection.flavors.find{|f| f.name == locate_config_value(:flavor) || f.id == locate_config_value(:flavor) }
       end
 
       def image
-        @image ||= connection.images.get(locate_config_value(:image))
+        @image ||= connection.images.find{|img| img.name =~ /#{locate_config_value(:image)}/ || img.id == locate_config_value(:image) }
       end
 
       def is_floating_ip_valid
