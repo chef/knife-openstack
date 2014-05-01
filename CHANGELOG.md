@@ -1,6 +1,13 @@
 ## v0.10.0
+NEXT
 * KNIFE-368 Ability to specify metadata during OpenStack server create
 * KNIFE-423 Add ability for knife-openstack to specify network IDs to attach
+* KNIFE-469 Error when 2 shared tenant network: FATAL: Bad request (400): Multiple possible networks found, use a Network ID to be more specific.
+* KNIFE-471 Explicitly define NIC for private network when creating server
+* KNIFE-477 Delete openstack instance by name
+* KNIFE-478 Generated SSH password not passed to bootstrap
+
+DONE
 * KNIFE-428 Added Availability zone to knife openstack
 * KNIFE-467 --no-network fails to find first network IP address
 * KNIFE-474 knife openstack group list throws a fog deprecation warning
