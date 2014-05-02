@@ -64,7 +64,7 @@ class Chef
 
         @name_args.each do |instance_id|
           begin
-            server = connection.servers.get(instance_id) || connection.servers.all(:name => instance_id).first
+            server = find_server(instance_id)
 
             msg_pair("Instance Name", server.name)
             msg_pair("Instance ID", server.id)
@@ -98,6 +98,12 @@ class Chef
             raise e
           end
         end
+      end
+
+      private
+
+      def find_server(instance_id)
+        connection.servers.get(instance_id) || connection.servers.all(:name => instance_id).first
       end
 
     end
