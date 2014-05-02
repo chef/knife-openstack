@@ -77,19 +77,3 @@ DONE
 
 ## V0.5.2
 * initial Cactus release using EC2 API
-
-# BACKLOG/ISSUES #
-This is a list of missing(?) features and open questions currently under development consideration:
-
-* Basic availability zones support (Jarek Zmudzinski) NEED TESTING ACCESS FOR AVAILABILITY ZONES
-* purge only works when names match up with clients
-* `knife openstack floating list|associate|release NODE` with --floating-ip-pool also
-* KNIFE-229 Allow specifying the name of the pool when using floating IPs
-* attempt to allocate a floating ipaddress if none if free, currently missing in Fog
-* KNIFE-76 take either the flavor ID or the flavor name
-* take either the image ID or the image name (similar for KNIFE-76)
-* KNIFE-86 server create with expired password hangs
-* KNIFE-231 added ability to specify arbitrary network ID
-* assumption of only single floating IP (and fog uses the last as the public_ip_address)
-* probably other places public network is assumed that could cause issues
-* fog is putting the original public IP address into the private_ip_address method when you get a floating_ip, this is wrong. Remove KNIFE-248 code once fixed.
