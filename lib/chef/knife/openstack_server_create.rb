@@ -65,7 +65,7 @@ class Chef
 
       option :network_ids,
       :long => "--network-ids NETWORK_ID_1,NETWORK_ID_2,NETWORK_ID_3",
-      :description => "Comma separated list of the UUID(s) of the network(s) to create on your new node",
+      :description => "Comma separated list of the UUID(s) of the network(s) for the server to attach",
       :proc => Proc.new { |networks| networks.split(',') }
 
       option :floating_ip,

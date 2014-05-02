@@ -124,13 +124,16 @@ class Chef
               :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
             }
             )
-                        rescue Excon::Errors::Unauthorized => e
-                          ui.fatal("Connection failure, please check your OpenStack username and password.")
-                          exit 1
-                        rescue Excon::Errors::SocketError => e
-                          ui.fatal("Connection failure, please check your OpenStack authentication URL.")
-                          exit 1
-                        end
+                     rescue Excon::Errors::Unauthorized => e
+                       ui.fatal("Connection failure, please check your OpenStack username and password.")
+                       exit 1
+                     rescue Excon::Errors::SocketError => e
+                       ui.fatal("Connection failure, please check your OpenStack authentication URL.")
+                       exit 1
+                     rescue Fog::Errors::NotFound => e
+                       ui.fatal("No OpenStack Network service found. This command is unavailable with nova-network.")
+                       exit 1
+                     end
       end
 
       def locate_config_value(key)
