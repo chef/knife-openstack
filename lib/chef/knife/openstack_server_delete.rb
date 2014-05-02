@@ -92,6 +92,8 @@ class Chef
 
           rescue NoMethodError
             ui.error("Could not locate server '#{instance_id}'.")
+          rescue ArgumentError => e
+            ui.error(e.message)
           rescue Excon::Errors::BadRequest => e
             response = Chef::JSONCompat.from_json(e.response.body)
             ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
@@ -103,7 +105,17 @@ class Chef
       private
 
       def find_server(instance_id)
-        connection.servers.get(instance_id) || connection.servers.all(:name => instance_id).first
+        if server = connection.servers.get(instance_id)
+          return server
+        end
+
+        if servers = connection.servers.all(:name => instance_id)
+          if servers.length > 1
+            raise ArgumentError.new("Multiple server matches found for '#{instance_id}', use an instance_id to be more specific")
+          else
+            servers.first
+          end
+        end
       end
 
     end
