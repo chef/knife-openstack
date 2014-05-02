@@ -62,9 +62,9 @@ class Chef
 
         validate!
 
-        @name_args.each do |instance_id|
+        @name_args.each do |search_term|
           begin
-            server = find_server(instance_id)
+            server = find_server(search_term)
 
             msg_pair("Instance Name", server.name)
             msg_pair("Instance ID", server.id)
@@ -83,15 +83,15 @@ class Chef
             ui.warn("Deleted server #{server.id}")
 
             if config[:purge]
-              thing_to_delete = config[:chef_node_name] || instance_id
+              thing_to_delete = config[:chef_node_name] || search_term
               destroy_item(Chef::Node, thing_to_delete, "node")
               destroy_item(Chef::ApiClient, thing_to_delete, "client")
             else
-              ui.warn("Corresponding node and client for the #{instance_id} server were not deleted and remain registered with the Chef Server")
+              ui.warn("Corresponding node and client for the #{search_term} server were not deleted and remain registered with the Chef Server")
             end
 
           rescue NoMethodError
-            ui.error("Could not locate server '#{instance_id}'.")
+            ui.error("Could not locate server '#{search_term}'.")
           rescue ArgumentError => e
             ui.error(e.message)
           rescue Excon::Errors::BadRequest => e
@@ -104,14 +104,14 @@ class Chef
 
       private
 
-      def find_server(instance_id)
-        if server = connection.servers.get(instance_id)
+      def find_server(search_term)
+        if server = connection.servers.get(search_term)
           return server
         end
 
-        if servers = connection.servers.all(:name => instance_id)
+        if servers = connection.servers.all(:name => search_term)
           if servers.length > 1
-            raise ArgumentError.new("Multiple server matches found for '#{instance_id}', use an instance_id to be more specific")
+            raise ArgumentError.new("Multiple server matches found for '#{search_term}', use an instance_id to be more specific")
           else
             servers.first
           end
