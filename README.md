@@ -105,6 +105,12 @@ knife openstack group list
 
 Outputs a list of the security groups available to the currently configured OpenStack Compute cloud account. Each group may have multiple rules. This data may be useful when choosing your security group(s) to pass to the `knife openstack server create` subcommand.
 
+knife openstack network list
+--------------------
+
+Outputs a list of the networks available to the currently configured OpenStack Compute cloud account. This data may be useful when choosing your networks to pass to the `knife openstack server create` subcommand. This command is only available with OpenStack deployments using the Neutron network service (not nova-network).
+
+
 # License #
 
 Author:: Seth Chisamore (<schisamo@getchef.com>)
