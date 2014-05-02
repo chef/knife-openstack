@@ -102,6 +102,32 @@ class Chef
                         end
       end
 
+      def network
+        Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
+        Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
+        Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
+        Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure].to_s}")
+
+        @network ||= begin
+          network = Fog::Network.new(
+            :provider => 'OpenStack',
+            :openstack_username => Chef::Config[:knife][:openstack_username],
+            :openstack_api_key => Chef::Config[:knife][:openstack_password],
+            :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
+            :openstack_tenant => Chef::Config[:knife][:openstack_tenant],
+            :connection_options => {
+              :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
+            }
+            )
+                        rescue Excon::Errors::Unauthorized => e
+                          ui.fatal("Connection failure, please check your OpenStack username and password.")
+                          exit 1
+                        rescue Excon::Errors::SocketError => e
+                          ui.fatal("Connection failure, please check your OpenStack authentication URL.")
+                          exit 1
+                        end
+      end
+
       def locate_config_value(key)
         key = key.to_sym
         Chef::Config[:knife][key] || config[key]

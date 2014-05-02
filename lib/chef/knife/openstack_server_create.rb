@@ -63,6 +63,11 @@ class Chef
       :long => "--node-name NAME",
       :description => "The Chef node name for your new node"
 
+      option :network_ids,
+      :long => "--network-ids NETWORK_ID_1,NETWORK_ID_2,NETWORK_ID_3",
+      :description => "Comma separated list of the UUID(s) of the network(s) to create on your new node",
+      :proc => Proc.new { |networks| networks.split(',') }
+
       option :floating_ip,
       :short => "-a [IP]",
       :long => "--floating-ip [IP]",
@@ -272,7 +277,11 @@ class Chef
             :image_ref => locate_config_value(:image),
             :flavor_ref => locate_config_value(:flavor),
             :security_groups => locate_config_value(:security_groups),
-            :key_name => locate_config_value(:openstack_ssh_key_id)
+            :key_name => locate_config_value(:openstack_ssh_key_id),
+            :nics => locate_config_value(:network_ids).map do |nic|
+              nic_id = { 'net_id' => nic }
+              nic_id
+            end
           }
         else
           server_def = {
@@ -281,7 +290,11 @@ class Chef
             :flavor_ref => locate_config_value(:flavor),
             :security_groups => locate_config_value(:security_groups),
             :key_name => locate_config_value(:openstack_ssh_key_id),
-            :user_data => locate_config_value(:user_data)
+            :user_data => locate_config_value(:user_data),
+            :nics => locate_config_value(:network_ids).map do |nic|
+              nic_id = { 'net_id' => nic }
+              nic_id
+            end
           }
         end
 
