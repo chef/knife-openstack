@@ -40,15 +40,15 @@ class Chef
       attr_accessor :initial_sleep_delay
 
       option :flavor,
-      :short => "-f FLAVOR_ID",
-      :long => "--flavor FLAVOR_ID",
-      :description => "The flavor ID of server (m1.small, m1.medium, etc)",
+      :short => "-f FLAVOR",
+      :long => "--flavor FLAVOR",
+      :description => "The flavor name or ID of server (m1.small, m1.medium, etc)",
       :proc => Proc.new { |f| Chef::Config[:knife][:flavor] = f }
 
       option :image,
-      :short => "-I IMAGE_ID",
-      :long => "--image IMAGE_ID",
-      :description => "The image ID for the server",
+      :short => "-I IMAGE",
+      :long => "--image IMAGE",
+      :description => "A regexp matching an image name or an image ID for the server",
       :proc => Proc.new { |i| Chef::Config[:knife][:image] = i }
 
       option :security_groups,
@@ -280,8 +280,8 @@ class Chef
         # define the server to be created
         server_def = {
           :name => node_name,
-          :image_ref => locate_config_value(:image),
-          :flavor_ref => locate_config_value(:flavor),
+          :image_ref => image.id,
+          :flavor_ref => flavor.id,
           :security_groups => locate_config_value(:security_groups),
           :availability_zone => locate_config_value(:availability_zone),
           :metadata => locate_config_value(:metadata),
@@ -456,11 +456,11 @@ class Chef
       end
 
       def flavor
-        @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+        @flavor ||= connection.flavors.find{|f| f.name == locate_config_value(:flavor) || f.id == locate_config_value(:flavor) }
       end
 
       def image
-        @image ||= connection.images.get(locate_config_value(:image))
+        @image ||= connection.images.find{|img| img.name =~ /#{locate_config_value(:image)}/ || img.id == locate_config_value(:image) }
       end
 
       def is_floating_ip_valid
