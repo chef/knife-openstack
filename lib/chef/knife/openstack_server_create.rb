@@ -277,6 +277,12 @@ class Chef
         node_name = get_node_name(config[:chef_node_name])
 
         # this really should be caught in Fog
+        unless locate_config_value(:network_ids).nil?
+          network_ids = locate_config_value(:network_ids).map do |nic|
+              nic_id = { 'net_id' => nic }
+              nic_id
+          end
+        end
         if locate_config_value(:user_data).nil?
           server_def = {
             :name => node_name,
@@ -286,10 +292,7 @@ class Chef
             :availability_zone => locate_config_value(:availability_zone),
             :metadata => locate_config_value(:metadata),
             :key_name => locate_config_value(:openstack_ssh_key_id),
-            :nics => locate_config_value(:network_ids).map do |nic|
-              nic_id = { 'net_id' => nic }
-              nic_id
-            end
+            :nics => network_ids
           }
         else
           server_def = {
@@ -301,10 +304,7 @@ class Chef
             :metadata => locate_config_value(:metadata),
             :key_name => locate_config_value(:openstack_ssh_key_id),
             :user_data => locate_config_value(:user_data),
-            :nics => locate_config_value(:network_ids).map do |nic|
-              nic_id = { 'net_id' => nic }
-              nic_id
-            end
+            :nics => network_ids
           }
         end
 
