@@ -11,8 +11,8 @@ describe Chef::Knife::OpenstackServerCreate do
   before do
 
     @openstack_connection = double(Fog::Compute::OpenStack)
-    @openstack_connection.stub_chain(:flavors, :get).and_return ('flavor_id')
-    @openstack_connection.stub_chain(:images, :get).and_return double('image_id')
+    @openstack_connection.stub_chain(:flavors, :find).and_return double('flavor', {:id => 'flavor_id'})
+    @openstack_connection.stub_chain(:images, :find).and_return double('image', {:id => 'image_id'})
     @openstack_connection.stub_chain(:addresses).and_return [double('addresses', {
           :instance_id => nil,
           :ip => '111.111.111.111',
@@ -46,6 +46,7 @@ describe Chef::Knife::OpenstackServerCreate do
       :key_name => 'key_name',
       :flavor => 'flavor_id',
       :image => 'image_id',
+      :availability_zone => 'zone1',
       :addresses => {
         'foo' => [{'addr' => '34.56.78.90'}],
         'public' => [{'addr' => '75.101.253.10'}],
@@ -67,6 +68,8 @@ describe Chef::Knife::OpenstackServerCreate do
     it "ensures default options" do
       @options[:bootstrap_protocol][:default].should == nil
       @options[:distro][:default].should == 'chef-full'
+      @options[:availability_zone][:default].should == nil
+      @options[:metadata][:default].should == nil
       @options[:floating_ip][:default].should == '-1'
       @options[:host_key_verify][:default].should == true
       @options[:private_network][:default].should == false
@@ -130,6 +133,7 @@ describe Chef::Knife::OpenstackServerCreate do
       @knife_openstack_create.config[:chef_node_name] = "blarf"
       @knife_openstack_create.config[:template_file] = '~/.chef/templates/my-bootstrap.sh.erb'
       @knife_openstack_create.config[:distro] = 'ubuntu-10.04-magic-sparkles'
+      @knife_openstack_create.config[:first_boot_attributes] = {'some_var' => true}
       @knife_openstack_create.config[:run_list] = ['role[base]']
 
       @bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
@@ -160,6 +164,19 @@ describe Chef::Knife::OpenstackServerCreate do
       @bootstrap.config[:chef_node_name].should == 'blarf'
     end
 
+    it "configures the bootstrap to use the server password" do
+      @bootstrap.config[:ssh_password].should == 'password'
+    end
+
+    it "configures the bootstrap to use the config ssh password" do
+      @knife_openstack_create.config[:ssh_password] = 'testing123'
+
+      bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
+        @new_openstack_server.addresses['public'].last['addr'])
+
+      bootstrap.config[:ssh_password].should == 'testing123'
+    end
+
     it "configures the bootstrap to use the OpenStack server id if no explicit node name is set" do
       @knife_openstack_create.config[:chef_node_name] = nil
 
@@ -184,6 +201,10 @@ describe Chef::Knife::OpenstackServerCreate do
 
     it "configures the bootstrap to use sudo" do
       @bootstrap.config[:use_sudo].should be_true
+    end
+
+    it "configures the bootstrap with json attributes" do
+      @bootstrap.config[:first_boot_attributes]['some_var'].should be_true
     end
 
     it "configured the bootstrap to use the desired template" do

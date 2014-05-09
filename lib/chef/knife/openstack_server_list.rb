@@ -1,7 +1,7 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
+# Author:: Seth Chisamore (<schisamo@getchef.com>)
+# Author:: Matt Ray (<matt@getchef.com>)
+# Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,8 +33,9 @@ class Chef
         validate!
 
         server_list = [
-          ui.color('Instance ID', :bold),
           ui.color('Name', :bold),
+          ui.color('Instance ID', :bold),
+          ui.color('Zone', :bold),
           ui.color('Public IP', :bold),
           ui.color('Private IP', :bold),
           ui.color('Flavor', :bold),
@@ -44,9 +45,10 @@ class Chef
         ]
 
         begin
-          connection.servers.all.sort_by(&:id).each do |server|
-            server_list << server.id.to_s
+          connection.servers.all.sort_by(&:name).each do |server|
             server_list << server.name
+            server_list << server.id.to_s
+            server_list << server.availability_zone
             if primary_public_ip_address(server.addresses)
               server_list << primary_public_ip_address(server.addresses)
             else
@@ -81,7 +83,7 @@ class Chef
           ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
           raise e
         end
-        puts ui.list(server_list, :uneven_columns_across, 8)
+        puts ui.list(server_list, :uneven_columns_across, 9)
 
       end
     end

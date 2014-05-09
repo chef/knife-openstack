@@ -1,7 +1,7 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2011-2012 Opscode, Inc.
+# Author:: Seth Chisamore (<schisamo@getchef.com>)
+# Author:: Matt Ray (<matt@getchef.com>)
+# Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,16 +32,16 @@ class Chef
         validate!
 
         flavor_list = [
-          ui.color('ID', :bold),
           ui.color('Name', :bold),
+          ui.color('ID', :bold),
           ui.color('Virtual CPUs', :bold),
           ui.color('RAM', :bold),
           ui.color('Disk', :bold),
         ]
         begin
-          connection.flavors.sort_by(&:id).each do |flavor|
-            flavor_list << flavor.id.to_s
+          connection.flavors.sort_by(&:name).each do |flavor|
             flavor_list << flavor.name
+            flavor_list << flavor.id.to_s
             flavor_list << flavor.vcpus.to_s
             flavor_list << "#{flavor.ram.to_s} MB"
             flavor_list << "#{flavor.disk.to_s} GB"

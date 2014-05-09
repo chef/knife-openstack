@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.has_rdoc = true
   s.extra_rdoc_files = ["README.md", "LICENSE" ]
   s.authors     = ["Seth Chisamore", "Matt Ray"]
-  s.email       = ["schisamo@opscode.com", "matt@opscode.com"]
+  s.email       = ["schisamo@getchef.com", "matt@getchef.com"]
   s.homepage    = "https://github.com/opscode/knife-openstack"
   s.summary     = %q{OpenStack Compute Support for Chef's Knife Command}
   s.description = s.summary
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency "fog", ">= 1.10.0"
   s.add_dependency "chef", ">= 0.10.10"
   s.add_dependency "knife-windows"
-  
+
   %w(rspec-core rspec-expectations rspec-mocks rspec_junit_formatter).each { |gem| s.add_development_dependency gem }
   s.require_paths = ["lib"]
 end

@@ -40,15 +40,15 @@ class Chef
       attr_accessor :initial_sleep_delay
 
       option :flavor,
-      :short => "-f FLAVOR_ID",
-      :long => "--flavor FLAVOR_ID",
-      :description => "The flavor ID of server (m1.small, m1.medium, etc)",
+      :short => "-f FLAVOR",
+      :long => "--flavor FLAVOR",
+      :description => "The flavor name or ID of server (m1.small, m1.medium, etc)",
       :proc => Proc.new { |f| Chef::Config[:knife][:flavor] = f }
 
       option :image,
-      :short => "-I IMAGE_ID",
-      :long => "--image IMAGE_ID",
-      :description => "The image ID for the server",
+      :short => "-I IMAGE",
+      :long => "--image IMAGE",
+      :description => "A regexp matching an image name or an image ID for the server",
       :proc => Proc.new { |i| Chef::Config[:knife][:image] = i }
 
       option :security_groups,
@@ -58,10 +58,22 @@ class Chef
       :default => ["default"],
       :proc => Proc.new { |groups| groups.split(',') }
 
+      md = {}
+      option :metadata,
+      :short => "-M X=1",
+      :long => "--metadata X=1",
+      :description => "Metadata information for this server (may pass multiple times)",
+      :proc => Proc.new { |data| md.merge!({data.split('=')[0]=>data.split('=')[1]}) }
+
       option :chef_node_name,
       :short => "-N NAME",
       :long => "--node-name NAME",
       :description => "The Chef node name for your new node"
+
+      option :network_ids,
+      :long => "--network-ids NETWORK_ID_1,NETWORK_ID_2,NETWORK_ID_3",
+      :description => "Comma separated list of the UUID(s) of the network(s) for the server to attach",
+      :proc => Proc.new { |networks| networks.split(',') }
 
       option :floating_ip,
       :short => "-a [IP]",
@@ -265,32 +277,33 @@ class Chef
         # servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
-        # this really should be caught in Fog
-        if locate_config_value(:user_data).nil?
-          server_def = {
-            :name => node_name,
-            :image_ref => locate_config_value(:image),
-            :flavor_ref => locate_config_value(:flavor),
-            :security_groups => locate_config_value(:security_groups),
-            :key_name => locate_config_value(:openstack_ssh_key_id)
-          }
-        else
-          server_def = {
-            :name => node_name,
-            :image_ref => locate_config_value(:image),
-            :flavor_ref => locate_config_value(:flavor),
-            :security_groups => locate_config_value(:security_groups),
-            :key_name => locate_config_value(:openstack_ssh_key_id),
-            :user_data => locate_config_value(:user_data)
-          }
+        # define the server to be created
+        server_def = {
+          :name => node_name,
+          :image_ref => image.id,
+          :flavor_ref => flavor.id,
+          :security_groups => locate_config_value(:security_groups),
+          :availability_zone => locate_config_value(:availability_zone),
+          :metadata => locate_config_value(:metadata),
+          :key_name => locate_config_value(:openstack_ssh_key_id)
+        }
+        server_def[:user_data] = locate_config_value(:user_data) unless locate_config_value(:user_data).nil?
+        unless locate_config_value(:network_ids).nil?
+          server_def[:nics] = locate_config_value(:network_ids).map do |nic|
+            nic_id = { 'net_id' => nic }
+            nic_id
+          end
         end
+        Chef::Log.debug("server_def is: #{server_def}")
 
         Chef::Log.debug("Name #{node_name}")
+        Chef::Log.debug("Availability Zone #{locate_config_value(:availability_zone)}")
         Chef::Log.debug("Image #{locate_config_value(:image)}")
         Chef::Log.debug("Flavor #{locate_config_value(:flavor)}")
         Chef::Log.debug("Requested Floating IP #{locate_config_value(:floating_ip)}")
         Chef::Log.debug("Security Groups #{locate_config_value(:security_groups)}")
         Chef::Log.debug("User Data #{locate_config_value(:user_data)}")
+        Chef::Log.debug("Metadata #{locate_config_value(:metadata)}")
         Chef::Log.debug("Creating server #{server_def}")
 
         begin
@@ -313,6 +326,7 @@ class Chef
 
         msg_pair("Instance Name", server.name)
         msg_pair("Instance ID", server.id)
+        msg_pair("Availability zone", server.availability_zone)
 
         print "\n#{ui.color("Waiting for server", :magenta)}"
 
@@ -326,8 +340,8 @@ class Chef
         msg_pair("SSH Identity File", config[:identity_file])
         msg_pair("SSH Keypair", server.key_name) if server.key_name
         msg_pair("SSH Password", server.password) if (server.password && !server.key_name)
-        Chef::Log.debug("Addresses #{server.addresses}")
 
+        Chef::Log.debug("Addresses #{server.addresses}")
         msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
         msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
 
@@ -414,6 +428,7 @@ class Chef
       def bootstrap_common_params(bootstrap, server_name)
         bootstrap.config[:chef_node_name] = config[:chef_node_name] || server_name
         bootstrap.config[:run_list] = config[:run_list]
+        bootstrap.config[:first_boot_attributes] = config[:first_boot_attributes]
         bootstrap.config[:prerelease] = config[:prerelease]
         bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
         bootstrap.config[:distro] = locate_config_value(:distro)
@@ -432,6 +447,7 @@ class Chef
         bootstrap = Chef::Knife::Bootstrap.new
         bootstrap.name_args = [bootstrap_ip_address]
         bootstrap.config[:ssh_user] = config[:ssh_user]
+        bootstrap.config[:ssh_password] = config[:ssh_password] || server.password unless config[:ssh_key_name]
         bootstrap.config[:ssh_port] = config[:ssh_port]
         bootstrap.config[:identity_file] = config[:identity_file]
         bootstrap.config[:host_key_verify] = config[:host_key_verify]
@@ -440,11 +456,11 @@ class Chef
       end
 
       def flavor
-        @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+        @flavor ||= connection.flavors.find{|f| f.name == locate_config_value(:flavor) || f.id == locate_config_value(:flavor) }
       end
 
       def image
-        @image ||= connection.images.get(locate_config_value(:image))
+        @image ||= connection.images.find{|img| img.name =~ /#{locate_config_value(:image)}/ || img.id == locate_config_value(:image) }
       end
 
       def is_floating_ip_valid
@@ -461,12 +477,13 @@ class Chef
           else
             return false # no floating IPs available
           end
-        end
-        # floating requested with value
-        if addresses.find_index { |a| a.ip == address }
-          return true
         else
-          return false # requested floating IP does not exist
+          # floating requested with value
+          if addresses.find_index { |a| a.ip == address }
+            return true
+          else
+            return false # requested floating IP does not exist
+          end
         end
       end
 

@@ -1,6 +1,6 @@
 #
-# Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Matt Ray (<matt@getchef.com>)
+# Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,13 +39,13 @@ class Chef
           ui.color('Description', :bold),
         ]
         connection.security_groups.sort_by(&:name).each do |group|
-          group.rules.each do |rule|
-            unless rule['ip_protocol'].nil?
+          group.security_group_rules.each do |rule|
+            unless rule.ip_protocol.nil?
               group_list << group.name
-              group_list << rule['ip_protocol']
-              group_list << rule['from_port'].to_s
-              group_list << rule['to_port'].to_s
-              group_list << rule['ip_range']['cidr']
+              group_list << rule.ip_protocol
+              group_list << rule.from_port.to_s
+              group_list << rule.to_port.to_s
+              group_list << rule.ip_range['cidr']
               group_list << group.description
             end
           end

@@ -1,7 +1,7 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Author:: Matt Ray (<matt@opscode.com>)
-# Copyright:: Copyright (c) 2011-2013 Opscode, Inc.
+# Author:: Seth Chisamore (<schisamo@getchef.com>)
+# Author:: Matt Ray (<matt@getchef.com>)
+# Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,8 +38,8 @@ class Chef
         validate!
 
         image_list = [
-          ui.color('ID', :bold),
           ui.color('Name', :bold),
+          ui.color('ID', :bold),
           ui.color('Snapshot', :bold),
         ]
         begin
@@ -48,8 +48,8 @@ class Chef
           end.each do |image|
             unless ((image.name =~ /initrd$|kernel$|loader$|virtual$|vmlinuz$/) &&
                 !config[:disable_filter])
-              image_list << image.id
               image_list << image.name
+              image_list << image.id
               snapshot = 'no'
               image.metadata.each do |datum|
                 if (datum.key == 'image_type') && (datum.value == 'snapshot')
