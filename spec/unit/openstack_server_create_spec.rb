@@ -11,8 +11,8 @@ describe Chef::Knife::OpenstackServerCreate do
   before do
 
     @openstack_connection = double(Fog::Compute::OpenStack)
-    @openstack_connection.stub_chain(:flavors, :get).and_return ('flavor_id')
-    @openstack_connection.stub_chain(:images, :get).and_return double('image_id')
+    @openstack_connection.stub_chain(:flavors, :find).and_return double('flavor', {:id => 'flavor_id'})
+    @openstack_connection.stub_chain(:images, :find).and_return double('image', {:id => 'image_id'})
     @openstack_connection.stub_chain(:addresses).and_return [double('addresses', {
           :instance_id => nil,
           :ip => '111.111.111.111',

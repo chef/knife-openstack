@@ -40,15 +40,15 @@ class Chef
       attr_accessor :initial_sleep_delay
 
       option :flavor,
-      :short => "-f FLAVOR_ID",
-      :long => "--flavor FLAVOR_ID",
-      :description => "The flavor ID of server (m1.small, m1.medium, etc)",
+      :short => "-f FLAVOR",
+      :long => "--flavor FLAVOR",
+      :description => "The flavor name or ID of server (m1.small, m1.medium, etc)",
       :proc => Proc.new { |f| Chef::Config[:knife][:flavor] = f }
 
       option :image,
-      :short => "-I IMAGE_ID",
-      :long => "--image IMAGE_ID",
-      :description => "The image ID for the server",
+      :short => "-I IMAGE",
+      :long => "--image IMAGE",
+      :description => "A regexp matching an image name or an image ID for the server",
       :proc => Proc.new { |i| Chef::Config[:knife][:image] = i }
 
       option :security_groups,
@@ -277,37 +277,24 @@ class Chef
         # servers require a name, generate one if not passed
         node_name = get_node_name(config[:chef_node_name])
 
-        # this really should be caught in Fog
+        # define the server to be created
+        server_def = {
+          :name => node_name,
+          :image_ref => image.id,
+          :flavor_ref => flavor.id,
+          :security_groups => locate_config_value(:security_groups),
+          :availability_zone => locate_config_value(:availability_zone),
+          :metadata => locate_config_value(:metadata),
+          :key_name => locate_config_value(:openstack_ssh_key_id)
+        }
+        server_def[:user_data] = locate_config_value(:user_data) unless locate_config_value(:user_data).nil?
         unless locate_config_value(:network_ids).nil?
-          network_ids = locate_config_value(:network_ids).map do |nic|
-              nic_id = { 'net_id' => nic }
-              nic_id
+          server_def[:nics] = locate_config_value(:network_ids).map do |nic|
+            nic_id = { 'net_id' => nic }
+            nic_id
           end
         end
-        if locate_config_value(:user_data).nil?
-          server_def = {
-            :name => node_name,
-            :image_ref => locate_config_value(:image),
-            :flavor_ref => locate_config_value(:flavor),
-            :security_groups => locate_config_value(:security_groups),
-            :availability_zone => locate_config_value(:availability_zone),
-            :metadata => locate_config_value(:metadata),
-            :key_name => locate_config_value(:openstack_ssh_key_id),
-            :nics => network_ids
-          }
-        else
-          server_def = {
-            :name => node_name,
-            :image_ref => locate_config_value(:image),
-            :flavor_ref => locate_config_value(:flavor),
-            :security_groups => locate_config_value(:security_groups),
-            :availability_zone => locate_config_value(:availability_zone),
-            :metadata => locate_config_value(:metadata),
-            :key_name => locate_config_value(:openstack_ssh_key_id),
-            :user_data => locate_config_value(:user_data),
-            :nics => network_ids
-          }
-        end
+        Chef::Log.debug("server_def is: #{server_def}")
 
         Chef::Log.debug("Name #{node_name}")
         Chef::Log.debug("Availability Zone #{locate_config_value(:availability_zone)}")
@@ -469,11 +456,11 @@ class Chef
       end
 
       def flavor
-        @flavor ||= connection.flavors.get(locate_config_value(:flavor))
+        @flavor ||= connection.flavors.find{|f| f.name == locate_config_value(:flavor) || f.id == locate_config_value(:flavor) }
       end
 
       def image
-        @image ||= connection.images.get(locate_config_value(:image))
+        @image ||= connection.images.find{|img| img.name =~ /#{locate_config_value(:image)}/ || img.id == locate_config_value(:image) }
       end
 
       def is_floating_ip_valid
