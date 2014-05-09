@@ -58,11 +58,12 @@ class Chef
       :default => ["default"],
       :proc => Proc.new { |groups| groups.split(',') }
 
+      md = {}
       option :metadata,
-      :short => "-M X=1,Y=2,Z=3",
-      :long => "--metadata X=1,Y=2,Z=3",
-      :description => "The metdata information for this server",
-      :proc => Proc.new { |metadata| Hash[*metadata.split(/=|,/)] }
+      :short => "-M X=1",
+      :long => "--metadata X=1",
+      :description => "Metadata information for this server (may pass multiple times)",
+      :proc => Proc.new { |data| md.merge!({data.split('=')[0]=>data.split('=')[1]}) }
 
       option :chef_node_name,
       :short => "-N NAME",
