@@ -121,6 +121,54 @@ class Chef
         end
       end
 
+      # method copyed from knife-ec2
+      def fcolor(flavor)
+        case flavor
+        when "t1.micro"
+          fcolor = :blue
+        when "m1.small"
+          fcolor = :magenta
+        when "m1.medium"
+          fcolor = :cyan
+        when "m1.large"
+          fcolor = :green
+        when "m1.xlarge"
+          fcolor = :red
+        end
+      end
+
+      def status_color(status)
+        case status
+        when "in-use"
+          status_color = :red
+        when "available"
+          status_color = :green
+        else
+          status_color = :blue
+        end
+      end
+
+      def get_flavor_by_id(flavor_id)
+        connection.flavors.find { |f| f.id == flavor_id }.name
+      end
+      def get_image_by_id(image_id)
+        connection.images.find { |i| i.id == image_id }.name
+      end
+
+
+      def get_ip_address(addresses, field_name='public')
+        if addresses[field_name]
+          return addresses[field_name].last['addr']
+        end
+      end
+
+
+      def get_server_name_by_id(id)
+        connection.servers.find { |s| s.id == id}.name
+      end
+
+
+
       def validate!(keys=[:openstack_username, :openstack_password, :openstack_auth_url])
         errors = []
 
