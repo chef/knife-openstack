@@ -9,6 +9,7 @@ DONE
 * KNIFE-475 json-attributes option wasnt actually getting passed to bootstrap
 * KNIFE-477 Delete openstack instance by name
 * KNIFE-478 Generated SSH password not passed to bootstrap
+* add support for working with names instead of ids, updated listing accordingly
 
 ## v0.9.1
 * KNIFE-462 missing user_data throws stack
