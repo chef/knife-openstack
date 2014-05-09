@@ -33,8 +33,8 @@ class Chef
         validate!
 
         server_list = [
-          ui.color('Instance ID', :bold),
           ui.color('Name', :bold),
+          ui.color('Instance ID', :bold),
           ui.color('Zone', :bold),
           ui.color('Public IP', :bold),
           ui.color('Private IP', :bold),
@@ -45,9 +45,9 @@ class Chef
         ]
 
         begin
-          connection.servers.all.sort_by(&:id).each do |server|
-            server_list << server.id.to_s
+          connection.servers.all.sort_by(&:name).each do |server|
             server_list << server.name
+            server_list << server.id.to_s
             server_list << server.availability_zone
             if primary_public_ip_address(server.addresses)
               server_list << primary_public_ip_address(server.addresses)

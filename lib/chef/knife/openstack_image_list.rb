@@ -38,8 +38,8 @@ class Chef
         validate!
 
         image_list = [
-          ui.color('ID', :bold),
           ui.color('Name', :bold),
+          ui.color('ID', :bold),
           ui.color('Snapshot', :bold),
         ]
         begin
@@ -48,8 +48,8 @@ class Chef
           end.each do |image|
             unless ((image.name =~ /initrd$|kernel$|loader$|virtual$|vmlinuz$/) &&
                 !config[:disable_filter])
-              image_list << image.id
               image_list << image.name
+              image_list << image.id
               snapshot = 'no'
               image.metadata.each do |datum|
                 if (datum.key == 'image_type') && (datum.value == 'snapshot')

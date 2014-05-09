@@ -18,7 +18,7 @@ class Chef
           ui.color('Tenant', :bold),
           ui.color('Shared', :bold),
         ]
-        network.networks.all.each do |network|
+        network.networks.all.sort_by(&:name).each do |network|
           net_list << network.name
           net_list << network.id
           net_list << network.tenant_id
