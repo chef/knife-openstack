@@ -74,25 +74,33 @@ class Chef
         end
       end
 
-      def connection
+      def connection(conn_type = 'Nova')
         Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
         Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
         Chef::Log.debug("openstack_endpoint_type #{Chef::Config[:knife][:openstack_endpoint_type] || 'publicURL' }")
         Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
         Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure].to_s}")
 
+        @connection_params ||= {
+          :provider => 'OpenStack',
+          :openstack_username => Chef::Config[:knife][:openstack_username],
+          :openstack_api_key => Chef::Config[:knife][:openstack_password],
+          :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
+          :openstack_endpoint_type => Chef::Config[:knife][:openstack_endpoint_type],
+          :openstack_tenant => Chef::Config[:knife][:openstack_tenant],
+          :connection_options => {
+            :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
+          }
+        }
+
         @connection ||= begin
-          connection = Fog::Compute.new(
-            :provider => 'OpenStack',
-            :openstack_username => Chef::Config[:knife][:openstack_username],
-            :openstack_api_key => Chef::Config[:knife][:openstack_password],
-            :openstack_auth_url => Chef::Config[:knife][:openstack_auth_url],
-            :openstack_endpoint_type => Chef::Config[:knife][:openstack_endpoint_type],
-            :openstack_tenant => Chef::Config[:knife][:openstack_tenant],
-            :connection_options => {
-              :ssl_verify_peer => !Chef::Config[:knife][:openstack_insecure]
-            }
-            )
+                          if conn_type == 'Nova'
+                            @connection_nova = Fog::Compute.new(@connection_params)
+                          elsif conn_type == 'Cinder'
+                            @connection_cinder ||= Fog::Volume.new(@connection_params)
+                          elsif conn_type == 'Network'
+                            @connection_network ||= Fog::Network.new(@connection_params)
+                          end
                         rescue Excon::Errors::Unauthorized => e
                           ui.fatal("Connection failure, please check your OpenStack username and password.")
                           exit 1
