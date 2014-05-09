@@ -55,9 +55,12 @@ class Chef
             if primary_private_ip_address(server.addresses)
               server_list << primary_private_ip_address(server.addresses)
             else
-              server_list << ''
+                server_list << server.addresses.map {|k,v| v[0]['addr']}.join(',')
             end
-            server_list << server.flavor['id'].to_s
+            #else
+            #  server_list << ''
+            #end
+            server_list << ui.color(get_flavor_by_id(server.flavor['id']),fcolor(get_flavor_by_id(server.flavor['id'])))
             if server.image
               server_list << server.image['id']
             else
