@@ -294,6 +294,11 @@ class Chef
             nic_id
           end
         end
+        if (server_def[:nics].nil? || server_def[:nics].empty?) && (!private_network.nil? || !public_network.nil?)
+          server_def[:nics] = []
+          server_def[:nics] << {:net_id => private_network['id']} unless private_network.nil?
+          server_def[:nics] << {:net_id => public_network['id']} unless public_network.nil?
+        end
         Chef::Log.debug("server_def is: #{server_def}")
 
         Chef::Log.debug("Name #{node_name}")
@@ -369,15 +374,20 @@ class Chef
         Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
         # private_network means bootstrap_network = 'private'
-        config[:bootstrap_network] = 'private' if config[:private_network]
-
+        config[:bootstrap_network] = private_network['name'] || 'private' if config[:private_network]
+        
+        # maybe change bootstrap_network to name of public_network if set to 'public'
+        config[:bootstrap_network] = public_network['name'] if !public_network.nil? && config[:bootstrap_network] == 'public'
         unless config[:network] # --no-network
           bootstrap_ip_address = primary_public_ip_address(server.addresses) ||
             primary_private_ip_address(server.addresses) ||
             server.addresses[1][0]['addr']
           Chef::Log.debug("No Bootstrap Network: #{config[:bootstrap_network]}")
         else
-          bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network])
+          bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network]) ||
+            primary_network_ip_address(server.addresses, 'public') ||
+            primary_network_ip_address(server.addresses, 'private') ||
+            primary_network_ip_address(server.addresses, private_network['name'])
           Chef::Log.debug("Bootstrap Network: #{config[:bootstrap_network]}")
         end
 
