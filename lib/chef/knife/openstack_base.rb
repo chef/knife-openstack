@@ -162,13 +162,66 @@ class Chef
         end
       end
 
+      def private_network
+        @private_network ||= begin 
+          tenant_id = network.current_tenant['id']
+          networks = network.list_networks(:tenant_id => tenant_id) 
+          private_network = nil
+          unless networks.data.nil? || networks.data[:body].nil? || networks.data[:body]['networks'].nil?
+            # see if we have a network named 'private' first
+            private_network = networks.data[:body]['networks'].find {|net| net['name'] == 'private'}
+            # if not, find the first one that is not router:external or shared
+            if private_network.nil?
+              private_network = networks.data[:body]['networks'].find {|net| net['shared'] == false and net['router:external'] == false}
+            end
+          end
+          private_network
+                     rescue Excon::Errors::Unauthorized => e
+                       ui.fatal("Network connection failure, please check your OpenStack username and password.")
+                       exit 1
+                     rescue Excon::Errors::SocketError => e
+                       ui.fatal("Network connection failure, please check your OpenStack authentication URL.")
+                       exit 1
+                     end
+      end 
+
+      def public_network
+        @public_network ||= begin 
+          networks = network.list_networks
+          public_network = nil
+          unless networks.data.nil? || networks.data[:body].nil? || networks.data[:body]['networks'].nil?
+            # see if we have a network named 'private' first
+            public_network = networks.data[:body]['networks'].find {|net| net['name'] == 'public'}
+            # if not, find the first one that is router:external
+            if public_network.nil?
+              public_network = networks.data[:body]['networks'].find {|net| net['router:external'] == true}
+            end
+          end
+          public_network
+                     rescue Excon::Errors::Unauthorized => e
+                       ui.fatal("Network connection failure, please check your OpenStack username and password.")
+                       exit 1
+                     rescue Excon::Errors::SocketError => e
+                       ui.fatal("Network connection failure, please check your OpenStack authentication URL.")
+                       exit 1
+                     end
+      end
+
       def primary_private_ip_address(addresses)
-        primary_network_ip_address(addresses, 'private')
+        network_name = 'private'
+        unless private_network.nil? || !private_network.has_key?('name')
+          network_name = private_network['name']
+        end
+        primary_network_ip_address(addresses, network_name)
       end
 
       #we use last since the floating IP goes there
       def primary_public_ip_address(addresses)
-        primary_network_ip_address(addresses, 'public')
+        network_name = 'public'
+        unless public_network.nil? || !public_network.has_key?('name')
+          network_name = public_network['name']
+        end
+        primary_network_ip_address(addresses, network_name)
       end
 
       def primary_network_ip_address(addresses, network_name)

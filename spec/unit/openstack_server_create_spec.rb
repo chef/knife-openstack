@@ -19,6 +19,8 @@ describe Chef::Knife::OpenstackServerCreate do
           :fixed_ip => true
         })]
 
+    @openstack_network = double(Fog::Network::OpenStack)
+
     @knife_openstack_create = Chef::Knife::OpenstackServerCreate.new
     @knife_openstack_create.initial_sleep_delay = 0
     @knife_openstack_create.stub(:tcp_test_ssh).and_return(true)
@@ -37,8 +39,12 @@ describe Chef::Knife::OpenstackServerCreate do
     @knife_openstack_create.stub(:msg_pair)
     @knife_openstack_create.stub(:puts)
     @knife_openstack_create.stub(:print)
-
+    
+    @openstack_current_tenant = double('tenant', {'id' => double()})
+    @openstack_network.stub(:current_tenant).and_return(@openstack_current_tenant)
     @openstack_servers = double()
+    @openstack_networks = double()
+    @openstack_networks.stub_chain(:data).and_return( {:body => {'networks' => [{'name' => 'private'}, {'name' => 'public'}]}})
     @new_openstack_server = double()
 
     @openstack_server_attribs = { :name => 'Mock Server',
@@ -96,7 +102,12 @@ describe Chef::Knife::OpenstackServerCreate do
     before do
       @openstack_servers.should_receive(:create).and_return(@new_openstack_server)
       @openstack_connection.should_receive(:servers).and_return(@openstack_servers)
+      @openstack_network.should_receive(:current_tenant).and_return(@openstack_current_tenant)
+      @openstack_network.should_receive(:list_networks).and_return(@openstack_networks)
+      @openstack_network.should_receive(:list_networks).and_return(@openstack_networks)
+      @openstack_current_tenant.should_receive(:[]).and_return(double())
       Fog::Compute::OpenStack.should_receive(:new).and_return(@openstack_connection)
+      Fog::Network::OpenStack.should_receive(:new).and_return(@openstack_network)
       @bootstrap = Chef::Knife::Bootstrap.new
       Chef::Knife::Bootstrap.stub(:new).and_return(@bootstrap)
       @bootstrap.should_receive(:run)
