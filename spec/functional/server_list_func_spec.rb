@@ -1,3 +1,6 @@
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
+# Copyright:: Copyright (c) 2013-14 Opscode, Inc.
+#
 require 'spec_helper'
 require 'chef/knife/openstack_server_list'
 require 'chef/knife/cloud/openstack_service'
@@ -47,6 +50,7 @@ describe Chef::Knife::Cloud::OpenstackServerList do
 
       it "raise error on invalid chef-node-attribute set" do
         instance.config[:chef_node_attribute] = "invalid_attribute"
+        instance.ui.stub(:fatal)
         @node.should_receive(:attribute?).with("invalid_attribute").and_return(false)
         instance.ui.should_receive(:error).with("The Node does not have a invalid_attribute attribute.")
         expect { instance.run }.to raise_error
