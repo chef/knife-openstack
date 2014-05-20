@@ -90,6 +90,14 @@ describe Chef::Knife::OpenstackServerCreate do
     it "user_data should be empty" do
         Chef::Config[:knife][:user_data].should == nil
     end
+
+    it "doesn't set any network IDs" do
+        Chef::Config[:knife][:network_ids].should == nil
+    end
+
+    it "doesn't set any fixed IP pairs" do
+        Chef::Config[:knife][:fixed_ips].should == nil
+    end
   end
 
   describe "run" do

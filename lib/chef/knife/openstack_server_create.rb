@@ -75,6 +75,11 @@ class Chef
       :description => "Comma separated list of the UUID(s) of the network(s) for the server to attach",
       :proc => Proc.new { |networks| networks.split(',') }
 
+      option :fixed_ips,
+      :long => "--fixed-ips SUBNET_ID_1=IP1,SUBNET_ID_2=IP2",
+      :description => "Comma separated list of pair(s) of network UUIDs and fixed IP addresses of the ports for the server to attach",
+      :proc => Proc.new { |pairs| pairs.split(',').map {|pair| pair.split('=') } }
+
       option :floating_ip,
       :short => "-a [IP]",
       :long => "--floating-ip [IP]",
@@ -288,10 +293,18 @@ class Chef
           :key_name => locate_config_value(:openstack_ssh_key_id)
         }
         server_def[:user_data] = locate_config_value(:user_data) unless locate_config_value(:user_data).nil?
+
+        # NIC handling: network IDs have precedence over ports
         unless locate_config_value(:network_ids).nil?
-          server_def[:nics] = locate_config_value(:network_ids).map do |nic|
-            nic_id = { 'net_id' => nic }
-            nic_id
+          server_def[:nics] = []
+          server_def[:nics] += locate_config_value(:network_ids).map do |nic|
+            { 'net_id' => nic }
+          end
+        end
+        unless locate_config_value(:fixed_ips).nil?
+          server_def[:nics] ||= []
+          server_def[:nics] += locate_config_value(:fixed_ips).map do |subnet_id, fixed_ip|
+            { 'port_id' => create_or_update_fixed_ip_port(subnet_id, fixed_ip) }
           end
         end
         Chef::Log.debug("server_def is: #{server_def}")
@@ -413,6 +426,39 @@ class Chef
         end
         msg_pair("Environment", config[:environment] || '_default')
         msg_pair("Run List", config[:run_list].join(', '))
+      end
+
+      def create_or_update_fixed_ip_port(subnet_id, ip_address)
+        fixed_ip = { "subnet_id" => subnet_id, "ip_address" => ip_address }
+
+        network_id = network.subnets.get(subnet_id).network_id
+        Chef::Log.debug("fixed_ip_port: subnet #{subnet_id}'s parent network_id=#{network_id}")
+
+        begin
+          port = network.ports.create(network_id: network_id, fixed_ips: [ fixed_ip ])
+        rescue Excon::Errors::BadRequest, Excon::Errors::Conflict => e
+          response = Chef::JSONCompat.from_json(e.response.body)
+
+          # try reusing a port that has no device
+          if response['NeutronError']['type'] == 'IpAddressInUse'
+
+            # figure out if the port is in use (found no better way to query that)
+            port = network.ports.all(network_id: network_id).select do |p|
+              p.fixed_ips.include?(fixed_ip) && p.device_id.empty?
+            end.first
+
+            if port
+              Chef::Log.debug("fixed_ip_port: found unused port: #{port.id}")
+              return port.id
+            end
+          end
+
+          ui.fatal("Fixed IP port creation failed (#{response['NeutronError']['type']}): #{response['NeutronError']['message']}")
+          exit 1
+        end
+
+        Chef::Log.debug("fixed_ip_port: created port #{port.id}")
+        port.id
       end
 
       def bootstrap_for_windows_node(server, bootstrap_ip_address)
