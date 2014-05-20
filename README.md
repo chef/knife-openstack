@@ -27,9 +27,9 @@ In order to communicate with an OpenStack API you will need to tell Knife your O
     knife[:openstack_password] = "Your OpenStack Dashboard password"
     knife[:openstack_tenant] = "Your OpenStack tenant name"
 
-If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables:
+If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables.  For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
 
-    knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}"
+    knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}/tokens"
     knife[:openstack_username] = "#{ENV['OS_USERNAME']}"
     knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
     knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
