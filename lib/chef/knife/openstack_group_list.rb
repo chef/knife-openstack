@@ -11,10 +11,10 @@ class Chef
 
         banner "knife openstack group list (options)"
 
-    def query_resource
-      begin
-        @service.connection.security_groups
-      rescue Excon::Errors::BadRequest => e
+        def query_resource
+          begin
+            @service.connection.security_groups
+          rescue Excon::Errors::BadRequest => e
             response = Chef::JSONCompat.from_json(e.response.body)
             ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
             raise e
