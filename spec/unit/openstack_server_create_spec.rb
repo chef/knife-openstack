@@ -163,6 +163,28 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.config[:network] = true
     end
 
+    context "when no-network option specified" do
+      before(:each) { @instance.config[:network] = false }
+
+      it "set public ip as a bootstrap ip if both public and private ip available" do
+        @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
+        @instance.before_bootstrap
+        @instance.config[:bootstrap_ip_address].should == "127.0.0.2"
+      end
+
+      it "set private-ip as a bootstrap ip if private ip is available" do
+        @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+        @instance.before_bootstrap
+        @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+      end
+
+      it "set available ip as a bootstrap ip if no public, private ip available" do
+        @instance.server.stub(:addresses).and_return({1=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+        @instance.before_bootstrap
+        @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+      end
+    end
+
     it "set bootstrap_ip" do
       @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
       @instance.before_bootstrap
