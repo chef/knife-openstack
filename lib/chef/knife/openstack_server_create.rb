@@ -45,6 +45,7 @@ class Chef
                 :image_ref => locate_config_value(:image),
                 :flavor_ref => locate_config_value(:flavor),
                 :security_groups => locate_config_value(:openstack_security_groups),
+                :availability_zone => locate_config_value(:availability_zone),
                 :key_name => locate_config_value(:openstack_ssh_key_id)
               },
               :server_create_timeout => locate_config_value(:server_create_timeout)
@@ -62,7 +63,8 @@ class Chef
             {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
             {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
             {:label => 'Keypair', :key => 'key_name'},
-            {:label => 'State', :key => 'state'}
+            {:label => 'State', :key => 'state'},
+            {:label => 'Availability Zone', :key => 'availability_zone'}
             ]
             super
         end
