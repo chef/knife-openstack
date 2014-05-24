@@ -108,7 +108,7 @@ Provides a list of the security groups available to the currently configured Ope
 knife openstack network list
 --------------------
 
-Lists the networks available to the currently configured OpenStack account. This data may be useful when choosing your networks to pass to the `knife openstack server create` subcommand. This command is only available with OpenStack deployments using the Neutron network service (not nova-network). Please see `knife openstack server delete --help` for all of the supported options.
+Lists the networks available to the currently configured OpenStack account. This data may be useful when choosing your networks to pass to the `knife openstack server create` subcommand. This command is only available with OpenStack deployments using the Neutron network service (not nova-network). Please see `knife openstack server create --help` for all of the supported options.
 
 # License #
 
