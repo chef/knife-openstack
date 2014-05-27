@@ -46,6 +46,7 @@ class Chef
                 :flavor_ref => locate_config_value(:flavor),
                 :security_groups => locate_config_value(:openstack_security_groups),
                 :availability_zone => locate_config_value(:availability_zone),
+                :metadata => locate_config_value(:metadata),
                 :key_name => locate_config_value(:openstack_ssh_key_id)
               },
               :server_create_timeout => locate_config_value(:server_create_timeout)
