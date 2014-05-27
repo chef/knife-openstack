@@ -16,7 +16,12 @@ class Chef
 
         def before_exec_command
           #set columns_with_info map
-          @columns_with_info = []
+          @columns_with_info = [
+            {:label => 'ID', :key => 'id'},
+            {:label => 'Name', :key => 'name'},
+            {:label => 'Tenant', :key => 'tenant_id'},
+            {:label => 'Shared', :key => 'shared'}
+          ]
         end
 
         def query_resource
