@@ -63,6 +63,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_security_groups] = "openstack_security_groups"
       Chef::Config[:knife][:server_create_timeout] = "server_create_timeout"
       Chef::Config[:knife][:openstack_ssh_key_id] = "openstack_ssh_key"
+      Chef::Config[:knife][:metadata] = "foo=bar"
     end
 
     after(:all) do
@@ -71,6 +72,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife].delete(:openstack_ssh_key_id)
       Chef::Config[:knife].delete(:openstack_security_groups)
       Chef::Config[:knife].delete(:server_create_timeout)
+      Chef::Config[:knife].delete(:metadata)
     end
 
     it "set create_options" do
@@ -81,6 +83,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.create_options[:server_def][:image_ref].should == Chef::Config[:knife][:image]
       @instance.create_options[:server_def][:security_groups].should == Chef::Config[:knife][:openstack_security_groups]
       @instance.create_options[:server_def][:flavor_ref].should == Chef::Config[:knife][:flavor]
+      @instance.create_options[:server_def][:metadata].should == Chef::Config[:knife][:metadata]
       @instance.create_options[:server_create_timeout].should == Chef::Config[:knife][:server_create_timeout]
     end
 
@@ -96,6 +99,11 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.service = double("Chef::Knife::Cloud::OpenstackService", :create_server_dependencies => nil)
       @instance.before_exec_command
       @instance.create_options[:server_def][:user_data].should == user_data
+    end
+
+    it "ensures default value for metadata" do
+      options = @instance.options
+      options[:metadata][:default].should == nil
     end
   end
 

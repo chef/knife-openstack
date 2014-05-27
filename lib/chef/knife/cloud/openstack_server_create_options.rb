@@ -5,8 +5,7 @@ class Chef
   class Knife
     class Cloud
       module OpenstackServerCreateOptions
-
-       def self.included(includer)
+        def self.included(includer)
           includer.class_eval do
             include ServerCreateOptions
 
@@ -51,7 +50,13 @@ class Chef
             :boolean => true,
             :default => true,
             :description => "Use first available network for bootstrapping if 'public' and 'private' are unavailable."
-
+            
+            md = {}
+            option :metadata,
+            :short => "-M X=1",
+            :long => "--metadata X=1",
+            :description => "Metadata information for this server (may pass multiple times)",
+            :proc => Proc.new { |data| md.merge!({data.split('=')[0]=>data.split('=')[1]}) }
           end
         end
       end
