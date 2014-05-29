@@ -51,12 +51,11 @@ class Chef
             :default => true,
             :description => "Use first available network for bootstrapping if 'public' and 'private' are unavailable."
             
-            md = {}
             option :metadata,
             :short => "-M X=1",
             :long => "--metadata X=1",
             :description => "Metadata information for this server (may pass multiple times)",
-            :proc => Proc.new { |data| md.merge!({data.split('=')[0]=>data.split('=')[1]}) }
+            :proc => Proc.new { |data| Chef::Config[:knife][:metadata] ||= {}; Chef::Config[:knife][:metadata].merge!({data.split('=')[0]=>data.split('=')[1]})}
           end
         end
       end
