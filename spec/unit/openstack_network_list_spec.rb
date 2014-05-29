@@ -38,4 +38,12 @@ describe Chef::Knife::Cloud::OpenstackNetworkList do
       expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
     end
   end
+
+  context "query_resource" do
+    it "returns the networks using the fog service." do
+      instance.service = double
+      instance.service.should_receive(:list_networks)
+      instance.query_resource
+    end
+  end
 end
