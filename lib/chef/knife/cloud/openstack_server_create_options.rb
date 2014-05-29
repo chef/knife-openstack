@@ -62,12 +62,11 @@ class Chef
             :description => "The availability zone for this server",
             :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
 
-            md = {}
             option :metadata,
             :short => "-M X=1",
             :long => "--metadata X=1",
             :description => "Metadata information for this server (may pass multiple times)",
-            :proc => Proc.new { |data| md.merge!({data.split('=')[0]=>data.split('=')[1]}) }
+            :proc => Proc.new { |data| Chef::Config[:knife][:metadata] ||= {}; Chef::Config[:knife][:metadata].merge!({data.split('=')[0]=>data.split('=')[1]})}
           end
         end
       end
