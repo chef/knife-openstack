@@ -52,6 +52,12 @@ class Chef
             :default => true,
             :description => "Use first available network for bootstrapping if 'public' and 'private' are unavailable."
 
+            option :availability_zone,
+            :short => "-Z ZONE_NAME",
+            :long => "--availability-zone ZONE_NAME",
+            :description => "The availability zone for this server",
+            :proc => Proc.new { |z| Chef::Config[:knife][:availability_zone] = z }
+
           end
         end
       end

@@ -42,7 +42,8 @@ class Chef
           {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
           {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
           {:label => 'Keypair', :key => 'key_name'},
-          {:label => 'State', :key => 'state'}
+          {:label => 'State', :key => 'state'},
+          {:label => 'Availability Zone', :key => 'availability_zone'}
         ]
           super
         end
