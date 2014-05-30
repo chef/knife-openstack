@@ -22,6 +22,7 @@ class Chef
             {:label => 'Tenant', :key => 'tenant_id'},
             {:label => 'Shared', :key => 'shared'}
           ]
+          @sort_by_field = "name"
         end
 
         def query_resource

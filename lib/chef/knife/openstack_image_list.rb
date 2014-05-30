@@ -1,3 +1,6 @@
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
+# Copyright:: Copyright (c) 2014 Chef Software, Inc.
+
 require 'chef/knife/cloud/list_resource_command'
 require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_service_options'
@@ -24,10 +27,11 @@ class Chef
           end
           #set columns_with_info map
           @columns_with_info = [
-          {:label => 'ID', :key => 'id'}, 
-          {:label => 'Name', :key => 'name'},
-          {:label => 'Snapshot', :key => 'metadata', :value_callback => method(:is_image_snapshot)}
-        ]
+            {:label => 'Name', :key => 'name'},
+            {:label => 'ID', :key => 'id'},
+            {:label => 'Snapshot', :key => 'metadata', :value_callback => method(:is_image_snapshot)}
+          ]
+          @sort_by_field = "name"
         end
 
         def query_resource
