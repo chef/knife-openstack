@@ -52,6 +52,11 @@ class Chef
             :default => true,
             :description => "Use first available network for bootstrapping if 'public' and 'private' are unavailable."
 
+            option :network_ids,
+            :long => "--network-ids NETWORK_ID_1,NETWORK_ID_2,NETWORK_ID_3",
+            :description => "Comma separated list of the UUID(s) of the network(s) for the server to attach",
+            :proc => Proc.new { |networks| networks.split(',') }
+
             option :availability_zone,
             :short => "-Z ZONE_NAME",
             :long => "--availability-zone ZONE_NAME",

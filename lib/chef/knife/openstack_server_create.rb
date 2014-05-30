@@ -50,8 +50,9 @@ class Chef
               },
               :server_create_timeout => locate_config_value(:server_create_timeout)
             }
-
+            
             @create_options[:server_def].merge!({:user_data => locate_config_value(:user_data)}) if locate_config_value(:user_data)
+            @create_options[:server_def].merge!({:nics => locate_config_value(:network_ids).map { |nic| nic_id = { 'net_id' => nic }}}) if locate_config_value(:network_ids)
 
             Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
             #set columns_with_info map
