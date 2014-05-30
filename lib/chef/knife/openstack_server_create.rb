@@ -98,6 +98,16 @@ class Chef
       :boolean => true,
       :default => false
 
+      option :secret,
+      :long  => "--secret SECRET",
+      :description => "The secret key to use to encrypt data bag item values",
+      :proc => Proc.new { |s| Chef::Config[:knife][:secret] = s }
+
+      option :secret_file,
+      :long => "--secret-file SECRET_FILE",
+      :description => "A file containing the secret key to use to encrypt data bag item values",
+      :proc => Proc.new { |sf| Chef::Config[:knife][:secret_file] = sf }
+
       option :ssh_key_name,
       :short => "-S KEY",
       :long => "--ssh-key KEY",
@@ -249,6 +259,7 @@ class Chef
         $stdout.sync = true
 
         validate!
+        warn_chef_config_secret_key
         if locate_config_value(:bootstrap_protocol) == 'winrm'
           load_winrm_deps
         else
@@ -437,6 +448,8 @@ class Chef
         bootstrap.config[:environment] = config[:environment]
         bootstrap.config[:encrypted_data_bag_secret] = config[:encrypted_data_bag_secret]
         bootstrap.config[:encrypted_data_bag_secret_file] = config[:encrypted_data_bag_secret_file]
+        bootstrap.config[:secret] = config[:secret]
+        bootstrap.config[:secret_file] = config[:secret_file]
         # let ohai know we're using OpenStack
         Chef::Config[:knife][:hints] ||= {}
         Chef::Config[:knife][:hints]['openstack'] ||= {}
@@ -511,6 +524,29 @@ class Chef
         return chef_node_name unless chef_node_name.nil?
         # lazy uuids
         chef_node_name = "os-" + rand.to_s.split('.')[1]
+      end
+
+      # warn on using secret_key in knife.rb
+      def warn_chef_config_secret_key
+        unless Chef::Config[:encrypted_data_bag_secret].nil?
+          ui.warn "* " * 40
+          ui.warn(<<-WARNING)
+Specifying the encrypted data bag secret key using an 'encrypted_data_bag_secret'
+entry in 'knife.rb' is deprecated. Please see CHEF-4011 for more details. You
+can supress this warning and still distribute the secret key to all bootstrapped
+machines by adding the following to your 'knife.rb' file:
+
+  knife[:secret_file] = "/path/to/your/secret"
+
+If you would like to selectively distribute a secret key during bootstrap
+please use the '--secret' or '--secret-file' options of this command instead.
+
+#{ui.color('IMPORTANT:', :red, :bold)} In a future version of Chef, this
+behavior will be removed and any 'encrypted_data_bag_secret' entries in
+'knife.rb' will be ignored completely.
+WARNING
+          ui.warn "* " * 40
+        end
       end
     end
   end
