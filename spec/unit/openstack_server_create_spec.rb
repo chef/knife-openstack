@@ -63,6 +63,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_security_groups] = "openstack_security_groups"
       Chef::Config[:knife][:server_create_timeout] = "server_create_timeout"
       Chef::Config[:knife][:openstack_ssh_key_id] = "openstack_ssh_key"
+      Chef::Config[:knife][:network_ids] = "test_network_id"
+      Chef::Config[:knife][:network_ids].stub(:map).and_return(Chef::Config[:knife][:network_ids])
     end
 
     after(:all) do
@@ -81,6 +83,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.create_options[:server_def][:image_ref].should == Chef::Config[:knife][:image]
       @instance.create_options[:server_def][:security_groups].should == Chef::Config[:knife][:openstack_security_groups]
       @instance.create_options[:server_def][:flavor_ref].should == Chef::Config[:knife][:flavor]
+      @instance.create_options[:server_def][:nics].should == Chef::Config[:knife][:network_ids]
       @instance.create_options[:server_create_timeout].should == Chef::Config[:knife][:server_create_timeout]
     end
 
@@ -96,6 +99,20 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.service = double("Chef::Knife::Cloud::OpenstackService", :create_server_dependencies => nil)
       @instance.before_exec_command
       @instance.create_options[:server_def][:user_data].should == user_data
+    end
+
+    context "with multiple network_ids specified" do
+      before(:each) do
+        @instance.service = double
+        @instance.service.should_receive(:create_server_dependencies)
+        Chef::Config[:knife][:network_ids] = "test_network_id1,test_network_id2"
+        Chef::Config[:knife][:network_ids].stub(:map).and_return(Chef::Config[:knife][:network_ids].split(","))
+      end
+      
+      it "creates the server_def with multiple nic_ids." do
+        @instance.before_exec_command
+        @instance.create_options[:server_def][:nics].should == ["test_network_id1", "test_network_id2"]
+      end
     end
   end
 
