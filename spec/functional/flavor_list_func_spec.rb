@@ -18,9 +18,9 @@ describe Chef::Knife::Cloud::OpenstackFlavorList do
     end
 
     it "lists formatted list of resources" do
-      instance.ui.should_receive(:list).with(["ID", "Name", "Virtual CPUs", "RAM", "Disk",
-                                              "resource-1", "m1.tiny", "1", "512 MB", "0 GB",
-                                              "resource-2", "m1-xlarge-bigdisk", "8", "16384 MB", "50 GB"], :uneven_columns_across, 5)
+      instance.ui.should_receive(:list).with(["Name", "ID", "Virtual CPUs", "RAM", "Disk",
+                                              "m1-xlarge-bigdisk", "resource-2", "8", "16384 MB", "50 GB",
+                                              "m1.tiny", "resource-1", "1", "512 MB", "0 GB"], :uneven_columns_across, 5)
       instance.run
     end
   end

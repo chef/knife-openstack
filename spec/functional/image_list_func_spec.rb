@@ -17,16 +17,16 @@ describe Chef::Knife::Cloud::OpenstackImageList do
     end
 
     it "displays formatted list of images, filtered by default" do
-      instance.ui.should_receive(:list).with(["ID", "Name", "Snapshot",
-                                              "resource-1", "image01", "no"], :uneven_columns_across, 3)
+      instance.ui.should_receive(:list).with(["Name", "ID", "Snapshot",
+                                              "image01", "resource-1", "no"], :uneven_columns_across, 3)
       instance.run
     end
 
     it "lists all images when disable_filter = true" do
       instance.config[:disable_filter] = true
-      instance.ui.should_receive(:list).with(["ID", "Name", "Snapshot",
-                                              "resource-1", "image01", "no",
-                                              "resource-2", "initrd", "no"], :uneven_columns_across, 3)
+      instance.ui.should_receive(:list).with(["Name", "ID", "Snapshot",
+                                              "image01", "resource-1", "no",
+                                              "initrd", "resource-2", "no"], :uneven_columns_across, 3)
       instance.run
     end
   end
