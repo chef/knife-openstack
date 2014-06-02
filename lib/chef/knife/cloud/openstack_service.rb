@@ -36,6 +36,26 @@ class Chef
         def add_api_endpoint
           @auth_params.merge!({:openstack_auth_url => Chef::Config[:knife][:api_endpoint]}) unless Chef::Config[:knife][:api_endpoint].nil?
         end
+
+        def get_server(search_term)
+          begin
+            if server = connection.servers.get(search_term)
+              return server
+            end
+
+            if servers = connection.servers.all(:name => search_term)
+              if servers.length > 1
+                error_message = "Multiple server matches found for '#{search_term}', use an instance_id to be more specific."
+                ui.fatal(error_message)
+                raise CloudExceptions::ValidationError, error_message
+              else
+                servers.first
+              end
+            end
+          rescue Excon::Errors::BadRequest => e
+            handle_excon_exception(CloudExceptions::KnifeCloudError, e)
+          end
+        end
       end
     end
   end
