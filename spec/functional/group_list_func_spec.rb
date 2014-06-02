@@ -32,7 +32,6 @@ describe Chef::Knife::Cloud::OpenstackGroupList do
                                                                 ]
                                     })
                   ]
-
       instance.stub(:query_resource).and_return(resources)
       instance.stub(:puts)
       instance.stub(:create_service_instance).and_return(Chef::Knife::Cloud::Service.new)
