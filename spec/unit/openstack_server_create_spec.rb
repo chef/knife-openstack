@@ -65,6 +65,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_ssh_key_id] = "openstack_ssh_key"
       Chef::Config[:knife][:network_ids] = "test_network_id"
       Chef::Config[:knife][:network_ids].stub(:map).and_return(Chef::Config[:knife][:network_ids])
+      Chef::Config[:knife][:metadata] = "foo=bar"
     end
 
     after(:all) do
@@ -73,6 +74,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife].delete(:openstack_ssh_key_id)
       Chef::Config[:knife].delete(:openstack_security_groups)
       Chef::Config[:knife].delete(:server_create_timeout)
+      Chef::Config[:knife].delete(:metadata)
     end
 
     it "set create_options" do
@@ -84,6 +86,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.create_options[:server_def][:security_groups].should == Chef::Config[:knife][:openstack_security_groups]
       @instance.create_options[:server_def][:flavor_ref].should == Chef::Config[:knife][:flavor]
       @instance.create_options[:server_def][:nics].should == Chef::Config[:knife][:network_ids]
+      @instance.create_options[:server_def][:metadata].should == Chef::Config[:knife][:metadata]
       @instance.create_options[:server_create_timeout].should == Chef::Config[:knife][:server_create_timeout]
     end
 
@@ -113,6 +116,11 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         @instance.before_exec_command
         @instance.create_options[:server_def][:nics].should == ["test_network_id1", "test_network_id2"]
       end
+    end
+
+    it "ensures default value for metadata" do
+      options = @instance.options
+      options[:metadata][:default].should == nil
     end
   end
 
