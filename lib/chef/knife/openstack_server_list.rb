@@ -2,6 +2,7 @@
 # Author:: Seth Chisamore (<schisamo@getchef.com>)
 # Author:: Matt Ray (<matt@getchef.com>)
 # Author:: Chirag Jog (<chirag@clogeny.com>)
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Copyright:: Copyright (c) 2011-2013 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -36,16 +37,17 @@ class Chef
         def before_exec_command
           #set columns_with_info map
           @columns_with_info = [
-          {:label => 'Instance ID', :key => 'id'},
-          {:label => 'Name', :key => 'name'},
-          {:label => 'Public IP', :key => 'addresses', :value_callback => method(:get_public_ip_address)},
-          {:label => 'Private IP', :key => 'addresses', :value_callback => method(:get_private_ip_address)},
-          {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
-          {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
-          {:label => 'Keypair', :key => 'key_name'},
-          {:label => 'State', :key => 'state'},
-          {:label => 'Availability Zone', :key => 'availability_zone'}
-        ]
+            {:label => 'Name', :key => 'name'},
+            {:label => 'Instance ID', :key => 'id'},
+            {:label => 'Public IP', :key => 'addresses', :value_callback => method(:get_public_ip_address)},
+            {:label => 'Private IP', :key => 'addresses', :value_callback => method(:get_private_ip_address)},
+            {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
+            {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
+            {:label => 'Keypair', :key => 'key_name'},
+            {:label => 'State', :key => 'state'},
+            {:label => 'Availability Zone', :key => 'availability_zone'}
+          ]
+          @sort_by_field = "name"
           super
         end
 

@@ -1,6 +1,3 @@
-# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Copyright:: Copyright (c) 2013-14 Opscode, Inc.
-#
 require 'spec_helper'
 require 'chef/knife/openstack_server_list'
 require 'chef/knife/cloud/openstack_service'
@@ -21,10 +18,9 @@ describe Chef::Knife::Cloud::OpenstackServerList do
     end
 
     it "lists formatted list of resources" do
-      instance.ui.should_receive(:list).with(["Instance ID", "Name", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone",
-                                              "resource-1", "ubuntu01", "172.31.6.132", "172.31.6.133", "1", "image1","keypair", "ACTIVE", "test zone",
-                                              "resource-2", "windows2008", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone",
-                                              "resource-3-err", "windows2008", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone"], :uneven_columns_across, 9)
+      instance.ui.should_receive(:list).with(["Name", "Instance ID", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone",
+                                              "ubuntu01", "resource-1", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone",
+                                              "windows2008", "resource-2", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone", "windows2008", "resource-3-err", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone"], :uneven_columns_across, 9)
       instance.run
     end
 
@@ -37,14 +33,22 @@ describe Chef::Knife::Cloud::OpenstackServerList do
       end
 
       it "lists formatted list of resources on chef data option set" do
-        instance.ui.should_receive(:list).with(["Instance ID", "Name", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone", "Chef Node Name", "Environment", "FQDN", "Runlist", "Tags", "Platform", "resource-1", "ubuntu01", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "", "resource-2", "windows2008", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "", "resource-3-err", "windows2008", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone", "", "", "", "", "", "", "server-4", "server-4", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "server-4", "_default", "testfqdnnode.us", "[]", "[]", "ubuntu"], :uneven_columns_across, 15)
+        instance.ui.should_receive(:list).with(["Name", "Instance ID", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone", "Chef Node Name", "Environment", "FQDN", "Runlist", "Tags", "Platform",
+                                                "server-4", "server-4", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "server-4", "_default", "testfqdnnode.us", "[]", "[]", "ubuntu",
+                                                "ubuntu01", "resource-1", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "",
+                                                "windows2008", "resource-2", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "",
+                                                "windows2008", "resource-3-err", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone", "", "", "", "", "", ""], :uneven_columns_across, 15)
         instance.run
       end
 
       it "lists formatted list of resources on chef-data and chef-node-attribute option set" do
         instance.config[:chef_node_attribute] = "platform_family"
         @node.should_receive(:attribute?).with("platform_family").and_return(true)
-        instance.ui.should_receive(:list).with(["Instance ID", "Name", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone", "Chef Node Name", "Environment", "FQDN", "Runlist", "Tags", "Platform", "platform_family", "resource-1", "ubuntu01", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "", "", "resource-2", "windows2008", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "", "", "resource-3-err", "windows2008", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone", "", "", "", "", "", "", "", "server-4", "server-4", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "server-4", "_default", "testfqdnnode.us", "[]", "[]", "ubuntu", "debian"], :uneven_columns_across, 16)
+        instance.ui.should_receive(:list).with(["Name", "Instance ID", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone", "Chef Node Name", "Environment", "FQDN", "Runlist", "Tags", "Platform", "platform_family",
+                                                "server-4", "server-4", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "server-4", "_default", "testfqdnnode.us", "[]", "[]", "ubuntu", "debian",
+                                                "ubuntu01", "resource-1", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "", "",
+                                                "windows2008", "resource-2", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "", "",
+                                                "windows2008", "resource-3-err", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone", "", "", "", "", "", "", ""], :uneven_columns_across, 16)
         instance.run
       end
 
@@ -59,8 +63,11 @@ describe Chef::Knife::Cloud::OpenstackServerList do
       it "not display chef-data on chef-node-attribute set but chef-data option missing" do
         instance.config[:chef_data] = false
         instance.config[:chef_node_attribute] = "platform_family"
-        instance.ui.should_not_receive(:list).with(["Instance ID", "Name", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone", "Chef Node Name", "Environment", "FQDN", "Runlist", "Tags", "Platform", "resource-1", "ubuntu01", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "", "resource-2", "windows2008", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone", "", "", "", "", "", "", "resource-3-err", "windows2008", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone", "", "", "", "", "", "", "server-4", "server-4", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "server-4", "_default", "testfqdnnode.us", "[]", "[]", "ubuntu"], :uneven_columns_across, 15)
-        instance.ui.should_receive(:list).with(["Instance ID", "Name", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone", "resource-1", "ubuntu01", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone", "resource-2", "windows2008", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone", "resource-3-err", "windows2008", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone", "server-4", "server-4", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone"], :uneven_columns_across, 9)
+        instance.ui.should_receive(:list).with(["Name", "Instance ID", "Public IP", "Private IP", "Flavor", "Image", "Keypair", "State", "Availability Zone",
+                                                "server-4", "server-4", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone",
+                                                "ubuntu01", "resource-1", "172.31.6.132", "172.31.6.133", "1", "image1", "keypair", "ACTIVE", "test zone",
+                                                "windows2008", "resource-2", "172.31.6.132", nil, "id2", "image2", "keypair", "ACTIVE", "test zone",
+                                                "windows2008", "resource-3-err", nil, nil, "id2", "image2", "keypair", "ERROR", "test zone"], :uneven_columns_across, 9)
         instance.run
       end
     end
