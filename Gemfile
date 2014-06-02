@@ -10,5 +10,5 @@ group :development do
   gem 'rake'
   gem 'mixlib-shellout'
   gem 'knife-cloud', :git => 'https://github.com/opscode/knife-cloud.git'
-  gem 'knife-windows', :git => 'https://github.com/opscode/knife-windows.git'
+  gem 'knife-windows'
 end
