@@ -64,7 +64,7 @@ Provisioning and bootstrapping for Windows 2003 and later images is now supporte
 
 Example:
 
-    knife openstack server create -I <Image_ID> -f <Flavor_ID> -S <keypair_name> --bootstrap-protocol winrm -P <Administrator_Password> -x Administrator -N <chef_node_name> --template windows-chef-client-msi.erb
+    knife openstack server create -I <Image> -f <Flavor> -S <keypair_name> --bootstrap-protocol winrm -P <Administrator_Password> -x Administrator -N <chef_node_name> --template windows-chef-client-msi.erb
 
 NOTE:
 * Bootstrap Protocol (`--bootstrap-protocol`) is required to be set to `winrm`.
@@ -108,7 +108,7 @@ Provides a list of the security groups available to the currently configured Ope
 knife openstack network list
 --------------------
 
-Lists the networks available to the currently configured OpenStack account. This data may be useful when choosing your networks to pass to the `knife openstack server create` subcommand. This command is only available with OpenStack deployments using the Neutron network service (not nova-network). Please see `knife openstack server delete --help` for all of the supported options.
+Lists the networks available to the currently configured OpenStack account. This data may be useful when choosing your networks to pass to the `knife openstack server create` subcommand. This command is only available with OpenStack deployments using the Neutron network service (not nova-network). Please see `knife openstack server create --help` for all of the supported options.
 
 # License #
 
