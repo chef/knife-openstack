@@ -362,7 +362,6 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       
       it { pending "not yet supported" }
     end
-  end
 
     context 'when standard options and --openstack-floating-ip option specified' do
       server_create_common_bfr_aftr
