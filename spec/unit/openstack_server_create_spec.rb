@@ -214,5 +214,11 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.config[:bootstrap_ip_address].should == "127.0.0.2"
     end
 
+    it "configures the bootstrap to use alternate network" do
+      @instance.server.stub(:addresses).and_return({"foo"=>[{"version"=>1, "addr"=>"127.0.0.1"}], "private"=>[{"version"=>4, "addr"=>"127.0.0.2"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.3"}]})
+      @instance.config[:bootstrap_network] = 'foo'
+      @instance.before_bootstrap
+      @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+    end
   end
 end
