@@ -46,11 +46,6 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     it "run sucessfully on all params exist" do
       expect { @instance.validate_params! }.to_not raise_error
     end
-
-    it "raise error if ssh key is missing" do
-      Chef::Config[:knife].delete(:openstack_ssh_key_id)
-      expect { @instance.validate_params! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError,  " You must provide SSH Key..")
-    end
   end
 
   describe "#before_exec_command" do
@@ -186,6 +181,11 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.config[:bootstrap_network] = "public"
       # default no network is true
       @instance.config[:network] = true
+      Chef::Config[:knife][:ssh_password] = "config_ssh_password"
+    end
+
+    after(:each) do
+      Chef::Config[:knife].delete(:ssh_password)
     end
 
     it "set bootstrap_ip" do
@@ -220,5 +220,23 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.before_bootstrap
       @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
     end
+
+    it "configures the bootstrap to use the server password" do
+      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      Chef::Config[:knife].delete(:ssh_password)
+      server_password  = "adFRjk1089"
+      @instance.server.stub(:password).and_return(server_password)
+      @instance.before_bootstrap
+      @instance.config[:ssh_password].should == server_password
+    end
+
+    it "configures the bootstrap to use the config ssh password" do
+      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      server_password  = "config_ssh_password"
+      Chef::Config[:knife][:ssh_password] = server_password
+      @instance.server.should_not_receive(:password)
+      @instance.before_bootstrap
+      @instance.config[:ssh_password].should == server_password
+    end    
   end
 end
