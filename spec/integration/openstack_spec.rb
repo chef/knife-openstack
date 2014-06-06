@@ -76,8 +76,8 @@ describe 'knife-openstack integration test' , :if => is_config_present do
   include RSpec::KnifeTestUtils
 
   before(:all) do
-    run('gem build knife-openstack.gemspec').exitstatus.should == 0
-    run("gem install #{get_gem_file_name}").exitstatus.should == 0
+    expect(run('gem build knife-openstack.gemspec').exitstatus).to be(0)
+    expect(run("gem install #{get_gem_file_name}").exitstatus).to be(0)
     init_openstack_test
   end
 
@@ -103,17 +103,17 @@ describe 'knife-openstack integration test' , :if => is_config_present do
 
     context 'when --chef-data CLI option specified' do
       let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data" }
-      it {pending('setup a chef-zero on workspace node')}
+      it {skip('setup a chef-zero on workspace node')}
     end
 
     context 'when --chef-data and valid --chef-node-attribute CLI option specified' do
       let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute platform_family" }
-      it {pending('setup a chef-zero on workspace node')}
+      it {skip('setup a chef-zero on workspace node')}
     end
 
     context 'when --chef-data and In valid --chef-node-attribute CLI option specified' do
       let(:command) { "knife openstack server list" + append_openstack_creds(is_list_cmd = true) + " --chef-data --chef-node-attribute invalid" }
-      it {pending('setup a chef-zero on workspace node')}
+      it {skip('setup a chef-zero on workspace node')}
     end    
   end
 
@@ -360,7 +360,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       " --openstack-private-network"+
       append_openstack_creds() + " --sudo"}
       
-      it { pending "not yet supported" }
+      it { skip "not yet supported" }
     end
 
     context 'when standard options and --openstack-floating-ip option specified' do
@@ -376,7 +376,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       " --openstack-floating-ip"+
       append_openstack_creds() + " --sudo"}
 
-      it {pending 'empty floating ip pool'}
+      it {skip 'empty floating ip pool'}
     end
 
     context 'when standard options and user data specified' do
@@ -387,7 +387,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
 
       after do
         # check user_data exists in server def
-        cmd_output.should include("user_data=>\"#{@user_data_file.read}\"")
+        expect(cmd_output).to include("user_data=>\"#{@user_data_file.read}\"")
         delete_sh_user_data_file(@user_data_file)
         run(delete_instance_cmd("#{cmd_output}"))
       end
@@ -479,7 +479,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       " --winrm-user #{SecureRandom.hex(6)}"+
       " --winrm-password #{@os_winrm_password}" +
       append_openstack_creds_for_windows() }
-      it { pending "Fails due to OC-9708 bug in knife-windows." }
+      it { skip "Fails due to OC-9708 bug in knife-windows." }
     end
 
     context 'when invalid winrm password specified' do
@@ -497,7 +497,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       append_openstack_creds_for_windows() }
       after(:each)  { run(delete_instance_cmd("#{cmd_output}")) }
 
-      it { pending "Fails due to OC-9708 bug in knife-windows." }
+      it { skip "Fails due to OC-9708 bug in knife-windows." }
     end
 
     context 'when standard options ssh bootstrap and valid image-os-type protocol specified' do
