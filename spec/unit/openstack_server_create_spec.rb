@@ -79,8 +79,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     it "set create_options" do
       @instance.service = double
-      allow(@instance.service).to receive(:get_image).and_return(mock_image('image'))
-      allow(@instance.service).to receive(:get_flavor).and_return(mock_flavor('flavor'))
+      allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
+      allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
       @instance.service.should_receive(:create_server_dependencies)
       @instance.before_exec_command
       @instance.create_options[:server_def][:name].should == @instance.config[:chef_node_name]
@@ -94,8 +94,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     it "doesn't set user data in server_def if user_data not specified" do
       @instance.service = double("Chef::Knife::Cloud::OpenstackService", :create_server_dependencies => nil)
-      allow(@instance.service).to receive(:get_image).and_return(mock_image('image'))
-      allow(@instance.service).to receive(:get_flavor).and_return(mock_flavor('flavor'))
+      allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
+      allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
       @instance.before_exec_command
       @instance.create_options[:server_def].should_not include(:user_data)
     end
@@ -104,8 +104,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       user_data = "echo 'hello world' >> /tmp/user_data.txt"
       Chef::Config[:knife][:user_data] = user_data
       @instance.service = double("Chef::Knife::Cloud::OpenstackService", :create_server_dependencies => nil)
-      allow(@instance.service).to receive(:get_image).and_return(mock_image('image'))
-      allow(@instance.service).to receive(:get_flavor).and_return(mock_flavor('flavor'))
+      allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
+      allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
       @instance.before_exec_command
       @instance.create_options[:server_def][:user_data].should == user_data
     end
@@ -113,8 +113,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     context "with multiple network_ids specified" do
       before(:each) do
         @instance.service = double
-        allow(@instance.service).to receive(:get_image).and_return(mock_image('image'))
-        allow(@instance.service).to receive(:get_flavor).and_return(mock_flavor('flavor'))
+        allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
+        allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
         @instance.service.should_receive(:create_server_dependencies)
         Chef::Config[:knife][:network_ids] = "test_network_id1,test_network_id2"
         Chef::Config[:knife][:network_ids].stub(:map).and_return(Chef::Config[:knife][:network_ids].split(","))
