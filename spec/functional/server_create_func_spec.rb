@@ -33,6 +33,13 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     @openstack_service = Chef::Knife::Cloud::OpenstackService.new
     @openstack_service.stub(:msg_pair)
     @openstack_service.stub(:print)
+    image = Object.new
+    allow(image).to receive(:id).and_return('image_id')
+    allow(@openstack_service).to receive(:get_image).and_return(image)
+    flavor = Object.new
+    allow(flavor).to receive(:id).and_return('flavor_id')
+    allow(@openstack_service).to receive(:get_flavor).and_return(flavor)
+
     @knife_openstack_create.stub(:create_service_instance).and_return(@openstack_service)
     @knife_openstack_create.stub(:puts)
     @new_openstack_server = double()
