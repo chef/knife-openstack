@@ -42,8 +42,8 @@ class Chef
               :server_def => {
                 #servers require a name, knife-cloud generates the chef_node_name
                 :name => config[:chef_node_name],
-                :image_ref => locate_config_value(:image),
-                :flavor_ref => locate_config_value(:flavor),
+                :image_ref => service.get_image(locate_config_value(:image)).id,
+                :flavor_ref => service.get_flavor(locate_config_value(:flavor)).id,
                 :security_groups => locate_config_value(:openstack_security_groups),
                 :availability_zone => locate_config_value(:availability_zone),
                 :metadata => locate_config_value(:metadata),
