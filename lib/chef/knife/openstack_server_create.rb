@@ -116,6 +116,10 @@ class Chef
 
         def before_bootstrap
           super
+
+          # Use SSH password either specified from command line or from openstack server instance
+          config[:ssh_password] = locate_config_value(:ssh_password) || server.password unless config[:openstack_ssh_key_id]
+
           # private_network means bootstrap_network = 'private'
           config[:bootstrap_network] = 'private' if config[:private_network]
 
@@ -140,11 +144,19 @@ class Chef
         end
 
         def validate_params!
-          super
+          # set param vm_name to a random value if the name is not set by the user (plugin)
+          config[:chef_node_name] = get_node_name(locate_config_value(:chef_node_name), locate_config_value(:chef_node_name_prefix))
+
           errors = []
           
-          errors << "You must provide SSH Key." if locate_config_value(:bootstrap_protocol) == 'ssh' && !locate_config_value(:identity_file).nil? && locate_config_value(:openstack_ssh_key_id).nil?
-            
+          if locate_config_value(:bootstrap_protocol) == 'winrm'
+            if locate_config_value(:winrm_password).nil?
+              errors << "You must provide Winrm Password."
+            end
+          elsif locate_config_value(:bootstrap_protocol) != 'ssh'
+            errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
+          end
+
           errors << "You must provide --image-os-type option [windows/linux]" if ! (%w(windows linux).include?(locate_config_value(:image_os_type)))
           error_message = ""
           raise CloudExceptions::ValidationError, error_message if errors.each{|e| ui.error(e); error_message = "#{error_message} #{e}."}.any?
