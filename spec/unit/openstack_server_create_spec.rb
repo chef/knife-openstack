@@ -1,7 +1,23 @@
+#
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
+# Author:: Ameya Varade (<ameya.varade@clogeny.com>)
 # Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.
+# License:: Apache License, Version 2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 require File.expand_path('../../spec_helper', __FILE__)
 require 'chef/knife/openstack_server_create'
@@ -29,7 +45,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
   describe "#validate_params!" do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
-      @instance.ui.stub(:error)
+      allow(@instance.ui).to receive(:error)
       Chef::Config[:knife][:bootstrap_protocol] = "ssh"
       Chef::Config[:knife][:identity_file] = "identity_file"
       Chef::Config[:knife][:image_os_type] = "linux"
@@ -51,7 +67,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
   describe "#before_exec_command" do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
-      @instance.ui.stub(:error)
+      allow(@instance.ui).to receive(:error)
       @instance.config[:chef_node_name] = "chef_node_name"
       Chef::Config[:knife][:image] = "image"
       Chef::Config[:knife][:flavor] = "flavor"
@@ -59,7 +75,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:server_create_timeout] = "server_create_timeout"
       Chef::Config[:knife][:openstack_ssh_key_id] = "openstack_ssh_key"
       Chef::Config[:knife][:network_ids] = "test_network_id"
-      Chef::Config[:knife][:network_ids].stub(:map).and_return(Chef::Config[:knife][:network_ids])
+      allow(Chef::Config[:knife][:network_ids]).to receive(:map).and_return(Chef::Config[:knife][:network_ids])
       Chef::Config[:knife][:metadata] = "foo=bar"
     end
 
@@ -76,15 +92,15 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.service = double
       allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
       allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
-      @instance.service.should_receive(:create_server_dependencies)
+      expect(@instance.service).to receive(:create_server_dependencies)
       @instance.before_exec_command
-      @instance.create_options[:server_def][:name].should == @instance.config[:chef_node_name]
-      @instance.create_options[:server_def][:image_ref].should == Chef::Config[:knife][:image]
-      @instance.create_options[:server_def][:security_groups].should == Chef::Config[:knife][:openstack_security_groups]
-      @instance.create_options[:server_def][:flavor_ref].should == Chef::Config[:knife][:flavor]
-      @instance.create_options[:server_def][:nics].should == Chef::Config[:knife][:network_ids]
-      @instance.create_options[:server_def][:metadata].should == Chef::Config[:knife][:metadata]
-      @instance.create_options[:server_create_timeout].should == Chef::Config[:knife][:server_create_timeout]
+      expect(@instance.create_options[:server_def][:name]).to be == @instance.config[:chef_node_name]
+      expect(@instance.create_options[:server_def][:image_ref]).to be == Chef::Config[:knife][:image]
+      expect(@instance.create_options[:server_def][:security_groups]).to be == Chef::Config[:knife][:openstack_security_groups]
+      expect(@instance.create_options[:server_def][:flavor_ref]).to be == Chef::Config[:knife][:flavor]
+      expect(@instance.create_options[:server_def][:nics]).to be == Chef::Config[:knife][:network_ids]
+      expect(@instance.create_options[:server_def][:metadata]).to be == Chef::Config[:knife][:metadata]
+      expect(@instance.create_options[:server_create_timeout]).to be == Chef::Config[:knife][:server_create_timeout]
     end
 
     it "doesn't set user data in server_def if user_data not specified" do
@@ -92,7 +108,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
       allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
       @instance.before_exec_command
-      @instance.create_options[:server_def].should_not include(:user_data)
+      expect(@instance.create_options[:server_def]).to_not include(:user_data)
     end
 
     it "sets user data" do
@@ -102,7 +118,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
       allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
       @instance.before_exec_command
-      @instance.create_options[:server_def][:user_data].should == user_data
+      expect(@instance.create_options[:server_def][:user_data]).to be == user_data
     end
 
     context "with multiple network_ids specified" do
@@ -110,27 +126,27 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         @instance.service = double
         allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
         allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
-        @instance.service.should_receive(:create_server_dependencies)
+        expect(@instance.service).to receive(:create_server_dependencies)
         Chef::Config[:knife][:network_ids] = "test_network_id1,test_network_id2"
-        Chef::Config[:knife][:network_ids].stub(:map).and_return(Chef::Config[:knife][:network_ids].split(","))
+        allow(Chef::Config[:knife][:network_ids]).to receive(:map).and_return(Chef::Config[:knife][:network_ids].split(","))
       end
       
       it "creates the server_def with multiple nic_ids." do
         @instance.before_exec_command
-        @instance.create_options[:server_def][:nics].should == ["test_network_id1", "test_network_id2"]
+        expect(@instance.create_options[:server_def][:nics]).to be == ["test_network_id1", "test_network_id2"]
       end
     end
 
     it "ensures default value for metadata" do
       options = @instance.options
-      options[:metadata][:default].should == nil
+      expect(options[:metadata][:default]).to be == nil
     end
   end
 
   describe "#after_exec_command" do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
-      @instance.stub(:msg_pair)
+      allow(@instance).to receive(:msg_pair)
     end
 
     after(:all) do
@@ -142,9 +158,9 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_floating_ip] = "-1"
       @instance.service = Chef::Knife::Cloud::Service.new
       @instance.server = double
-      @instance.server.should_not_receive(:associate_address)
-      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
-      @instance.should_receive(:bootstrap)
+      expect(@instance.server).to_not receive(:associate_address)
+      allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
+      expect(@instance).to receive(:bootstrap)
       @instance.after_exec_command
     end
 
@@ -152,31 +168,31 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_floating_ip] = nil
       @instance.service = Chef::Knife::Cloud::Service.new
       @instance.server = double
-      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
-      @instance.should_receive(:bootstrap)
+      allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
+      expect(@instance).to receive(:bootstrap)
       connection = double
-      @instance.service.stub(:connection).and_return(double)
+      allow(@instance.service).to receive(:connection).and_return(double)
       free_floating = Object.new
       free_floating.define_singleton_method(:fixed_ip) { return nil }
       free_floating.define_singleton_method(:ip) { return "127.0.0.1" }
-      @instance.service.connection.should_receive(:addresses).and_return([free_floating])
-      @instance.server.should_receive(:associate_address).with(free_floating.ip)
+      expect(@instance.service.connection).to receive(:addresses).and_return([free_floating])
+      expect(@instance.server).to receive(:associate_address).with(free_floating.ip)
       @instance.after_exec_command
     end
 
     it "raise error on unavailability of free_floating ip" do
       Chef::Config[:knife][:openstack_floating_ip] = nil
       @instance.service = Chef::Knife::Cloud::Service.new
-      @instance.ui.stub(:fatal)
+      allow(@instance.ui).to receive(:fatal)
       @instance.server = double
-      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
-      @instance.should_not_receive(:bootstrap)
+      allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
+      expect(@instance).to_not receive(:bootstrap)
       connection = double
-      @instance.service.stub(:connection).and_return(double)
+      allow(@instance.service).to receive(:connection).and_return(double)
       free_floating = Object.new
       free_floating.define_singleton_method(:fixed_ip) { return "127.0.0.1" }
-      @instance.service.connection.should_receive(:addresses).and_return([free_floating])
-      @instance.server.should_not_receive(:associate_address)
+      expect(@instance.service.connection).to receive(:addresses).and_return([free_floating])
+      expect(@instance.server).to_not receive(:associate_address)
       expect { @instance.after_exec_command }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ServerSetupError, "Unable to assign a Floating IP from allocated IPs.")
     end    
   end
@@ -200,55 +216,55 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       before(:each) { @instance.config[:network] = false }
 
       it "set public ip as a bootstrap ip if both public and private ip available" do
-        @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
+        allow(@instance.server).to receive(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
         @instance.before_bootstrap
-        @instance.config[:bootstrap_ip_address].should == "127.0.0.2"
+        expect(@instance.config[:bootstrap_ip_address]).to be == "127.0.0.2"
       end
 
       it "set private-ip as a bootstrap ip if private ip is available" do
-        @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+        allow(@instance.server).to receive(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
         @instance.before_bootstrap
-        @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+        expect(@instance.config[:bootstrap_ip_address]).to be == "127.0.0.1"
       end
 
       it "set available ip as a bootstrap ip if no public, private ip available" do
-        @instance.server.stub(:addresses).and_return({1=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+        allow(@instance.server).to receive(:addresses).and_return({1=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
         @instance.before_bootstrap
-        @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+        expect(@instance.config[:bootstrap_ip_address]).to be == "127.0.0.1"
       end
     end
 
     it "set bootstrap_ip" do
-      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
       @instance.before_bootstrap
-      @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+      expect(@instance.config[:bootstrap_ip_address]).to be == "127.0.0.1"
     end
 
     it "set private-ip as a bootstrap-ip if private-network option set" do
-      @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
+      allow(@instance.server).to receive(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
       @instance.config[:private_network] = true
       @instance.before_bootstrap
-      @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+      expect(@instance.config[:bootstrap_ip_address]).to be == "127.0.0.1"
     end
 
     it "raise error on nil bootstrap_ip" do
-      @instance.ui.stub(:error)
+      allow(@instance.ui).to receive(:error)
 
-      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>nil}]})
+      allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>nil}]})
       expect { @instance.before_bootstrap }.to raise_error(Chef::Knife::Cloud::CloudExceptions::BootstrapError, "No IP address available for bootstrapping.")
     end
     
     it "set public ip as default bootstrap network is public" do
-      @instance.server.stub(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
+      allow(@instance.server).to receive(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
       @instance.before_bootstrap
-      @instance.config[:bootstrap_ip_address].should == "127.0.0.2"
+      expect(@instance.config[:bootstrap_ip_address]).to be == "127.0.0.2"
     end
 
     it "configures the bootstrap to use alternate network" do
-      @instance.server.stub(:addresses).and_return({"foo"=>[{"version"=>1, "addr"=>"127.0.0.1"}], "private"=>[{"version"=>4, "addr"=>"127.0.0.2"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.3"}]})
+      allow(@instance.server).to receive(:addresses).and_return({"foo"=>[{"version"=>1, "addr"=>"127.0.0.1"}], "private"=>[{"version"=>4, "addr"=>"127.0.0.2"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.3"}]})
       @instance.config[:bootstrap_network] = 'foo'
       @instance.before_bootstrap
-      @instance.config[:bootstrap_ip_address].should == "127.0.0.1"
+      expect(@instance.config[:bootstrap_ip_address]).to be == "127.0.0.1"
     end
 
     it "configures the bootstrap to use the server password" do

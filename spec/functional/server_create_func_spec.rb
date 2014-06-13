@@ -1,6 +1,10 @@
 #
+# Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
+# Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
+# Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Chef Software, Inc.
+# Author:: Ameya Varade (<ameya.varade@clogeny.com>)
+# Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 require File.expand_path('../../spec_helper', __FILE__)
 
 describe Chef::Knife::Cloud::OpenstackServerCreate do
@@ -31,8 +36,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
 
     @openstack_service = Chef::Knife::Cloud::OpenstackService.new
-    @openstack_service.stub(:msg_pair)
-    @openstack_service.stub(:print)
+    allow(@openstack_service).to receive(:msg_pair)
+    allow(@openstack_service).to receive(:print)
     image = Object.new
     allow(image).to receive(:id).and_return('image_id')
     allow(@openstack_service).to receive(:get_image).and_return(image)
@@ -40,8 +45,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     allow(flavor).to receive(:id).and_return('flavor_id')
     allow(@openstack_service).to receive(:get_flavor).and_return(flavor)
 
-    @knife_openstack_create.stub(:create_service_instance).and_return(@openstack_service)
-    @knife_openstack_create.stub(:puts)
+    allow(@knife_openstack_create).to receive(:create_service_instance).and_return(@openstack_service)
+    allow(@knife_openstack_create).to receive(:puts)
     @new_openstack_server = double()
 
     @openstack_server_attribs = { :name => 'Mock Server',
@@ -57,16 +62,16 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
                                 }
 
     @openstack_server_attribs.each_pair do |attrib, value|
-      @new_openstack_server.stub(attrib).and_return(value)
+      allow(@new_openstack_server).to receive(attrib).and_return(value)
     end
   end
 
   describe "run" do
     before(:each) do
-      @knife_openstack_create.stub(:validate_params!)
-      Fog::Compute::OpenStack.stub_chain(:new, :servers, :create).and_return(@new_openstack_server)
+      allow(@knife_openstack_create).to receive(:validate_params!)
+      allow(Fog::Compute::OpenStack).to receive_message_chain(:new, :servers, :create).and_return(@new_openstack_server)
       @knife_openstack_create.config[:openstack_floating_ip] = '-1'
-      @new_openstack_server.stub(:wait_for)
+      allow(@new_openstack_server).to receive(:wait_for)
     end
 
     context "for Linux" do
@@ -76,15 +81,15 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@config)
         @ssh_bootstrap_protocol = Chef::Knife::Cloud::SshBootstrapProtocol.new(@config)
         @unix_distribution = Chef::Knife::Cloud::UnixDistribution.new(@config)
-        @ssh_bootstrap_protocol.stub(:send_bootstrap_command)
+        allow(@ssh_bootstrap_protocol).to receive(:send_bootstrap_command)
       end
 
       it "Creates an OpenStack instance and bootstraps it" do
-        Chef::Knife::Cloud::Bootstrapper.should_receive(:new).with(@config).and_return(@bootstrapper)
-        @bootstrapper.stub(:bootstrap).and_call_original
-        @bootstrapper.should_receive(:create_bootstrap_protocol).and_return(@ssh_bootstrap_protocol)
-        @bootstrapper.should_receive(:create_bootstrap_distribution).and_return(@unix_distribution)
-        @openstack_service.should_receive(:server_summary).exactly(2).times
+        expect(Chef::Knife::Cloud::Bootstrapper).to receive(:new).with(@config).and_return(@bootstrapper)
+        allow(@bootstrapper).to receive(:bootstrap).and_call_original
+        expect(@bootstrapper).to receive(:create_bootstrap_protocol).and_return(@ssh_bootstrap_protocol)
+        expect(@bootstrapper).to receive(:create_bootstrap_distribution).and_return(@unix_distribution)
+        expect(@openstack_service).to receive(:server_summary).exactly(2).times
         @knife_openstack_create.run
       end
     end
@@ -100,15 +105,14 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         @windows_distribution = Chef::Knife::Cloud::WindowsDistribution.new(@config)
       end
       it "Creates an OpenStack instance for Windows and bootstraps it" do
-        Chef::Knife::Cloud::Bootstrapper.should_receive(:new).with(@config).and_return(@bootstrapper)
-        @bootstrapper.stub(:bootstrap).and_call_original
-        @bootstrapper.should_receive(:create_bootstrap_protocol).and_return(@winrm_bootstrap_protocol)
-        @bootstrapper.should_receive(:create_bootstrap_distribution).and_return(@windows_distribution)
-        @winrm_bootstrap_protocol.stub(:send_bootstrap_command)
-        @openstack_service.should_receive(:server_summary).exactly(2).times
+        expect(Chef::Knife::Cloud::Bootstrapper).to receive(:new).with(@config).and_return(@bootstrapper)
+        allow(@bootstrapper).to receive(:bootstrap).and_call_original
+        expect(@bootstrapper).to receive(:create_bootstrap_protocol).and_return(@winrm_bootstrap_protocol)
+        expect(@bootstrapper).to receive(:create_bootstrap_distribution).and_return(@windows_distribution)
+        allow(@winrm_bootstrap_protocol).to receive(:send_bootstrap_command)
+        expect(@openstack_service).to receive(:server_summary).exactly(2).times
         @knife_openstack_create.run
       end
     end
-
   end
 end

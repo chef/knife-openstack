@@ -1,6 +1,8 @@
 #
+# Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Chef Software, Inc.
+# Author:: Ameya Varade (<ameya.varade@clogeny.com>)
+# Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +16,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 require File.expand_path('../../spec_helper', __FILE__)
 require 'chef/knife/openstack_server_delete'
 require 'chef/knife/cloud/openstack_service'
@@ -34,10 +37,10 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
     end
 
     @openstack_service = Chef::Knife::Cloud::OpenstackService.new
-    @openstack_service.stub(:msg_pair)
-    @knife_openstack_delete.stub(:create_service_instance).and_return(@openstack_service)
-    @knife_openstack_delete.ui.stub(:warn)
-    @knife_openstack_delete.ui.stub(:confirm)
+    allow(@openstack_service).to receive(:msg_pair)
+    allow(@knife_openstack_delete).to receive(:create_service_instance).and_return(@openstack_service)
+    allow(@knife_openstack_delete.ui).to receive(:warn)
+    allow(@knife_openstack_delete.ui).to receive(:confirm)
     @openstack_servers = double()
     @running_openstack_server = double()
     @openstack_server_attribs = { :name => 'Mock Server',
@@ -51,30 +54,30 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
                                 }
 
     @openstack_server_attribs.each_pair do |attrib, value|
-      @running_openstack_server.stub(attrib).and_return(value)
+      allow(@running_openstack_server).to receive(attrib).and_return(value)
     end
     @knife_openstack_delete.name_args = ['test001']
   end
 
   describe "run" do
     it "deletes an OpenStack instance." do
-      @openstack_servers.should_receive(:get).and_return(@running_openstack_server)
-      @openstack_connection.should_receive(:servers).and_return(@openstack_servers)
-      Fog::Compute::OpenStack.should_receive(:new).and_return(@openstack_connection)
-      @running_openstack_server.should_receive(:destroy)
+      expect(@openstack_servers).to receive(:get).and_return(@running_openstack_server)
+      expect(@openstack_connection).to receive(:servers).and_return(@openstack_servers)
+      expect(Fog::Compute::OpenStack).to receive(:new).and_return(@openstack_connection)
+      expect(@running_openstack_server).to receive(:destroy)
       @knife_openstack_delete.run
     end
 
     it "deletes the instance along with the node and client on the chef-server when --purge is given as an option." do
       @knife_openstack_delete.config[:purge] = true
-      Chef::Node.should_receive(:load).and_return(@chef_node)
-      @chef_node.should_receive(:destroy)
-      Chef::ApiClient.should_receive(:load).and_return(@chef_client)
-      @chef_client.should_receive(:destroy)
-      @openstack_servers.should_receive(:get).and_return(@running_openstack_server)
-      @openstack_connection.should_receive(:servers).and_return(@openstack_servers)
-      Fog::Compute::OpenStack.should_receive(:new).and_return(@openstack_connection)
-      @running_openstack_server.should_receive(:destroy)
+      expect(Chef::Node).to receive(:load).and_return(@chef_node)
+      expect(@chef_node).to receive(:destroy)
+      expect(Chef::ApiClient).to receive(:load).and_return(@chef_client)
+      expect(@chef_client).to receive(:destroy)
+      expect(@openstack_servers).to receive(:get).and_return(@running_openstack_server)
+      expect(@openstack_connection).to receive(:servers).and_return(@openstack_servers)
+      expect(Fog::Compute::OpenStack).to receive(:new).and_return(@openstack_connection)
+      expect(@running_openstack_server).to receive(:destroy)
       @knife_openstack_delete.run
     end
   end
