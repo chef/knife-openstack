@@ -37,7 +37,7 @@ describe Chef::Knife::OpenstackServerCreate do
     %w{msg_pair puts print}.each do |method|
       allow(@knife_openstack_create).to receive(method.to_sym)
     end
-    
+
     @openstack_servers = double()
     @new_openstack_server = double()
 
@@ -105,6 +105,10 @@ describe Chef::Knife::OpenstackServerCreate do
       @knife_openstack_create.config[:floating_ip] = '-1'
     end
 
+    after do
+      Chef::Config[:knife].delete(:bootstrap_protocol)
+    end
+
     it "Creates an OpenStack instance and bootstraps it" do
       expect(@new_openstack_server).to receive(:wait_for).and_return(true)
       @knife_openstack_create.run
@@ -150,11 +154,11 @@ describe Chef::Knife::OpenstackServerCreate do
     end
 
     it "configures the bootstrap to use the correct ssh_user login" do
-      expect(@bootstrap.config[:ssh_user]).to eq('ubuntu')      
+      expect(@bootstrap.config[:ssh_user]).to eq('ubuntu')
     end
 
     it "configures the bootstrap to use the correct ssh_port" do
-      expect(@bootstrap.config[:ssh_port]).to eq('44')      
+      expect(@bootstrap.config[:ssh_port]).to eq('44')
     end
 
     it "configures the bootstrap to use the correct ssh identity file" do
@@ -253,6 +257,33 @@ describe Chef::Knife::OpenstackServerCreate do
 
     it "configures the bootstrap to use public network since none specified" do
       expect(@bootstrap.name_args).to eq(['75.101.253.10'])
+    end
+  end
+
+describe "when configuring the bootstrap process with no network when public and private address are nil" do
+    before do
+      @knife_openstack_create.config[:network] = false
+      @openstack_server_attribs[:addresses]["public"][0]["addr"] = nil
+      @openstack_server_attribs[:addresses]["private"][0]["addr"] = nil
+
+      expect(@new_openstack_server).to receive(:wait_for).and_return(true)
+      expect(@openstack_servers).to receive(:create).and_return(@new_openstack_server)
+      expect(@openstack_connection).to receive(:servers).and_return(@openstack_servers)
+      expect(Fog::Compute::OpenStack).to receive(:new).and_return(@openstack_connection)
+      @bootstrap = Chef::Knife::Bootstrap.new
+      allow(Chef::Knife::Bootstrap).to receive(:new).and_return(@bootstrap)
+      expect(@bootstrap).to receive(:run)
+      @knife_openstack_create.config[:run_list] = []
+      @knife_openstack_create.config[:floating_ip] = '-1'
+    end
+    after do
+      @openstack_server_attribs[:addresses]["public"][0]["addr"] = '75.101.253.10'
+      @openstack_server_attribs[:addresses]["private"][0]["addr"] = '10.251.75.20'
+    end
+
+    it "uses the ip provided by server.addresses" do
+      expect(@knife_openstack_create).to receive(:bootstrap_for_node).with(@new_openstack_server,"34.56.78.90").and_return(@bootstrap)
+      @knife_openstack_create.run
     end
   end
 end
