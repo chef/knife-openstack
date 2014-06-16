@@ -268,21 +268,21 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
 
     it "configures the bootstrap to use the server password" do
-      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
       Chef::Config[:knife].delete(:ssh_password)
       server_password  = "adFRjk1089"
-      @instance.server.stub(:password).and_return(server_password)
+      allow(@instance.server).to receive(:password).and_return(server_password)
       @instance.before_bootstrap
-      @instance.config[:ssh_password].should == server_password
+      expect(@instance.config[:ssh_password]).to be == server_password
     end
 
     it "configures the bootstrap to use the config ssh password" do
-      @instance.server.stub(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
       server_password  = "config_ssh_password"
       Chef::Config[:knife][:ssh_password] = server_password
-      @instance.server.should_not_receive(:password)
+      expect(@instance.server).to_not receive(:password)
       @instance.before_bootstrap
-      @instance.config[:ssh_password].should == server_password
+      expect(@instance.config[:ssh_password]).to be == server_password
     end    
   end
 end
