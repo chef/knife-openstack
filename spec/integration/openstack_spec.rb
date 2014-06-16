@@ -88,7 +88,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
   end
 
   describe 'display help for command' do
-    %w{flavor\ list server\ create server\ delete server\ list group\ list image\ list }.each do |command|
+    %w{flavor\ list server\ create server\ delete server\ list group\ list image\ list network\ list }.each do |command|
       context "when --help option used with #{command} command" do
         let(:command) { "knife openstack #{command} --help" }
         run_cmd_check_stdout("--help")
@@ -139,6 +139,13 @@ describe 'knife-openstack integration test' , :if => is_config_present do
     end
   end
 
+  describe 'display network list' do
+    context 'when standard options specified' do
+      let(:command) { "knife openstack network list" + append_openstack_creds(is_list_cmd = true) }
+      it {skip 'Chef openstack setup not support this functionality'}
+    end
+  end
+
   describe 'server show' do
     context 'with valid instance_id' do
       before(:each) do
@@ -159,6 +166,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
     before(:each) {rm_known_host}
     context 'when standard options specified' do
       cmd_out = ""
+
       before(:each) { create_node_name("linux") }
 
       after { cmd_out = "#{cmd_output}" }
@@ -212,7 +220,10 @@ describe 'knife-openstack integration test' , :if => is_config_present do
     end
 
     context 'when standard options and delete-server-on-failure specified' do
-      server_create_common_bfr_aftr
+      cmd_out = ""
+      before(:each) { create_node_name("linux") }
+
+      after { cmd_out = "#{cmd_output}" }
 
       let(:command) { "knife openstack server create -N #{@name_node}"+
       " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
@@ -225,6 +236,11 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       append_openstack_creds + " --sudo"}
       
       run_cmd_check_status_and_output("succeed", "#{@name_node}")
+
+      context "delete server by using name after create" do
+        let(:command) { "knife openstack server delete #{@name_node} " + append_openstack_creds(is_list_cmd = true) + " --yes" }
+        run_cmd_check_status_and_output("succeed", "#{@name_node}")
+      end
     end
 
     context 'when delete-server-on-failure specified and bootstrap fails' do
@@ -436,6 +452,55 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       append_openstack_creds + " --sudo"}
 
       run_cmd_check_status_and_output("succeed", "#{@name_node}")
+    end
+
+    context 'when standard options and openstack metadata option is specified' do
+      server_create_common_bfr_aftr
+
+      let(:command) { "knife openstack server create -N #{@name_node}"+
+      " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
+      " --template-file " + get_linux_template_file_path +
+      " --server-url http://localhost:8889" +
+      " --yes --server-create-timeout 1800" +
+      " --metadata testdataone='testmetadata'" +
+      get_ssh_credentials +
+      " --identity-file #{temp_dir}/openstack.pem"+
+      " --metadata testdatatwo='testmetadata'" +
+      append_openstack_creds + " --sudo"}
+
+      run_cmd_check_status_and_output("succeed", "#{@name_node}")
+    end
+
+    context 'when standard options and openstack network-ids option is specified' do
+      server_create_common_bfr_aftr
+
+      let(:command) { "knife openstack server create -N #{@name_node}"+
+      " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
+      " --template-file " + get_linux_template_file_path +
+      " --server-url http://localhost:8889" +
+      " --yes --server-create-timeout 1800" +
+      " --network-ids #{@os_network_ids} " +
+      get_ssh_credentials +
+      " --identity-file #{temp_dir}/openstack.pem"+
+      append_openstack_creds + " --sudo"}
+
+      it {skip 'Chef openstack setup not support this functionality'}
+    end
+
+    context 'when standard options and openstack availability-zone option is specified' do
+      server_create_common_bfr_aftr
+
+      let(:command) { "knife openstack server create -N #{@name_node}"+
+      " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
+      " --template-file " + get_linux_template_file_path +
+      " --server-url http://localhost:8889" +
+      " --yes --server-create-timeout 1800" +
+      " --availability-zone #{@os_availability_zone} " +
+      get_ssh_credentials +
+      " --identity-file #{temp_dir}/openstack.pem"+
+      append_openstack_creds + " --sudo"}
+
+      it {skip 'Chef openstack setup not support this functionality'}
     end
   end
 
