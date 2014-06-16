@@ -11,9 +11,9 @@ describe Chef::Knife::OpenstackServerCreate do
   before do
 
     @openstack_connection = double(Fog::Compute::OpenStack)
-    @openstack_connection.stub_chain(:flavors, :find).and_return double('flavor', {:id => 'flavor_id'})
-    @openstack_connection.stub_chain(:images, :find).and_return double('image', {:id => 'image_id'})
-    @openstack_connection.stub_chain(:addresses).and_return [double('addresses', {
+    allow(@openstack_connection).to receive_message_chain(:flavors, :find).and_return double('flavor', {:id => 'flavor_id'})
+    allow(@openstack_connection).to receive_message_chain(:images, :find).and_return double('image', {:id => 'image_id'})
+    allow(@openstack_connection).to receive_message_chain(:addresses).and_return [double('addresses', {
           :instance_id => nil,
           :ip => '111.111.111.111',
           :fixed_ip => true
@@ -21,8 +21,8 @@ describe Chef::Knife::OpenstackServerCreate do
 
     @knife_openstack_create = Chef::Knife::OpenstackServerCreate.new
     @knife_openstack_create.initial_sleep_delay = 0
-    @knife_openstack_create.stub(:tcp_test_ssh).and_return(true)
-    @knife_openstack_create.stub(:tcp_test_winrm).and_return(true)
+    allow(@knife_openstack_create).to receive(:tcp_test_ssh).and_return(true)
+    allow(@knife_openstack_create).to receive(:tcp_test_winrm).and_return(true)
 
     {
       :image => 'image',
@@ -34,10 +34,10 @@ describe Chef::Knife::OpenstackServerCreate do
       Chef::Config[:knife][key] = value
     end
 
-    @knife_openstack_create.stub(:msg_pair)
-    @knife_openstack_create.stub(:puts)
-    @knife_openstack_create.stub(:print)
-
+    %w{msg_pair puts print}.each do |method|
+      allow(@knife_openstack_create).to receive(method.to_sym)
+    end
+    
     @openstack_servers = double()
     @new_openstack_server = double()
 
@@ -56,7 +56,7 @@ describe Chef::Knife::OpenstackServerCreate do
     }
 
     @openstack_server_attribs.each_pair do |attrib, value|
-      @new_openstack_server.stub(attrib).and_return(value)
+      allow(@new_openstack_server).to receive(attrib).and_return(value)
     end
   end
 
@@ -66,61 +66,62 @@ describe Chef::Knife::OpenstackServerCreate do
     end
 
     it "ensures default options" do
-      @options[:bootstrap_protocol][:default].should == nil
-      @options[:distro][:default].should == 'chef-full'
-      @options[:availability_zone][:default].should == nil
-      @options[:metadata][:default].should == nil
-      @options[:floating_ip][:default].should == '-1'
-      @options[:host_key_verify][:default].should == true
-      @options[:private_network][:default].should == false
-      @options[:network][:default].should == true
-      @options[:bootstrap_network][:default].should == 'public'
-      @options[:run_list][:default].should == []
-      @options[:security_groups][:default].should == ['default']
-      @options[:server_create_timeout][:default].should == 600
-      @options[:ssh_port][:default].should == '22'
-      @options[:ssh_user][:default].should == 'root'
-      @options[:first_boot_attributes][:default].should == {}
+      expect(@options[:bootstrap_protocol][:default]).to be_nil
+      expect(@options[:bootstrap_protocol][:default]).to be_nil
+      expect(@options[:distro][:default]).to eq('chef-full')
+      expect(@options[:availability_zone][:default]).to be_nil
+      expect(@options[:metadata][:default]).to be_nil
+      expect(@options[:floating_ip][:default]).to eq('-1')
+      expect(@options[:host_key_verify][:default]).to be true
+      expect(@options[:private_network][:default]).to be false
+      expect(@options[:network][:default]).to be true
+      expect(@options[:bootstrap_network][:default]).to eq('public')
+      expect(@options[:run_list][:default]).to eq([])
+      expect(@options[:security_groups][:default]).to eq(['default'])
+      expect(@options[:server_create_timeout][:default]).to eq(600)
+      expect(@options[:ssh_port][:default]).to eq('22')
+      expect(@options[:ssh_user][:default]).to eq('root')
+      expect(@options[:first_boot_attributes][:default]).to eq({})
     end
 
     it "doesn't set an OpenStack endpoint type by default" do
-        Chef::Config[:knife][:openstack_endpoint_type].should == nil
+      expect(Chef::Config[:knife][:openstack_endpoint_type]).to be_nil
     end
 
     it "user_data should be empty" do
-        Chef::Config[:knife][:user_data].should == nil
+      expect(Chef::Config[:knife][:user_data]).to be_nil
     end
   end
 
   describe "run" do
     before do
-      @openstack_servers.should_receive(:create).and_return(@new_openstack_server)
-      @openstack_connection.should_receive(:servers).and_return(@openstack_servers)
-      Fog::Compute::OpenStack.should_receive(:new).and_return(@openstack_connection)
+      expect(@openstack_servers).to receive(:create).and_return(@new_openstack_server)
+      expect(@openstack_connection).to receive(:servers).and_return(@openstack_servers)
+      expect(Fog::Compute::OpenStack).to receive(:new).and_return(@openstack_connection)
       @bootstrap = Chef::Knife::Bootstrap.new
-      Chef::Knife::Bootstrap.stub(:new).and_return(@bootstrap)
-      @bootstrap.should_receive(:run)
+      allow(Chef::Knife::Bootstrap).to receive(:new).and_return(@bootstrap)
+      expect(@bootstrap).to receive(:run)
       @knife_openstack_create.config[:run_list] = []
       @knife_openstack_create.config[:floating_ip] = '-1'
     end
 
     it "Creates an OpenStack instance and bootstraps it" do
-      @new_openstack_server.should_receive(:wait_for).and_return(true)
+      expect(@new_openstack_server).to receive(:wait_for).and_return(true)
       @knife_openstack_create.run
     end
 
     it "Creates an OpenStack instance for Windows and bootstraps it" do
       @bootstrap_win = Chef::Knife::BootstrapWindowsWinrm.new
-      Chef::Knife::BootstrapWindowsWinrm.stub(:new).and_return(@bootstrap_win)
+      allow(Chef::Knife::BootstrapWindowsWinrm).to receive(:new).and_return(@bootstrap_win)
       Chef::Config[:knife][:bootstrap_protocol] = 'winrm'
-      @new_openstack_server.should_receive(:wait_for).and_return(true)
+      expect(@new_openstack_server).to receive(:wait_for).and_return(true)
       @knife_openstack_create.run
     end
 
     it "creates an OpenStack instance, assigns existing floating ip and bootstraps it" do
       @knife_openstack_create.config[:floating_ip] = "111.111.111.111"
-      @new_openstack_server.should_receive(:wait_for).and_return(true)
-      @new_openstack_server.should_receive(:associate_address).with('111.111.111.111')
+      expect(@new_openstack_server).to receive(:wait_for).and_return(true)
+      expect(@new_openstack_server).to receive(:associate_address).with('111.111.111.111')
       @knife_openstack_create.run
     end
   end
@@ -141,31 +142,31 @@ describe Chef::Knife::OpenstackServerCreate do
     end
 
     it "should set the bootstrap 'name argument' to the hostname of the OpenStack server" do
-      @bootstrap.name_args.should == ['75.101.253.10']
+      expect(@bootstrap.name_args).to eq(['75.101.253.10'])
     end
 
     it "configures sets the bootstrap's run_list" do
-      @bootstrap.config[:run_list].should == ['role[base]']
+      expect(@bootstrap.config[:run_list]).to eq(['role[base]'])
     end
 
     it "configures the bootstrap to use the correct ssh_user login" do
-      @bootstrap.config[:ssh_user].should == 'ubuntu'
+      expect(@bootstrap.config[:ssh_user]).to eq('ubuntu')      
     end
 
     it "configures the bootstrap to use the correct ssh_port" do
-      @bootstrap.config[:ssh_port].should == '44'
+      expect(@bootstrap.config[:ssh_port]).to eq('44')      
     end
 
     it "configures the bootstrap to use the correct ssh identity file" do
-      @bootstrap.config[:identity_file].should == "~/.ssh/key.pem"
+      expect(@bootstrap.config[:identity_file]).to eq("~/.ssh/key.pem")
     end
 
     it "configures the bootstrap to use the configured node name if provided" do
-      @bootstrap.config[:chef_node_name].should == 'blarf'
+      expect(@bootstrap.config[:chef_node_name]).to eq('blarf')
     end
 
     it "configures the bootstrap to use the server password" do
-      @bootstrap.config[:ssh_password].should == 'password'
+      expect(@bootstrap.config[:ssh_password]).to eq('password')
     end
 
     it "configures the bootstrap to use the config ssh password" do
@@ -174,7 +175,7 @@ describe Chef::Knife::OpenstackServerCreate do
       bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
         @new_openstack_server.addresses['public'].last['addr'])
 
-      bootstrap.config[:ssh_password].should == 'testing123'
+      expect(bootstrap.config[:ssh_password]).to eq('testing123')
     end
 
     it "configures the bootstrap to use the OpenStack server id if no explicit node name is set" do
@@ -182,37 +183,37 @@ describe Chef::Knife::OpenstackServerCreate do
 
       bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
         @new_openstack_server.addresses['public'].last['addr'])
-      bootstrap.config[:chef_node_name].should == @new_openstack_server.name
+      expect(bootstrap.config[:chef_node_name]).to eq(@new_openstack_server.name)
     end
 
     it "configures the bootstrap to use prerelease versions of chef if specified" do
-      @bootstrap.config[:prerelease].should be_false
+      expect(@bootstrap.config[:prerelease]).to be_nil
 
       @knife_openstack_create.config[:prerelease] = true
 
       bootstrap = @knife_openstack_create.bootstrap_for_node(@new_openstack_server,
         @new_openstack_server.addresses['public'].last['addr'])
-      bootstrap.config[:prerelease].should be_true
+      expect(bootstrap.config[:prerelease]).to be true
     end
 
     it "configures the bootstrap to use the desired distro-specific bootstrap script" do
-      @bootstrap.config[:distro].should == 'ubuntu-10.04-magic-sparkles'
+      expect(@bootstrap.config[:distro]).to eq('ubuntu-10.04-magic-sparkles')
     end
 
     it "configures the bootstrap to use sudo" do
-      @bootstrap.config[:use_sudo].should be_true
+      expect(@bootstrap.config[:use_sudo]).to be true
     end
 
     it "configures the bootstrap with json attributes" do
-      @bootstrap.config[:first_boot_attributes]['some_var'].should be_true
+      expect(@bootstrap.config[:first_boot_attributes]['some_var']).to be true
     end
 
     it "configured the bootstrap to use the desired template" do
-      @bootstrap.config[:template_file].should == '~/.chef/templates/my-bootstrap.sh.erb'
+      expect(@bootstrap.config[:template_file]).to eq('~/.chef/templates/my-bootstrap.sh.erb')
     end
 
     it "configured the bootstrap to set an openstack hint (via Chef::Config)" do
-      Chef::Config[:knife][:hints]['openstack'].should_not be_nil
+      expect(Chef::Config[:knife][:hints]['openstack']).to_not be_nil
     end
   end
 
@@ -225,7 +226,7 @@ describe Chef::Knife::OpenstackServerCreate do
     end
 
     it "configures the bootstrap to use private network" do
-      @bootstrap.name_args.should == ['10.251.75.20']
+      expect(@bootstrap.name_args).to eq(['10.251.75.20'])
     end
   end
 
@@ -238,7 +239,7 @@ describe Chef::Knife::OpenstackServerCreate do
     end
 
     it "configures the bootstrap to use alternate network" do
-      @bootstrap.name_args.should == ['34.56.78.90']
+      expect(@bootstrap.name_args).to eq(['34.56.78.90'])
     end
   end
 
@@ -251,7 +252,7 @@ describe Chef::Knife::OpenstackServerCreate do
     end
 
     it "configures the bootstrap to use public network since none specified" do
-      @bootstrap.name_args.should == ['75.101.253.10']
+      expect(@bootstrap.name_args).to eq(['75.101.253.10'])
     end
   end
 end
