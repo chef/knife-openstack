@@ -220,10 +220,10 @@ describe 'knife-openstack integration test' , :if => is_config_present do
     end
 
     context 'when standard options and delete-server-on-failure specified' do
-      cmd_out = ""
+      nodename = ""
       before(:each) { create_node_name("linux") }
 
-      after { cmd_out = "#{cmd_output}" }
+      after { nodename = @name_node }
 
       let(:command) { "knife openstack server create -N #{@name_node}"+
       " -I #{@os_linux_image} -f #{@os_linux_flavor} "+
@@ -238,7 +238,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       run_cmd_check_status_and_output("succeed", "#{@name_node}")
 
       context "delete server by using name after create" do
-        let(:command) { "knife openstack server delete #{@name_node} " + append_openstack_creds(is_list_cmd = true) + " --yes" }
+        let(:command) { "knife openstack server delete #{nodename} " + append_openstack_creds(is_list_cmd = true) + " --yes" }
         run_cmd_check_status_and_output("succeed", "#{@name_node}")
       end
     end
@@ -283,7 +283,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       " --yes" +
       append_openstack_creds() + " --sudo" }
       
-      run_cmd_check_status_and_output("fail", "ERROR: You must provide either Identity file or SSH Password.")
+      it { skip "Chef openstack setup not support this functionality."}
     end
 
     context 'when standard options and invalid openstack security group specified' do
@@ -314,7 +314,7 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       " --identity-file #{temp_dir}/openstack.pem"+
       append_openstack_creds() + " --sudo"}
 
-      run_cmd_check_status_and_output("fail", "Invalid imageRef provided")
+      run_cmd_check_status_and_output("fail", "ERROR: You have not provided a valid image ID. Please note the options for this value are -I or --image")
     end
 
     context 'when standard options and invalid flavor id specified' do
@@ -329,7 +329,22 @@ describe 'knife-openstack integration test' , :if => is_config_present do
       " --identity-file #{temp_dir}/openstack.pem"+
       append_openstack_creds() + " --sudo"}
       
-      run_cmd_check_status_and_output("fail", "Invalid flavorRef provided.")
+      run_cmd_check_status_and_output("fail", "ERROR: You have not provided a valid flavor ID. Please note the options for this value are -f or --flavor")
+    end
+
+    context 'when standard options and invalid floating ip specified' do
+      before(:each) { create_node_name("linux") }
+      
+      let(:command) { "knife openstack server create -N #{@name_node}"+
+      " -I #{@os_linux_image} --openstack-floating-ip #{@os_invalid_floating_ip} "+
+      " --template-file " + get_linux_template_file_path +
+      " --server-url http://localhost:8889" +
+      " --yes" +
+      get_ssh_credentials +
+      " --identity-file #{temp_dir}/openstack.pem"+
+      append_openstack_creds() + " --sudo"}
+      
+      run_cmd_check_status_and_output("fail", "ERROR: You have either requested an invalid floating IP address or none are available")
     end
 
     context 'when invalid key_pair specified' do
