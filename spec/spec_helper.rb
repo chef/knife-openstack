@@ -62,7 +62,7 @@ def is_config_present
   err_msg = err_msg + ( unset_env_var.length > 1 ? " variables " : " variable " ) + "for integration tests."
   puts err_msg unless unset_env_var.empty?
   
-  %w(OS_SSH_USER OPENSTACK_PRI_KEY OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_config_opt|
+  %w(OS_SSH_USER OPENSTACK_PRI_KEY OPENSTACK_KEY_PAIR OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE OS_NETWORK_IDS OS_AVAILABILITY_ZONE).each do |os_config_opt|
     option_value = ENV[os_config_opt] || (openstack_config[os_config_opt] if openstack_config)
     if option_value.nil?
       unset_config_options << os_config_opt
@@ -104,7 +104,7 @@ def init_openstack_test
   config_file_exist = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
   openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if config_file_exist
 
-  %w(OS_SSH_USER OPENSTACK_KEY_PAIR OPENSTACK_PRI_KEY OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE).each do |os_config_opt|
+  %w(OS_SSH_USER OPENSTACK_KEY_PAIR OPENSTACK_PRI_KEY OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE OS_NETWORK_IDS OS_AVAILABILITY_ZONE).each do |os_config_opt|
     instance_variable_set("@#{os_config_opt.downcase}", (openstack_config[os_config_opt] if openstack_config) || ENV[os_config_opt])
   end
   begin
