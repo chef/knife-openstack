@@ -37,6 +37,7 @@ class Chef
         banner "knife openstack server create (options)"
 
         def before_exec_command
+            super
             # setup the create options
             @create_options = {
               :server_def => {
@@ -68,7 +69,6 @@ class Chef
             {:label => 'State', :key => 'state'},
             {:label => 'Availability Zone', :key => 'availability_zone'}
             ]
-            super
         end
 
         def get_id(value)
@@ -158,6 +158,49 @@ class Chef
           end
 
           errors << "You must provide --image-os-type option [windows/linux]" if ! (%w(windows linux).include?(locate_config_value(:image_os_type)))
+          error_message = ""
+          raise CloudExceptions::ValidationError, error_message if errors.each{|e| ui.error(e); error_message = "#{error_message} #{e}."}.any?
+        end
+
+        def is_image_valid?
+          service.get_image(locate_config_value(:image)).nil? ? false : true
+        end
+
+        def is_flavor_valid?
+          service.get_flavor(locate_config_value(:flavor)).nil? ? false : true
+        end
+
+        def is_floating_ip_valid?
+          address = locate_config_value(:openstack_floating_ip)
+          
+          if address == '-1' # no floating IP requested
+            return true
+          end
+
+          addresses = service.connection.addresses
+          return false if addresses.empty? # no floating IPs
+          # floating requested without value
+          if address.nil?
+            if addresses.find_index { |a| a.fixed_ip.nil? }
+              return true
+            else
+              return false # no floating IPs available
+            end
+          else
+            # floating requested with value
+            if addresses.find_index { |a| a.ip == address }
+              return true
+            else
+              return false # requested floating IP does not exist
+            end
+          end
+        end
+
+        def post_connection_validations
+          errors = []
+          errors << "You have not provided a valid image ID. Please note the options for this value are -I or --image." if !is_image_valid?
+          errors << "You have not provided a valid flavor ID. Please note the options for this value are -f or --flavor." if !is_flavor_valid?
+          errors << "You have either requested an invalid floating IP address or none are available." if !is_floating_ip_valid?
           error_message = ""
           raise CloudExceptions::ValidationError, error_message if errors.each{|e| ui.error(e); error_message = "#{error_message} #{e}."}.any?
         end

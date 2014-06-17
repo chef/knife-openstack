@@ -25,9 +25,12 @@ require 'support/shared_examples_for_servercreatecommand'
 require 'support/shared_examples_for_command'
 
 describe Chef::Knife::Cloud::OpenstackServerCreate do
+  create_instance = Chef::Knife::Cloud::OpenstackServerCreate.new
+  create_instance.define_singleton_method(:post_connection_validations){}
+
   it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackServerCreate.new
-  it_behaves_like Chef::Knife::Cloud::ServerCreateCommand, Chef::Knife::Cloud::OpenstackServerCreate.new
-  
+  it_behaves_like Chef::Knife::Cloud::ServerCreateCommand, create_instance
+
   describe "#create_service_instance" do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
@@ -93,6 +96,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
       allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
       expect(@instance.service).to receive(:create_server_dependencies)
+      expect(@instance).to receive(:post_connection_validations)
       @instance.before_exec_command
       expect(@instance.create_options[:server_def][:name]).to be == @instance.config[:chef_node_name]
       expect(@instance.create_options[:server_def][:image_ref]).to be == Chef::Config[:knife][:image]
@@ -107,6 +111,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.service = double("Chef::Knife::Cloud::OpenstackService", :create_server_dependencies => nil)
       allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
       allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
+      expect(@instance).to receive(:post_connection_validations)
       @instance.before_exec_command
       expect(@instance.create_options[:server_def]).to_not include(:user_data)
     end
@@ -117,6 +122,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.service = double("Chef::Knife::Cloud::OpenstackService", :create_server_dependencies => nil)
       allow(@instance.service).to receive(:get_image).and_return(get_mock_resource('image'))
       allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource('flavor'))
+      expect(@instance).to receive(:post_connection_validations)
       @instance.before_exec_command
       expect(@instance.create_options[:server_def][:user_data]).to be == user_data
     end
@@ -129,6 +135,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         expect(@instance.service).to receive(:create_server_dependencies)
         Chef::Config[:knife][:network_ids] = "test_network_id1,test_network_id2"
         allow(Chef::Config[:knife][:network_ids]).to receive(:map).and_return(Chef::Config[:knife][:network_ids].split(","))
+        expect(@instance).to receive(:post_connection_validations)
       end
       
       it "creates the server_def with multiple nic_ids." do
@@ -284,5 +291,129 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.before_bootstrap
       expect(@instance.config[:ssh_password]).to be == server_password
     end    
+  end
+
+  describe "#post_connection_validations" do
+    before(:each) do
+      @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
+      allow(@instance.ui).to receive(:error)
+    end
+
+    it "raise error on invalid image" do
+      allow(@instance).to receive(:is_flavor_valid?).and_return(true)
+      allow(@instance).to receive(:is_floating_ip_valid?).and_return(true)
+      expect(@instance).to receive(:is_image_valid?).and_return(false)
+      expect { @instance.post_connection_validations }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError, " You have not provided a valid image ID. Please note the options for this value are -I or --image..")
+    end
+
+    it "raise error on invalid flavor" do
+      allow(@instance).to receive(:is_image_valid?).and_return(true)
+      allow(@instance).to receive(:is_floating_ip_valid?).and_return(true)
+      expect(@instance).to receive(:is_flavor_valid?).and_return(false)
+      expect { @instance.post_connection_validations }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError, " You have not provided a valid flavor ID. Please note the options for this value are -f or --flavor..")
+    end
+
+    it "raise error on invalid floating IP" do
+      allow(@instance).to receive(:is_flavor_valid?).and_return(true)
+      allow(@instance).to receive(:is_image_valid?).and_return(true)      
+      expect(@instance).to receive(:is_floating_ip_valid?).and_return(false)
+      expect { @instance.post_connection_validations }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError, " You have either requested an invalid floating IP address or none are available..")
+    end
+  end
+
+  describe "#is_floating_ip_valid?" do
+    before(:each) do
+      @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
+      # Default value
+      Chef::Config[:knife][:openstack_floating_ip] = "-1"
+      @instance.service = double
+    end
+
+    after(:all) do
+      Chef::Config[:knife].delete(:openstack_floating_ip)
+    end
+
+    it "returns true for default" do
+      expect(@instance.is_floating_ip_valid?).to be true
+    end
+
+    it "returns false if no floating IPs" do
+      Chef::Config[:knife].delete(:openstack_floating_ip)
+      expect(@instance.service).to receive_message_chain(:connection, :addresses).and_return([])
+      expect(@instance.is_floating_ip_valid?).to be false
+    end
+    
+    context "when floating ip requested without value" do
+      it "returns true if fixed_ip is nil" do
+        Chef::Config[:knife][:openstack_floating_ip] = nil
+        obj = Object.new
+        obj.define_singleton_method(:fixed_ip){nil}
+        expect(@instance.service).to receive_message_chain(:connection, :addresses).and_return([obj])
+        expect(@instance.is_floating_ip_valid?).to be true
+      end
+    end
+
+    context "when floating ip requested with value" do
+      before {Chef::Config[:knife][:openstack_floating_ip] = "127.0.0.1"}
+      after {Chef::Config[:knife].delete(:openstack_floating_ip)}
+
+      it "returns true if requested floating IP is exist" do
+        obj = Object.new
+        obj.define_singleton_method(:ip){return "127.0.0.1"}
+        expect(@instance.service).to receive_message_chain(:connection, :addresses).and_return([obj])
+        expect(@instance.is_floating_ip_valid?).to be true
+      end
+
+      it "returns false if requested floating IP does not exist" do
+        obj = Object.new
+        obj.define_singleton_method(:ip){return "127.0.1.1"}
+        expect(@instance.service).to receive_message_chain(:connection, :addresses).and_return([obj])
+        expect(@instance.is_floating_ip_valid?).to be false
+      end
+    end
+  end
+
+  describe "#is_image_valid?" do
+    before(:each) do
+      @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
+      @instance.service = double
+      Chef::Config[:knife][:image] = "image_id"
+    end
+
+    after(:each) do
+      Chef::Config[:knife].delete(:image)
+    end
+
+    it "returns false on invalid image" do
+      expect(@instance.service).to receive_message_chain(:get_image).and_return(nil)
+      expect(@instance.is_image_valid?).to be false
+    end
+
+    it "returns true on valid image" do
+      expect(@instance.service).to receive_message_chain(:get_image).and_return("image")
+      expect(@instance.is_image_valid?).to be true
+    end
+  end
+
+  describe "#is_flavor_valid?" do
+    before(:each) do
+      @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
+      @instance.service = double
+      Chef::Config[:knife][:flavor] = "flavor"
+    end
+
+    after(:each) do
+      Chef::Config[:knife].delete(:flavor)
+    end
+    
+    it "returns false on invalid flavor" do
+      expect(@instance.service).to receive_message_chain(:get_flavor).and_return(nil)
+      expect(@instance.is_flavor_valid?).to be false
+    end
+
+    it "returns true on valid flavor" do
+      expect(@instance.service).to receive_message_chain(:get_flavor).and_return("flavor")
+      expect(@instance.is_flavor_valid?).to be true
+    end
   end
 end
