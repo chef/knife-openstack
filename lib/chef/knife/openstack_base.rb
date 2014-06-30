@@ -203,7 +203,7 @@ class Chef
       end
 
       def get_image_by_id(image_id)
-        @images_list = connection.images
+        @images_list ||= connection.images
         @images_list.find { |i| i.id == image_id }.name
       end
 
