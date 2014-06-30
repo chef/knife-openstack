@@ -177,6 +177,36 @@ class Chef
         end
       end
 
+      # method copyed from knife-ec2
+      def fcolor(flavor)
+        case flavor
+        when "t1.micro"
+          fcolor = :blue
+        when "m1.small"
+          fcolor = :magenta
+        when "m1.medium"
+          fcolor = :cyan
+        when "m1.large"
+          fcolor = :green
+        when "m1.xlarge"
+          fcolor = :red
+        end
+      end
+
+      def get_flavor_display(id)
+        ui.color(get_flavor_by_id(id), fcolor(get_flavor_by_id(id)))
+      end
+
+      def get_flavor_by_id(flavor_id)
+        @flavor_list ||= connection.flavors
+        @flavor_list.find { |f| f.id == flavor_id }.name
+      end
+
+      def get_image_by_id(image_id)
+        @images_list ||= connection.images
+        @images_list.find { |i| i.id == image_id }.name
+      end
+
     end
   end
 end

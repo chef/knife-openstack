@@ -59,9 +59,9 @@ class Chef
             else
               server_list << ''
             end
-            server_list << server.flavor['id'].to_s
+            server_list << get_flavor_display(server.flavor['id'])
             if server.image
-              server_list << server.image['id']
+              server_list << get_image_by_id(server.image['id'])
             else
               server_list << ""
             end
