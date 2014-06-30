@@ -163,7 +163,16 @@ class Chef
       end
 
       def primary_private_ip_address(addresses)
-        primary_network_ip_address(addresses, 'private')
+        if primary_network_ip_address(addresses, 'private').nil?
+          addr = addresses.map { |k,v|  v.map {|a| a['addr']}}.flatten
+          if addr.length == 1
+            addr[0]
+          else
+            addr.to_s.gsub(/"/,'')
+          end
+        else
+          primary_network_ip_address(addresses, 'private')
+        end
       end
 
       #we use last since the floating IP goes there
