@@ -49,16 +49,43 @@ class Chef
             server_list << server.name
             server_list << server.id.to_s
             server_list << server.availability_zone
-            if primary_public_ip_address(server.addresses)
+	###################################################################################################
+	# no IP information is showing up for my implementation when using knife-openstack, which is a PITA
+	# Assumes network 0 is the private
+	# 	and that network 1 is public
+	# 	not defining any text as the PKEY for displaying servers
+	# otherwise, on Havana, I get no IP information from a server list
+	##################################################################################################
+	    floater_ip = ""
+	    fixed_ip = ""
+
+	    server.addresses.each do |netw|
+	      if netw[1][0]
+	        fixed_ip = netw[1][0]['addr']
+ 	      end
+	      if netw[1][1]
+	        floater_ip = netw[1][1]['addr']
+	      end
+	    end 
+
+	    
+            if floater_ip != ""
+	      server_list << floater_ip
+	    elsif primary_public_ip_address(server.addresses)
               server_list << primary_public_ip_address(server.addresses)
             else
               server_list << ''
             end
-            if primary_private_ip_address(server.addresses)
+
+
+            if fixed_ip != ""
+	      server << fixed_ip
+	    elsif primary_private_ip_address(server.addresses)
               server_list << primary_private_ip_address(server.addresses)
             else
               server_list << ''
             end
+
             server_list << server.flavor['id'].to_s
             if server.image
               server_list << server.image['id']
