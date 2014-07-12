@@ -51,16 +51,22 @@ class Chef
             server_list << server.availability_zone
 	###################################################################################################
 	# no IP information is showing up for my implementation when using knife-openstack, which is a PITA
-	# I don't think 'net1' is generic ... more work to do here
-	# set up for all networks; a hack includes I presume net1 to be a key
+	# Assumes network 0 is the private
+	# 	and that network 1 is public
+	# 	not defining any text as the PKEY for displaying servers
 	# otherwise, on Havana, I get no IP information from a server list
 	##################################################################################################
-	    all_ips = JSON.parse(server.addresses['net1'].to_json) 	# all IP addr names
-	    fixed = JSON.parse(all_ips[0].to_json) 			# the 1st IP is fixed, for my install
-            floater = JSON.parse(all_ips[1].to_json)			# the 2nd IP is floating, for my install
+	    floater_ip = ""
+	    fixed_ip = ""
+
+	    server.addresses.each do |netw|
+	      fixed_ip 		= netw[1][0]['addr']
+	      floater_ip	= netw[1][1]['addr']
+	    end 
+
 	    
-            if floater['addr'] != ""
-	      server_list << floater['addr']
+            if floater_ip != ""
+	      server_list << floater_ip
 	    elsif primary_public_ip_address(server.addresses)
               server_list << primary_public_ip_address(server.addresses)
             else
@@ -68,8 +74,8 @@ class Chef
             end
 
 
-            if fixed['addr'] != ""
-	      server << fixed['addr']
+            if fixed_ip != ""
+	      server << fixed_ip
 	    elsif primary_private_ip_address(server.addresses)
               server_list << primary_private_ip_address(server.addresses)
             else
