@@ -60,8 +60,12 @@ class Chef
 	    fixed_ip = ""
 
 	    server.addresses.each do |netw|
-	      fixed_ip 		= netw[1][0]['addr']
-	      floater_ip	= netw[1][1]['addr']
+	      if netw[1][0]
+	        fixed_ip = netw[1][0]['addr']
+ 	      end
+	      if netw[1][1]
+	        floater_ip = netw[1][1]['addr']
+	      end
 	    end 
 
 	    
