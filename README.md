@@ -56,7 +56,7 @@ Additionally the following options may be set in your `knife.rb`:
 
 # Working with Floating IPs #
 
-To use a floating IP address while bootstrapping nodes, use the `-a` or `--floating-ip` option.
+To use a floating IP address while bootstrapping nodes, use the `-a` or `--openstack-floating-ip` option.
 
 # Working with Windows Images #
 
