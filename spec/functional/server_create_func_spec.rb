@@ -76,7 +76,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     context "for Linux" do
       before do
-        @config = {:openstack_floating_ip=>"-1", :bootstrap_ip_address => "75.101.253.10", :ssh_password=>"password"}
+        @config = {:openstack_floating_ip=>"-1", :bootstrap_ip_address => "75.101.253.10", :ssh_password=>"password", :ssh_port=> nil}
         @knife_openstack_create.config[:distro] = 'chef-full'
         @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@config)
         @ssh_bootstrap_protocol = Chef::Knife::Cloud::SshBootstrapProtocol.new(@config)
@@ -96,7 +96,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     context "for Windows" do
       before do
-        @config = {:openstack_floating_ip=>"-1", :image_os_type => 'windows', :bootstrap_ip_address => "75.101.253.10", :bootstrap_protocol => 'winrm', :ssh_password=>"password"}
+        @config = {:openstack_floating_ip=>"-1", :image_os_type => 'windows', :bootstrap_ip_address => "75.101.253.10", :bootstrap_protocol => 'winrm', :ssh_password=>"password", :ssh_port=> nil}
         @knife_openstack_create.config[:image_os_type] = 'windows'
         @knife_openstack_create.config[:bootstrap_protocol] = 'winrm'
         @knife_openstack_create.config[:distro] = 'windows-chef-client-msi'
