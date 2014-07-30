@@ -51,6 +51,11 @@ class Chef
       :description => "A regexp matching an image name or an image ID for the server",
       :proc => Proc.new { |i| Chef::Config[:knife][:image] = i }
 
+      option :volumes,
+      :long => "--volumes VOLUME1,VOLUME2,VOLUME3",
+      :description => "Comma separated list of the UUID(s) of the volume(s) to attach to the server",
+      :proc => Proc.new { |volumes| volumes.split(',') }
+
       option :security_groups,
       :short => "-G X,Y,Z",
       :long => "--groups X,Y,Z",
@@ -304,6 +309,18 @@ class Chef
             nic_id = { 'net_id' => nic }
             nic_id
           end
+        end
+        unless locate_config_value(:volumes).nil?
+          counter = 96
+          server_def[:block_device_mapping] = locate_config_value(:volumes).map do |vol|
+            counter += 1 
+            {
+			  :volume_id => vol,
+			  :delete_on_termination => false,
+			  :device_name => "vd"+counter.chr,
+			  :volume_size => nil,
+            }
+            end
         end
         Chef::Log.debug("server_def is: #{server_def}")
 
