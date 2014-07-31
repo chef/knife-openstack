@@ -311,13 +311,13 @@ class Chef
           end
         end
         unless locate_config_value(:volumes).nil?
-          counter = 96
+          counter = 99
           server_def[:block_device_mapping] = locate_config_value(:volumes).map do |vol|
             counter += 1 
             {
 			  :volume_id => vol,
 			  :delete_on_termination => false,
-			  :device_name => "vd"+counter.chr,
+			  :device_name => "/dev/vd"+counter.chr,
 			  :volume_size => nil,
             }
             end
