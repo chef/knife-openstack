@@ -417,7 +417,7 @@ class Chef
 
         Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
         if bootstrap_ip_address.nil?
-          ui.error("No IP address available for bootstrapping. #{server.addresses.inspect}")
+          ui.error("No IP address available for bootstrapping.")
           exit 1
         end
 
