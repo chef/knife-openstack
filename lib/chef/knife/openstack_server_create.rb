@@ -51,6 +51,11 @@ class Chef
       :description => "A regexp matching an image name or an image ID for the server",
       :proc => Proc.new { |i| Chef::Config[:knife][:image] = i }
 
+      option :scheduler_hints,
+      :long => "--scheduler-hints HINTS",
+      :description => "A scheduler group hint to OpenStack",
+      :proc => Proc.new { |i| Chef::Config[:knife][:scheduler_hints] = i }
+
       option :volumes,
       :long => "--volumes VOLUME1,VOLUME2,VOLUME3",
       :description => "Comma separated list of the UUID(s) of the volume(s) to attach to the server",
@@ -300,6 +305,7 @@ class Chef
           :flavor_ref => flavor.id,
           :security_groups => locate_config_value(:security_groups),
           :availability_zone => locate_config_value(:availability_zone),
+          :os:scheduler_hints => locate_config_value(:scheduler_hints),
           :metadata => locate_config_value(:metadata),
           :key_name => locate_config_value(:openstack_ssh_key_id)
         }
@@ -411,7 +417,7 @@ class Chef
 
         Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
         if bootstrap_ip_address.nil?
-          ui.error("No IP address available for bootstrapping.")
+          ui.error("No IP address available for bootstrapping. #{server.addresses.inspect}")
           exit 1
         end
 
