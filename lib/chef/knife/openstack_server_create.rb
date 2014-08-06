@@ -305,7 +305,7 @@ class Chef
           :flavor_ref => flavor.id,
           :security_groups => locate_config_value(:security_groups),
           :availability_zone => locate_config_value(:availability_zone),
-          :os:scheduler_hints => locate_config_value(:scheduler_hints),
+          "os:scheduler_hints" => locate_config_value(:scheduler_hints),
           :metadata => locate_config_value(:metadata),
           :key_name => locate_config_value(:openstack_ssh_key_id)
         }
