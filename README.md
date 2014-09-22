@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/opscode/knife-openstack.png)](https://travis-ci.org/opscode/knife-openstack)
+
 Knife OpenStack
 ===============
 
