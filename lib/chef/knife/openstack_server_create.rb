@@ -215,7 +215,8 @@ class Chef
         end
 
         def get_floating_ip_id(floating_address)
-          floating_ip_id = 8675309
+          # required for this method to work
+          floating_ip_id = -1
           # Figure out the id for the port that the floating ip you requested
           @service.network.list_floating_ips[:body]["floatingips"].each do |x|
             if x["floating_ip_address"] == floating_address
