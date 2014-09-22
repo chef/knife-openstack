@@ -82,6 +82,7 @@ class Chef
           msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
 
           floating_address = locate_config_value(:openstack_floating_ip)
+          bind_ip = primary_network_ip_address(server.addresses,server.addresses.keys[0])
           Chef::Log.debug("Floating IP Address requested #{floating_address}")
           unless (floating_address == '-1') #no floating IP requested
             addresses = service.connection.addresses
@@ -95,13 +96,21 @@ class Chef
                   raise CloudExceptions::ServerSetupError, error_message
                 else
                   floating_address = addresses[free_floating].ip
-                end                
+                end
               rescue CloudExceptions::ServerSetupError => e
                 cleanup_on_failure
                 raise e
               end
             end
-            server.associate_address(floating_address)
+
+            # Pull the port_id for the associate_floating_ip
+            port_id = @service.network.list_ports[:body].flatten.flatten[1]["id"]
+            fixed_ip_address = @service.network.list_ports[:body].flatten.flatten[1]["fixed_ips"].flatten[0]["ip_address"]
+
+            floating_ip_id = get_floating_ip_id(floating_address)
+            # Associate the floating ip via the neutron/network api
+            @service.network.associate_floating_ip(floating_ip_id, port_id, options = {:fixed_ip_address => fixed_ip_address })
+
             #a bit of a hack, but server.reload takes a long time
             (server.addresses['public'] ||= []) << {"version"=>4,"addr"=>floating_address}
             msg_pair("Floating IP Address", floating_address)
@@ -127,7 +136,7 @@ class Chef
           unless config[:network] # --no-network
             bootstrap_ip_address = primary_public_ip_address(server.addresses) ||
               primary_private_ip_address(server.addresses) ||
-              server.addresses.first[1][0]['addr']
+              server.addresses.keys[0]
             Chef::Log.debug("No Bootstrap Network: #{config[:bootstrap_network]}")
           else
             bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network])
@@ -148,7 +157,7 @@ class Chef
           config[:chef_node_name] = get_node_name(locate_config_value(:chef_node_name), locate_config_value(:chef_node_name_prefix))
 
           errors = []
-          
+
           if locate_config_value(:bootstrap_protocol) == 'winrm'
             if locate_config_value(:winrm_password).nil?
               errors << "You must provide Winrm Password."
@@ -172,7 +181,7 @@ class Chef
 
         def is_floating_ip_valid?
           address = locate_config_value(:openstack_floating_ip)
-          
+
           if address == '-1' # no floating IP requested
             return true
           end
@@ -203,6 +212,18 @@ class Chef
           errors << "You have either requested an invalid floating IP address or none are available." if !is_floating_ip_valid?
           error_message = ""
           raise CloudExceptions::ValidationError, error_message if errors.each{|e| ui.error(e); error_message = "#{error_message} #{e}."}.any?
+        end
+
+        def get_floating_ip_id(floating_address)
+          # required for this method to work
+          floating_ip_id = -1
+          # Figure out the id for the port that the floating ip you requested
+          @service.network.list_floating_ips[:body]["floatingips"].each do |x|
+            if x["floating_ip_address"] == floating_address
+              floating_ip_id = x["id"]
+            end
+          end
+          return floating_ip_id
         end
       end
     end
