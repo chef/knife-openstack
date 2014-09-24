@@ -136,7 +136,7 @@ class Chef
           unless config[:network] # --no-network
             bootstrap_ip_address = primary_public_ip_address(server.addresses) ||
               primary_private_ip_address(server.addresses) ||
-              server.addresses.keys[0]
+              server.addresses.first[1][0]['addr']
             Chef::Log.debug("No Bootstrap Network: #{config[:bootstrap_network]}")
           else
             bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network])
