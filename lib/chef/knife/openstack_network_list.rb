@@ -1,30 +1,34 @@
-require 'chef/knife/openstack_base'
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
+# Copyright:: Copyright (c) 2014 Chef Software, Inc.
+
+require 'chef/knife/cloud/list_resource_command'
+require 'chef/knife/openstack_helpers'
+require 'chef/knife/cloud/openstack_service_options'
 
 class Chef
   class Knife
-    class OpenstackNetworkList < Knife
+    class Cloud
+      class OpenstackNetworkList < ResourceListCommand
+        include OpenstackHelpers
+        include OpenstackServiceOptions
 
-      include Knife::OpenstackBase
+        banner "knife openstack network list (options)"
 
-      banner "knife openstack network list (options)"
-
-      def run
-
-        validate!
-
-        net_list = [
-          ui.color('Name', :bold),
-          ui.color('ID', :bold),
-          ui.color('Tenant', :bold),
-          ui.color('Shared', :bold),
-        ]
-        network.networks.all.sort_by(&:name).each do |network|
-          net_list << network.name
-          net_list << network.id
-          net_list << network.tenant_id
-          net_list << network.shared.to_s
+        def before_exec_command
+          #set columns_with_info map
+          @columns_with_info = [
+            {:label => 'Name', :key => 'name'},
+            {:label => 'ID', :key => 'id'},
+            {:label => 'Tenant', :key => 'tenant_id'},
+            {:label => 'Shared', :key => 'shared'}
+          ]
+          @sort_by_field = "name"
         end
-        puts ui.list(net_list, :uneven_columns_across, 4)
+
+        def query_resource
+          @service.list_networks
+        end
+
       end
     end
   end

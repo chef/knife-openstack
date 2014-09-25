@@ -1,36 +1,18 @@
-## v0.10.0
-DONE
-* KNIFE-368 Ability to specify metadata during OpenStack server create
-* KNIFE-423 Add ability for knife-openstack to specify network IDs to attach
-* KNIFE-428 Added Availability zone to knife openstack
-* KNIFE-467 --no-network fails to find first network IP address
-* KNIFE-471 Explicitly define NIC for private network when creating server
-* KNIFE-474 knife openstack group list throws a fog deprecation warning
-* KNIFE-475 json-attributes option wasnt actually getting passed to bootstrap
-* KNIFE-477 Delete openstack instance by name
-* KNIFE-478 Generated SSH password not passed to bootstrap
-* add support for working with names instead of ids, updated listing accordingly
 
-## v0.9.1
-* KNIFE-462 missing user_data throws stack
-
-## v0.9.0
-* KNIFE-231 added ability to specify arbitrary bootstrap network ID
-* KNIFE-264 Add support for --json-attributes
-* KNIFE-277 knife openstack "ERROR: No IP address available for bootstrapping."
+* Implementation using knife-cloud gem
 * KNIFE-310 "knife openstack server list" will fail with boot from volume instances
-* KNIFE-435 Support user data for OpenStack server create
-* KNIFE-436 Support fixed network type for OpenStack server create
-* https://github.com/opscode/chef-rfc/pull/7/ create/delete enhancements
 
 ## v0.8.1
+
 * KNIFE-296 knife-windows overrides -i, -p, -P and -x options with winrm values
 * KNIFE-304 enable setting the ssh port for knife-openstack
 
 ## v0.8.0
+
 * KNIFE-221 Windows bootstrapping (winrm-based) support for knife-openstack (Chirag Jog)
 
 ## v0.7.1
+
 * KNIFE-261 file permissions fixed
 
 ## v0.7.0
@@ -76,3 +58,19 @@ DONE
 
 ## V0.5.2
 * initial Cactus release using EC2 API
+
+# BACKLOG/ISSUES #
+This is a list of missing(?) features and open questions currently under development consideration:
+
+* Basic availability zones support (Jarek Zmudzinski) NEED TESTING ACCESS FOR AVAILABILITY ZONES
+* purge only works when names match up with clients
+* `knife openstack floating list|associate|release NODE` with --floating-ip-pool also
+* KNIFE-229 Allow specifying the name of the pool when using floating IPs
+* attempt to allocate a floating ipaddress if none if free, currently missing in Fog
+* KNIFE-76 take either the flavor ID or the flavor name
+* take either the image ID or the image name (similar for KNIFE-76)
+* KNIFE-86 server create with expired password hangs
+* KNIFE-231 added ability to specify arbitrary network ID
+* assumption of only single floating IP (and fog uses the last as the public_ip_address)
+* probably other places public network is assumed that could cause issues
+* fog is putting the original public IP address into the private_ip_address method when you get a floating_ip, this is wrong. Remove KNIFE-248 code once fixed.
