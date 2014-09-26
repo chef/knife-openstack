@@ -104,8 +104,9 @@ class Chef
             end
 
             # Pull the port_id for the associate_floating_ip
-            port_id = @service.network.list_ports[:body].flatten.flatten[1]["id"]
-            fixed_ip_address = @service.network.list_ports[:body].flatten.flatten[1]["fixed_ips"].flatten[0]["ip_address"]
+            port_id = @service.network.list_ports[:body]['ports'].find {|x| x['fixed_ips'][0]['ip_address'] == bind_ip}['id']
+            fixed_ip_address = service.network.list_ports[:body]["ports"].find {|x| x['id'] == port_id}['fixed_ips'][0]["ip_address"]
+            binding.pry
 
             floating_ip_id = get_floating_ip_id(floating_address)
             # Associate the floating ip via the neutron/network api
