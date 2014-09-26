@@ -51,7 +51,6 @@ class Chef
           ]
           begin
             volumes.sort_by(&:name).each do |volume|
-              puts volume.inspect
               volume_list << volume.name
               volume_list << volume.id.to_s
               volume_list << volume.status
