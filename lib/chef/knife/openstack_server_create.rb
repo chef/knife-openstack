@@ -47,11 +47,24 @@ class Chef
                 :flavor_ref => service.get_flavor(locate_config_value(:flavor)).id,
                 :security_groups => locate_config_value(:openstack_security_groups),
                 :availability_zone => locate_config_value(:availability_zone),
+                "os:scheduler_hints" => locate_config_value(:openstack_scheduler_hints),
                 :metadata => locate_config_value(:metadata),
                 :key_name => locate_config_value(:openstack_ssh_key_id)
               },
               :server_create_timeout => locate_config_value(:server_create_timeout)
             }
+            unless locate_config_value(:openstack_volumes).nil?
+              counter = 99
+              server_def[:block_device_mapping] = locate_config_value(:openstack_volumes).map do |vol|
+                counter += 1 
+                {
+                  :volume_id => vol,
+                  :delete_on_termination => false,
+                  :device_name => "/dev/vd"+counter.chr,
+                  :volume_size => nil,
+                }
+                end
+            end
 
             @create_options[:server_def].merge!({:user_data => locate_config_value(:user_data)}) if locate_config_value(:user_data)
             @create_options[:server_def].merge!({:nics => locate_config_value(:network_ids).map { |nic| nic_id = { 'net_id' => nic }}}) if locate_config_value(:network_ids)
