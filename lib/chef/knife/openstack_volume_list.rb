@@ -18,43 +18,40 @@
 # limitations under the License.
 #
 
-require 'chef/knife/openstack_base'
+require 'chef/knife/cloud/list_resource_command'
+require 'chef/knife/openstack_helpers'
+require 'chef/knife/cloud/openstack_service_options'
 
 class Chef
   class Knife
-    class OpenstackVolumeList < Knife
+    class Cloud 
+    class OpenstackVolumeList < ResourceListCommand
 
-      include Knife::OpenstackBase
+      include OpenstackHelpers
+      include OpenstackServiceOptions
 
       banner "knife openstack volume list (options)"
 
-      def run
+      def before_exec_command
+        #set columns_with_info map
+        @columns_with_info = [
+          {:label => 'Name', :key => 'name' },
+          {:label => 'ID', :key => 'id' }, 
+          {:label => 'Status', :key => 'status' }, 
+          {:label => 'Size', :key => 'size', :value_callback => method(:size_in_gb) }, 
+          {:label => 'Description', :key => 'description' }
+	    ]
+        @sort_by_field = "name"
+      end
 
-        validate!
+	  def query_resource
+          @service.connection.volumes
+      end
 
-        volume_list = [
-          ui.color('Name', :bold),
-          ui.color('ID', :bold),
-          ui.color('Status', :bold),
-          ui.color('Size', :bold),
-          ui.color('Description', :bold),
-        ]
-        begin
-          connection.volumes.sort_by(&:name).each do |volume|
-            puts volume.inspect
-            volume_list << volume.name
-            volume_list << volume.id.to_s
-            volume_list << volume.status
-            volume_list << "#{volume.size.to_s} GB"
-            volume_list << volume.description
-          end
-        rescue Excon::Errors::BadRequest => e
-          response = Chef::JSONCompat.from_json(e.response.body)
-          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
-          raise e
-        end
-        puts ui.list(volume_list, :uneven_columns_across, 5)
+      def size_in_gb(size)
+         "#{size} GB"
       end
     end
   end
+end
 end
