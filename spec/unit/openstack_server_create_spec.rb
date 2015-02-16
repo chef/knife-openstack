@@ -137,7 +137,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         allow(Chef::Config[:knife][:network_ids]).to receive(:map).and_return(Chef::Config[:knife][:network_ids].split(","))
         expect(@instance).to receive(:post_connection_validations)
       end
-      
+
       it "creates the server_def with multiple nic_ids." do
         @instance.before_exec_command
         expect(@instance.create_options[:server_def][:nics]).to be == ["test_network_id1", "test_network_id2"]
@@ -165,7 +165,6 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_floating_ip] = "-1"
       @instance.service = Chef::Knife::Cloud::Service.new
       @instance.server = double
-      expect(@instance.server).to_not receive(:associate_address)
       allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
       expect(@instance).to receive(:bootstrap)
       @instance.after_exec_command
@@ -175,15 +174,24 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:openstack_floating_ip] = nil
       @instance.service = Chef::Knife::Cloud::Service.new
       @instance.server = double
+
+      @network = double
+      @ports = ['id' => 'test',
+                'fixed_ips' => ['ip_address' => '127.0.1.1']]
+      allow(@network).to receive(:list_ports).and_return(body: {'ports' => @ports})
+      @floating_ips = ['id' => 'test',
+                'fixed_ips' => ['ip_address' => '127.0.1.1']]
+      allow(@network).to receive(:list_floating_ips).and_return(body: {'floatingips' => @floating_ips})
+      allow(@network).to receive(:associate_floating_ip)
+      allow(@instance.service).to receive(:network).and_return(@network)
+
       allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
       expect(@instance).to receive(:bootstrap)
-      connection = double
       allow(@instance.service).to receive(:connection).and_return(double)
       free_floating = Object.new
       free_floating.define_singleton_method(:fixed_ip) { return nil }
       free_floating.define_singleton_method(:ip) { return "127.0.0.1" }
       expect(@instance.service.connection).to receive(:addresses).and_return([free_floating])
-      expect(@instance.server).to receive(:associate_address).with(free_floating.ip)
       @instance.after_exec_command
     end
 
@@ -194,14 +202,12 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.server = double
       allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.1.1"}]})
       expect(@instance).to_not receive(:bootstrap)
-      connection = double
       allow(@instance.service).to receive(:connection).and_return(double)
       free_floating = Object.new
       free_floating.define_singleton_method(:fixed_ip) { return "127.0.0.1" }
       expect(@instance.service.connection).to receive(:addresses).and_return([free_floating])
-      expect(@instance.server).to_not receive(:associate_address)
       expect { @instance.after_exec_command }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ServerSetupError, "Unable to assign a Floating IP from allocated IPs.")
-    end    
+    end
   end
 
   describe "#before_bootstrap" do
@@ -260,7 +266,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>nil}]})
       expect { @instance.before_bootstrap }.to raise_error(Chef::Knife::Cloud::CloudExceptions::BootstrapError, "No IP address available for bootstrapping.")
     end
-    
+
     it "set public ip as default bootstrap network is public" do
       allow(@instance.server).to receive(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}], "public"=>[{"version"=>4, "addr"=>"127.0.0.2"}]})
       @instance.before_bootstrap
@@ -290,7 +296,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       expect(@instance.server).to_not receive(:password)
       @instance.before_bootstrap
       expect(@instance.config[:ssh_password]).to be == server_password
-    end    
+    end
   end
 
   describe "#post_connection_validations" do
@@ -315,7 +321,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     it "raise error on invalid floating IP" do
       allow(@instance).to receive(:is_flavor_valid?).and_return(true)
-      allow(@instance).to receive(:is_image_valid?).and_return(true)      
+      allow(@instance).to receive(:is_image_valid?).and_return(true)
       expect(@instance).to receive(:is_floating_ip_valid?).and_return(false)
       expect { @instance.post_connection_validations }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError, " You have either requested an invalid floating IP address or none are available..")
     end
@@ -342,7 +348,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       expect(@instance.service).to receive_message_chain(:connection, :addresses).and_return([])
       expect(@instance.is_floating_ip_valid?).to be false
     end
-    
+
     context "when floating ip requested without value" do
       it "returns true if fixed_ip is nil" do
         Chef::Config[:knife][:openstack_floating_ip] = nil
@@ -405,7 +411,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     after(:each) do
       Chef::Config[:knife].delete(:flavor)
     end
-    
+
     it "returns false on invalid flavor" do
       expect(@instance.service).to receive_message_chain(:get_flavor).and_return(nil)
       expect(@instance.is_flavor_valid?).to be false

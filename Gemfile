@@ -4,6 +4,7 @@ source "https://rubygems.org"
 gemspec
 
 group :development do
+  gem 'rake'
   gem 'guard-rspec'
   gem 'mixlib-shellout'
   gem 'knife-windows', :git => 'https://github.com/opscode/knife-windows.git'

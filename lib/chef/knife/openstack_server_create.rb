@@ -109,7 +109,7 @@ class Chef
 
             floating_ip_id = get_floating_ip_id(floating_address)
             # Associate the floating ip via the neutron/network api
-            @service.network.associate_floating_ip(floating_ip_id, port_id, options = {:fixed_ip_address => fixed_ip_address })
+            @service.network.associate_floating_ip(floating_ip_id, port_id, {:fixed_ip_address => fixed_ip_address })
 
             #a bit of a hack, but server.reload takes a long time
             (server.addresses['public'] ||= []) << {"version"=>4,"addr"=>floating_address}
