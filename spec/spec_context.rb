@@ -15,8 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'spec_helper'
-
 shared_context  "#validate!" do |instance|
   before(:each) do
     Chef::Config[:knife][:openstack_username] = "testuser"

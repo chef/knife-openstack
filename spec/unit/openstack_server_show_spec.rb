@@ -19,13 +19,12 @@ require 'spec_helper'
 require 'chef/knife/openstack_server_show'
 require 'chef/knife/cloud/openstack_service'
 require 'support/shared_examples_for_command'
-require 'unit/validate_spec'
 
 describe Chef::Knife::Cloud::OpenstackServerShow do
   it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackServerShow.new
 
   include_context "#validate!", Chef::Knife::Cloud::OpenstackServerShow.new
-  
+
   let (:instance) {Chef::Knife::Cloud::OpenstackServerShow.new}
 
   context "#validate_params!" do
