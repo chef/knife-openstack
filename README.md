@@ -3,7 +3,7 @@
 Knife OpenStack
 ===============
 
-This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Icehouse` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
+This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Juno` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
 Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issues.
 
