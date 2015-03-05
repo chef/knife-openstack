@@ -22,7 +22,6 @@ require 'spec_helper'
 require 'chef/knife/openstack_server_delete'
 require 'chef/knife/cloud/openstack_service'
 require 'support/shared_examples_for_serverdeletecommand'
-require 'unit/validate_spec'
 
 describe Chef::Knife::Cloud::OpenstackServerDelete do
   it_behaves_like Chef::Knife::Cloud::ServerDeleteCommand, Chef::Knife::Cloud::OpenstackServerDelete.new
