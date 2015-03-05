@@ -28,6 +28,7 @@ In order to communicate with an OpenStack API you will need to tell Knife your O
     knife[:openstack_username] = "Your OpenStack Dashboard username"
     knife[:openstack_password] = "Your OpenStack Dashboard password"
     knife[:openstack_tenant] = "Your OpenStack tenant name"
+    knife[:openstack_region] = "Your OpenStack Region"
 
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables.  For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
 
@@ -35,6 +36,7 @@ If your knife.rb file will be checked into a SCM system (ie readable by others) 
     knife[:openstack_username] = "#{ENV['OS_USERNAME']}"
     knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
     knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
+    knife[:openstack_region] = "#{ENV['OS_region_NAME']}"
 
 If your OpenStack deployment is over SSL, but does not have a valid certificate, you can add the following option to bypass SSL check:
 
