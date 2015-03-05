@@ -55,9 +55,21 @@ class Chef
 
             @create_options[:server_def].merge!({:user_data => locate_config_value(:user_data)}) if locate_config_value(:user_data)
             @create_options[:server_def].merge!({:nics => locate_config_value(:network_ids).map { |nic| nic_id = { 'net_id' => nic }}}) if locate_config_value(:network_ids)
+            counter=99
+            @create_options[:server_def].merge!({:block_device_mapping => locate_config_value(:openstack_volumes).map do |vol|
+                counter += 1
+                {
+                  :volume_id => vol,
+                  :delete_on_termination => false,
+                  :device_name => "/dev/vd"+counter.chr,
+                  :volume_size => nil,
+                }
+              end
+              }) if locate_config_value(:openstack_volumes)
 
             Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
             #set columns_with_info map
+            #abort("Crap")
             @columns_with_info = [
             {:label => 'Instance ID', :key => 'id'},
             {:label => 'Name', :key => 'name'},

@@ -29,6 +29,12 @@ class Chef
             :default => ["default"],
             :proc => Proc.new { |groups| groups.split(',') }
 
+            option :openstack_volumes,
+            :long => "--openstack-volumes VOL1,VOL2,...",
+            :description => "Comma separated list of the UUID(s) of the volume(s) to attach to the server",
+            :default => true,
+            :proc => Proc.new { |openstack_volumes| openstack_volumes.split(',') }
+
             option :openstack_ssh_key_id,
             :short => "-S KEY",
             :long => "--openstack-ssh-key-id KEY",
