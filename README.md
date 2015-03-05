@@ -11,12 +11,14 @@ Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issu
 
 Be sure you are running the latest version Chef. Versions earlier than 0.10.0 don't support plugins:
 
-    $ gem install chef
-
+    $ curl -L https://chef.io/chef/install.sh > /tmp/install.sh && sudo bash /tmp/install.sh
+  
 This plugin is distributed as a Ruby Gem. To install it, run:
 
+    $ chef gem install knife-openstack
+    $ # OR
     $ gem install knife-openstack
-
+    
 Depending on your system's configuration, you may need to run this command with root privileges.
 
 # Configuration #
