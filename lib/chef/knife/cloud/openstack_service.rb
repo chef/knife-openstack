@@ -17,6 +17,7 @@ class Chef
           Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
           Chef::Log.debug("openstack_endpoint_type #{Chef::Config[:knife][:openstack_endpoint_type] || 'publicURL' }")
           Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure].to_s}")
+          Chef::Log.debug("openstack_region #{Chef::Config[:knife][:openstack_region].to_s}")
 
           super(options.merge({
                               :auth_params => {

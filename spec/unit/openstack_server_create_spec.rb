@@ -53,6 +53,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife][:identity_file] = "identity_file"
       Chef::Config[:knife][:image_os_type] = "linux"
       Chef::Config[:knife][:openstack_ssh_key_id] = "openstack_ssh_key"
+      Chef::Config[:knife][:openstack_region] = "test-region"
     end
 
     after(:all) do
@@ -60,6 +61,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       Chef::Config[:knife].delete(:identity_file)
       Chef::Config[:knife].delete(:image_os_type)
       Chef::Config[:knife].delete(:openstack_ssh_key_id)
+      Chef::Config[:knife].delete(:openstack_region)
     end
 
     it "run sucessfully on all params exist" do
@@ -104,6 +106,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       expect(@instance.create_options[:server_def][:flavor_ref]).to be == Chef::Config[:knife][:flavor]
       expect(@instance.create_options[:server_def][:nics]).to be == Chef::Config[:knife][:network_ids]
       expect(@instance.create_options[:server_def][:metadata]).to be == Chef::Config[:knife][:metadata]
+      expect(@instance.create_options[:server_def][:region]).to be == Chef::Config[:knife][:openstack_region]
       expect(@instance.create_options[:server_create_timeout]).to be == Chef::Config[:knife][:server_create_timeout]
     end
 

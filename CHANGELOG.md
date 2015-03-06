@@ -1,3 +1,10 @@
+## v1.1.0
+* Update the travis tests
+* Added Multi-region support
+* Updated the README to represent the changes in installing Chef.
+* Updated travis.yml to reflect newer 2.y.z releases of Ruby
+
+## v1.0.0
 
 * Implementation using knife-cloud gem
 * KNIFE-310 "knife openstack server list" will fail with boot from volume instances

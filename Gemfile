@@ -6,5 +6,4 @@ gemspec
 group :development do
   gem 'guard-rspec'
   gem 'mixlib-shellout'
-  gem 'knife-windows'
 end

@@ -20,6 +20,7 @@ shared_context  "#validate!" do |instance|
     Chef::Config[:knife][:openstack_username] = "testuser"
     Chef::Config[:knife][:openstack_password] = "testpassword"
     Chef::Config[:knife][:openstack_auth_url] = "tsturl"
+    Chef::Config[:knife][:openstack_region] = "test-region"
     allow(instance).to receive(:exit)
   end
 
@@ -27,6 +28,7 @@ shared_context  "#validate!" do |instance|
     Chef::Config[:knife].delete(:openstack_username)
     Chef::Config[:knife].delete(:openstack_password)
     Chef::Config[:knife].delete(:openstack_auth_url)
+    Chef::Config[:knife].delete(:openstack_region)
   end
 
   it "validate openstack mandatory options" do
