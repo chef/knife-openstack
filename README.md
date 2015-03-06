@@ -38,7 +38,7 @@ If your knife.rb file will be checked into a SCM system (ie readable by others) 
     knife[:openstack_username] = "#{ENV['OS_USERNAME']}"
     knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
     knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
-    knife[:openstack_region] = "#{ENV['OS_region_NAME']}"
+    knife[:openstack_region] = "#{ENV['OS_REGION_NAME']}"
 
 If your OpenStack deployment is over SSL, but does not have a valid certificate, you can add the following option to bypass SSL check:
 
