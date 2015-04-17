@@ -3,7 +3,7 @@
 Knife OpenStack
 ===============
 
-This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Juno` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
+This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Kilo` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
 Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issues.
 
@@ -11,12 +11,12 @@ Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issu
 
 Be sure you are running the latest version Chef. Versions earlier than 0.10.0 don't support plugins:
 
-    $ curl -L https://chef.io/chef/install.sh > /tmp/install.sh && sudo bash /tmp/install.sh
+    $ curl -L https://chef.io/chef/install.sh | sudo bash
   
 This plugin is distributed as a Ruby Gem. To install it, run:
 
     $ chef gem install knife-openstack
-    $ # OR
+    OR
     $ gem install knife-openstack
     
 Depending on your system's configuration, you may need to run this command with root privileges.
@@ -123,6 +123,8 @@ Author:: Seth Chisamore (<schisamo@chef.io>)
 Author:: Matt Ray (<matt@chef.io>)
 
 Author:: Chirag Jog (<chirag@clogeny.com>)
+
+Author:: JJ Asghar (<jj@chef.io>)
 
 Copyright:: Copyright (c) 2011-2015 Chef Software, Inc.
 
