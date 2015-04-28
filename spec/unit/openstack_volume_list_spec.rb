@@ -18,7 +18,7 @@
 # limitations under the License.
 
 require 'spec_helper'
-require 'chef/knife/openstack_flavor_list'
+require 'chef/knife/openstack_volume_list'
 require 'chef/knife/cloud/openstack_service'
 require 'support/shared_examples_for_command'
 
