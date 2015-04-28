@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/opscode/knife-openstack.png)](https://travis-ci.org/opscode/knife-openstack)
+[![Build Status](https://travis-ci.org/chef/knife-openstack.png)](https://travis-ci.org/chef/knife-openstack)
 
 Knife OpenStack
 ===============
 
-This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Icehouse` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
+This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Juno` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
 Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issues.
 
@@ -11,12 +11,14 @@ Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issu
 
 Be sure you are running the latest version Chef. Versions earlier than 0.10.0 don't support plugins:
 
-    $ gem install chef
-
+    $ curl -L https://chef.io/chef/install.sh > /tmp/install.sh && sudo bash /tmp/install.sh
+  
 This plugin is distributed as a Ruby Gem. To install it, run:
 
+    $ chef gem install knife-openstack
+    $ # OR
     $ gem install knife-openstack
-
+    
 Depending on your system's configuration, you may need to run this command with root privileges.
 
 # Configuration #
@@ -28,6 +30,7 @@ In order to communicate with an OpenStack API you will need to tell Knife your O
     knife[:openstack_username] = "Your OpenStack Dashboard username"
     knife[:openstack_password] = "Your OpenStack Dashboard password"
     knife[:openstack_tenant] = "Your OpenStack tenant name"
+    knife[:openstack_region] = "Your OpenStack Region"
 
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables.  For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
 
@@ -35,6 +38,7 @@ If your knife.rb file will be checked into a SCM system (ie readable by others) 
     knife[:openstack_username] = "#{ENV['OS_USERNAME']}"
     knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
     knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
+    knife[:openstack_region] = "#{ENV['OS_region_NAME']}"
 
 If your OpenStack deployment is over SSL, but does not have a valid certificate, you can add the following option to bypass SSL check:
 
@@ -114,13 +118,13 @@ Lists the networks available to the currently configured OpenStack account. This
 
 # License #
 
-Author:: Seth Chisamore (<schisamo@getchef.com>)
+Author:: Seth Chisamore (<schisamo@chef.io>)
 
-Author:: Matt Ray (<matt@getchef.com>)
+Author:: Matt Ray (<matt@chef.io>)
 
 Author:: Chirag Jog (<chirag@clogeny.com>)
 
-Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
+Copyright:: Copyright (c) 2011-2015 Chef Software, Inc.
 
 License:: Apache License, Version 2.0
 
