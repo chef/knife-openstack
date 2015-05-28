@@ -300,6 +300,21 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.before_bootstrap
       expect(@instance.config[:ssh_password]).to be == server_password
     end
+
+    it "configures the default private bootstrap network to use 'private'" do
+      allow(@instance.server).to receive(:addresses).and_return({"private"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      @instance.config[:private_network] = true
+      @instance.before_bootstrap
+      expect(@instance.config[:bootstrap_network]).to be == 'private'
+    end
+
+    it "configures the bootstrap to use alternate private network" do
+      allow(@instance.server).to receive(:addresses).and_return({"secure"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      @instance.config[:bootstrap_network] = 'secure'
+      @instance.config[:private_network] = true
+      @instance.before_bootstrap
+      expect(@instance.config[:bootstrap_network]).to be == 'secure'
+    end
   end
 
   describe "#post_connection_validations" do
