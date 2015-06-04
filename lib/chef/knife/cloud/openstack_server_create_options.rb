@@ -36,7 +36,7 @@ class Chef
             :short => "-G X,Y,Z",
             :long => "--openstack-groups X,Y,Z",
             :description => "The security groups for this server",
-
+            :default => ["default"],
             :proc => Proc.new { |groups| groups.split(',') }
 
             option :openstack_ssh_key_id,
