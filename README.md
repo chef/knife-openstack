@@ -101,6 +101,11 @@ knife openstack flavor list
 
 Provides a list of all available flavors (available "hardware" configurations for a server) available to the currently configured OpenStack account. Each flavor has a unique combination of virtual cpus, disk space and memory capacity. This data may be useful when choosing a flavor to pass to the `knife openstack server create` subcommand.
 
+knife openstack volume list
+---------------------------
+
+Provides a list of all volumes in the currently configured OpenStack account. Each volume shows its size and its availibility to be attached to server. This data may be useful when choosing a volume to pass to the `knife openstack server create` subcommand.
+
 knife openstack image list
 --------------------------
 
