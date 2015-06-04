@@ -1,3 +1,7 @@
+## v1.2.0
+* Allow users to specify alternate private networks. #163
+* Vol sched 1.0.0work #142
+
 ## v1.1.0
 * Update the travis tests
 * Added Multi-region support

@@ -25,18 +25,18 @@ class Chef
             option :openstack_volumes,
             :long => "--openstack-volumes VOLUME1,VOLUME2,VOLUME3",
             :description => "Comma separated list of the UUID(s) of the volume(s) to attach to the server",
-            :proc => Proc.new { |volumes| openstack_volumes.split(',') }
-           
+            :proc => Proc.new { |volumes| volumes.split(',') }
+
             option :openstack_scheduler_hints,
             :long => "--scheduler-hints HINTS",
             :description => "A scheduler group hint to OpenStack",
             :proc => Proc.new { |i| Chef::Config[:knife][:openstack_scheduler_hints] = i }
-            
+
             option :openstack_security_groups,
             :short => "-G X,Y,Z",
             :long => "--openstack-groups X,Y,Z",
             :description => "The security groups for this server",
-            :default => ["default"],
+
             :proc => Proc.new { |groups| groups.split(',') }
 
             option :openstack_ssh_key_id,
@@ -44,7 +44,7 @@ class Chef
             :long => "--openstack-ssh-key-id KEY",
             :description => "The OpenStack SSH keypair id",
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
-            
+
             option :user_data,
             :long => "--user-data USER_DATA",
             :description => "The file path containing user data information for this server",
