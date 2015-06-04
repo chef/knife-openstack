@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.authors     = ["JJ Asghar"]
   s.email       = ["jj@chef.io"]
   s.homepage    = "https://github.com/chef/knife-openstack"
-  s.summary     = %q{Chef Compute Support for Chef's Knife Command}
-  s.description = %q{Chef Compute Support for Chef's Knife Command using knife-cloud gem}
+  s.summary     = %q{A Chef knife plugin for OpenStack clouds.}
+  s.description = %q{A Chef knife plugin for OpenStack clouds.}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
