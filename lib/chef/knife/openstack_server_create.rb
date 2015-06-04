@@ -142,8 +142,10 @@ class Chef
           # Use SSH password either specified from command line or from openstack server instance
           config[:ssh_password] = locate_config_value(:ssh_password) || server.password unless config[:openstack_ssh_key_id]
 
-          # private_network means bootstrap_network = 'private'
-          config[:bootstrap_network] = 'private' if config[:private_network]
+          # The bootstrap network is always initialised to 'public' when a network name isn't specified.  Therefore,
+          # only set the bootstrap network to 'private' if still initialised to public and nothing was specified for
+          # the private network name.
+          config[:bootstrap_network] = 'private' if (config[:private_network] && config[:bootstrap_network] == 'public')
 
           # Which IP address to bootstrap
           unless config[:network] # --no-network
