@@ -56,7 +56,7 @@ class Chef
             unless locate_config_value(:openstack_volumes).nil?
               counter = 99
               @create_options[:server_def][:block_device_mapping] = locate_config_value(:openstack_volumes).map do |vol|
-                counter += 1 
+                counter += 1
                 {
                   :volume_id => vol,
                   :delete_on_termination => false,
