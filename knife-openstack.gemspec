@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.authors     = ["JJ Asghar"]
   s.email       = ["jj@chef.io"]
   s.homepage    = "https://github.com/chef/knife-openstack"
-  s.summary     = %q{Chef Compute Support for Chef's Knife Command}
-  s.description = %q{Chef Compute Support for Chef's Knife Command using knife-cloud gem}
+  s.summary     = %q{A Chef knife plugin for OpenStack clouds.}
+  s.description = %q{A Chef knife plugin for OpenStack clouds.}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "fog", "~> 1.23"
   s.add_dependency "chef", ">= 11"
-  s.add_dependency "knife-cloud", "~> 1.0"
+  s.add_dependency "knife-cloud", "~> 1.1.0"
 
   %w(rake rspec-core rspec-expectations rspec-mocks rspec_junit_formatter).each { |gem| s.add_development_dependency gem }
 end

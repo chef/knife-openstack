@@ -22,6 +22,16 @@ class Chef
             :default => "-1",
             :description => "Request to associate a floating IP address to the new OpenStack node. Assumes IPs have been allocated to the project. Specific IP is optional."
 
+            option :openstack_volumes,
+            :long => "--openstack-volumes VOLUME1,VOLUME2,VOLUME3",
+            :description => "Comma separated list of the UUID(s) of the volume(s) to attach to the server",
+            :proc => Proc.new { |volumes| volumes.split(',') }
+
+            option :openstack_scheduler_hints,
+            :long => "--scheduler-hints HINTS",
+            :description => "A scheduler group hint to OpenStack",
+            :proc => Proc.new { |i| Chef::Config[:knife][:openstack_scheduler_hints] = i }
+
             option :openstack_security_groups,
             :short => "-G X,Y,Z",
             :long => "--openstack-groups X,Y,Z",
@@ -34,7 +44,7 @@ class Chef
             :long => "--openstack-ssh-key-id KEY",
             :description => "The OpenStack SSH keypair id",
             :proc => Proc.new { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
-            
+
             option :user_data,
             :long => "--user-data USER_DATA",
             :description => "The file path containing user data information for this server",

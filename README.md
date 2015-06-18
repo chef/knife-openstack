@@ -84,7 +84,7 @@ This plugin provides the following Knife subcommands. Specific command options c
 knife openstack server create
 -----------------------------
 
-Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [chef-full](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/chef-full.erb) template (default since the 10.10 release). This may be overridden using the `-d` or `--template-file` command options. If you do not have public IP addresses, use the `--private-network` option to use the private IP address for bootstrapping or `--bootstrap-network NAME` to specify an alternate network. Please see `knife openstack server create --help` for all of the supported options.
+Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [chef-full](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/chef-full.erb) template (default since the 10.10 release). This may be overridden using the `-d` or `--template-file` command options. If you do not have public IP addresses, use the `--openstack-private-network` option to use the private IP address for bootstrapping.  In addition, you can use the `--bootstrap-network NAME` option to specify an alternate network for either a private or public network. If a network name isn't specified, the default name will be `'public'` for a public network and `'private'` for a private network e.g. when the `--openstack-private-network` option is specified.  Please see `knife openstack server create --help` for all of the supported options.
 
 knife openstack server delete
 -----------------------------
@@ -100,6 +100,11 @@ knife openstack flavor list
 ---------------------------
 
 Provides a list of all available flavors (available "hardware" configurations for a server) available to the currently configured OpenStack account. Each flavor has a unique combination of virtual cpus, disk space and memory capacity. This data may be useful when choosing a flavor to pass to the `knife openstack server create` subcommand.
+
+knife openstack volume list
+---------------------------
+
+Provides a list of all volumes in the currently configured OpenStack account. Each volume shows its size and its availibility to be attached to server. This data may be useful when choosing a volume to pass to the `knife openstack server create` subcommand.
 
 knife openstack image list
 --------------------------
