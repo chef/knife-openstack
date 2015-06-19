@@ -22,27 +22,32 @@ class Chef
         end
 
         def list(security_groups)
-          group_list = [
-            ui.color('Name', :bold),
-            ui.color('Protocol', :bold),
-            ui.color('From', :bold),
-            ui.color('To', :bold),
-            ui.color('CIDR', :bold),
-            ui.color('Description', :bold),
-          ]
-          security_groups.sort_by(&:name).each do |group|
-            group.security_group_rules.each do |rule|
-              unless rule.ip_protocol.nil?
-                group_list << group.name
-                group_list << rule.ip_protocol
-                group_list << rule.from_port.to_s
-                group_list << rule.to_port.to_s
-                group_list << rule.ip_range['cidr']
-                group_list << group.description
+          if(config[:format] == "summary")
+            group_list = [
+              ui.color('Name', :bold),
+              ui.color('Protocol', :bold),
+              ui.color('From', :bold),
+              ui.color('To', :bold),
+              ui.color('CIDR', :bold),
+              ui.color('Description', :bold),
+            ]
+            security_groups.sort_by(&:name).each do |group|
+              group.security_group_rules.each do |rule|
+                unless rule.ip_protocol.nil?
+                  group_list << group.name
+                  group_list << rule.ip_protocol
+                  group_list << rule.from_port.to_s
+                  group_list << rule.to_port.to_s
+                  group_list << rule.ip_range['cidr']
+                  group_list << group.description
+                end
               end
             end
+
+            puts ui.list(group_list, :uneven_columns_across, 6)
+          else
+            output(format_for_display(security_groups))
           end
-          puts ui.list(group_list, :uneven_columns_across, 6)
         end
       end
     end
