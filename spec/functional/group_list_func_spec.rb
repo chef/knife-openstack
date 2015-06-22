@@ -55,6 +55,7 @@ describe Chef::Knife::Cloud::OpenstackGroupList do
       allow(instance).to receive(:puts)
       allow(instance).to receive(:create_service_instance).and_return(Chef::Knife::Cloud::Service.new)
       allow(instance).to receive(:validate!)
+      instance.config[:format] = "summary"
     end
 
     it "lists formatted list of resources" do
