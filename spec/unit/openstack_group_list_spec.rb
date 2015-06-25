@@ -32,6 +32,7 @@ describe Chef::Knife::Cloud::OpenstackGroupList do
   context "#list" do
     before(:each) do
       @security_groups = [TestResource.new({ "name" => "Unrestricted","description" => "testdescription", "security_group_rules" => [TestResource.new({"from_port"=>636, "group"=>{}, "ip_protocol"=>"tcp", "to_port"=>636, "parent_group_id"=>14, "ip_range"=>{"cidr"=>"0.0.0.0/0"}, "id"=>183})]})]
+      instance.config[:format] = "summary"
     end
 
     it "returns group list" do
