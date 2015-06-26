@@ -1,6 +1,5 @@
 #
-# Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
-# Author:: Ameya Varade (<ameya.varade@clogeny.com>)
+# Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
 # Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
