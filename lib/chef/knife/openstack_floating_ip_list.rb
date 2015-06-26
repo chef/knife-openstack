@@ -12,7 +12,7 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner 'knife openstack floaing ip list (options)'
+        banner 'knife openstack floating ip list (options)'
 
         def before_exec_command
           # set columns_with_info map
