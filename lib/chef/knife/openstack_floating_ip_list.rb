@@ -1,4 +1,4 @@
-# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
+# Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
 # Copyright:: Copyright (c) 2014 Chef Software, Inc.
 
 require 'chef/knife/cloud/list_resource_command'
@@ -12,11 +12,12 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner 'knife openstack floating ip list (options)'
+        banner 'knife openstack floating_ip list (options)'
 
         def before_exec_command
           # set columns_with_info map
           @columns_with_info = [
+            { label: 'ID', key: 'id' },
             { label: 'Instance ID', key: 'instance_id' },
             { label: 'IP Address', key: 'ip' },
             { label: 'Fixed IP', key: 'fixed_ip' },
