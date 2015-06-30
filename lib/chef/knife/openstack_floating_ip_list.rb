@@ -26,7 +26,7 @@ class Chef
         end
 
         def query_resource
-          @service.list_floating_ips
+          @service.list_addresses
         end
       end
     end
