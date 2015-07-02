@@ -7,14 +7,15 @@ require 'chef/knife/cloud/openstack_service_options'
 class Chef
   class Knife
     class Cloud
-      class OpenstackFloatingIpCreate < Command
+      class OpenstackFloatingIpAllocate < Command
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner 'knife openstack floating_ip create (options)'
+        banner 'knife openstack floating_ip allocate (options)'
 
         def execute_command
-          @service.allocate_address
+          resource = @service.allocate_address
+          puts resource
         end
       end
     end

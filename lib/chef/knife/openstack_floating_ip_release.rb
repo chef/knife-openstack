@@ -9,15 +9,15 @@ require 'chef/knife/cloud/openstack_service_options'
 class Chef
   class Knife
     class Cloud
-      class OpenstackFloatingIpDelete < Command
+      class OpenstackFloatingIpRelease < Command
         include OpenstackServiceOptions
         include OpenstackHelpers
 
-        banner 'knife openstack floating_ip delete id [ID] (options)'
+        banner 'knife openstack floating_ip release ID [ID] (options)'
 
         def execute_command
           @name_args.each do |id|
-            service.delete_address(id)
+            service.release_address(id)
           end
         end
       end
