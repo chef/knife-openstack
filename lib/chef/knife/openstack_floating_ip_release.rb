@@ -16,9 +16,7 @@ class Chef
         banner 'knife openstack floating_ip release ID [ID] (options)'
 
         def execute_command
-          @name_args.each do |id|
-            service.release_address(id)
-          end
+          service.release_address(@name_args[0])
         end
       end
     end
