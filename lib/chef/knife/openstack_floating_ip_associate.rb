@@ -22,8 +22,8 @@ class Chef
         def execute_command
           floating_ip = @name_args[0]
           instance_id = locate_config_value(:instance_id)
-          response =  @service.associate_address(instance_id, floating_ip)
-          if response.status == 202
+          response = @service.associate_address(instance_id, floating_ip)
+          if response && response.status == 202
             ui.info "Floating IP #{floating_ip} associated with Instance #{instance_id}"
           end
         end
