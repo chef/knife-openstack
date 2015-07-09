@@ -17,8 +17,8 @@ class Chef
         option :instance_id,
           :long => '--instance-id ID',
           :description => 'Instance id to disassociate with.',
-          :required => true,
-          :proc => Proc.new { |key| Chef::Config[:knife][:instance_id] = key }
+          :proc => Proc.new { |key| Chef::Config[:knife][:instance_id] = key },
+          :required => true
 
         def execute_command
           if @name_args[0]

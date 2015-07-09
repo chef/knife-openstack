@@ -21,13 +21,9 @@ require 'support/shared_examples_for_command'
 require 'ostruct'
 
 describe Chef::Knife::Cloud::OpenstackFloatingIpAssociate do
-  it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackFloatingIpAssociate.new
-  include_context '#validate!', Chef::Knife::Cloud::OpenstackFloatingIpAssociate.new
-
   before(:each) do
-    @instance = Chef::Knife::Cloud::OpenstackFloatingIpAssociate.new
+    @instance = Chef::Knife::Cloud::OpenstackFloatingIpAssociate.new(["--instance-id", "23849038438240934n3294839248"])
     @instance.name_args = [ '127.0.0.1' ]
-    Chef::Config[:knife][:instance_id] = '23849038438240934n3294839248'
   end
 
   describe 'associate floating ip' do
