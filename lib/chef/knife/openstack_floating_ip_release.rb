@@ -1,6 +1,6 @@
 #
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Chef Software, Inc.
+# Copyright:: Copyright (c) 2015 Chef Software, Inc.
 #
 \
 require 'chef/knife/openstack_helpers'
