@@ -17,10 +17,17 @@ class Chef
         option :instance_id,
           :long => '--instance-id ID',
           :description => 'Instance id to associate it with.',
+          :required => true,
           :proc => Proc.new { |key| Chef::Config[:knife][:instance_id] = key }
 
         def execute_command
-          floating_ip = @name_args[0]
+          if @name_args[0]
+            floating_ip = @name_args[0]
+          else
+            ui.error "Please provide Floating IP to associate with."
+            exit 1
+          end
+
           instance_id = locate_config_value(:instance_id)
           response = @service.associate_address(instance_id, floating_ip)
           if response && response.status == 202

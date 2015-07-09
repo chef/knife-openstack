@@ -16,7 +16,12 @@ class Chef
         banner 'knife openstack floating_ip release ID [ID] (options)'
 
         def execute_command
-          service.release_address(@name_args[0])
+          if @name_args[0]
+            service.release_address(@name_args[0])
+          else
+            ui.error 'Please provide Floating IP to release.'
+            exit 1
+          end
         end
       end
     end
