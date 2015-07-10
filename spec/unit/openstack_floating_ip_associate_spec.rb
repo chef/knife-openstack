@@ -28,10 +28,11 @@ describe Chef::Knife::Cloud::OpenstackFloatingIpAssociate do
 
   describe 'associate floating ip' do
     it 'calls associate address' do
+      success_message = 'Floating IP 127.0.0.1 associated with Instance 23849038438240934n3294839248'
       @instance.service = Chef::Knife::Cloud::Service.new
-      response = OpenStruct.new(:status => 202)
-      expect(@instance.service).to receive(:associate_address).with('23849038438240934n3294839248', '127.0.0.1').and_return(response)
-      expect(@instance.ui).to receive(:info).and_return('Floating IP 127.0.0.1 associated with Instance 23849038438240934n3294839248')
+      response = OpenStruct.new(status: 202)
+      expect(@instance.service).to receive(:associate_address).and_return(response)
+      expect(@instance.ui).to receive(:info).and_return(success_message)
       @instance.execute_command
     end
   end

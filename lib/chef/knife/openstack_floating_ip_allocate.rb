@@ -14,8 +14,17 @@ class Chef
         banner 'knife openstack floating_ip allocate (options)'
 
         def execute_command
-          resource = @service.allocate_address
-          puts resource
+          @resource = @service.allocate_address
+        end
+
+        def after_exec_command
+          @columns_with_info = [{ label: 'ID', value: @resource['floating_ip']['id'].to_s },
+                                { label: 'Instance ID', value: @resource['floating_ip']['instance_id'].to_s },
+                                { label: 'Floating IP', value: @resource['floating_ip']['ip'].to_s },
+                                { label: 'Fixed IP', value: @resource['floating_ip']['fixed_ip'].to_s },
+                                { label: 'Pool', value: @resource['floating_ip']['pool'].to_s }
+                               ]
+          @service.server_summary(nil, @columns_with_info)
         end
       end
     end

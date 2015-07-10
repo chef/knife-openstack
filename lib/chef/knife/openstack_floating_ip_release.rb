@@ -17,7 +17,10 @@ class Chef
 
         def execute_command
           if @name_args[0]
-            service.release_address(@name_args[0])
+            response = service.release_address(@name_args[0])
+            if response && response.status == 202
+              ui.info 'Floating IP released successfully.'
+            end
           else
             ui.error 'Please provide Floating IP to release.'
             exit 1

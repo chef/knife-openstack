@@ -20,7 +20,6 @@ require 'chef/knife/cloud/openstack_service'
 require 'support/shared_examples_for_command'
 
 describe Chef::Knife::Cloud::OpenstackFloatingIpRelease do
-
   it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackFloatingIpRelease.new
   include_context '#validate!', Chef::Knife::Cloud::OpenstackFloatingIpRelease.new
 
@@ -38,8 +37,11 @@ describe Chef::Knife::Cloud::OpenstackFloatingIpRelease do
 
   describe 'release floating ip' do
     it 'calls release address' do
+      address_id = '23849038438240934n3294839248'
       @instance.service = double
-      expect(@instance.service).to receive(:release_address).with('23849038438240934n3294839248').and_return(@instance)
+      response = OpenStruct.new(status: 202)
+      expect(@instance.service).to receive(:release_address).and_return(response)
+      expect(@instance.ui).to receive(:info).and_return('Floating IP released successfully.')
       @instance.execute_command
     end
   end

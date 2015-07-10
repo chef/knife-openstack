@@ -39,7 +39,7 @@ describe Chef::Knife::Cloud::OpenstackFloatingIpAllocate do
   describe 'allocate floating ip' do
     it 'calls allocate address' do
       @instance.service = double
-      allow(@instance.service).to receive(:allocate_address).and_return(true)
+      expect(@instance.service).to receive(:allocate_address).and_return(true)
       @instance.execute_command
     end
   end
