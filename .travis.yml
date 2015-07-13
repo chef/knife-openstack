@@ -1,6 +1,15 @@
 rvm:
-  - 2.0.0
-  - 2.1.5
-  - 2.2.0
-
+- 2.0.0
+- 2.1.5
+- 2.2.0
 script: bundle exec rake spec
+deploy:
+  provider: rubygems
+  api_key:
+    secure: fHosXRjyuBtNwtLKiMdTQkvFdV7uHNZaK8VoeBAT6kIk9xVgTQRXnPq5AflJMwnALrLyYDZq2okWxquu3xljYu9u3bOnQDVTrrHtvWTmoMb9jcPPtIDAJ0eT1ctlmXNGBcq5/jk4YP/83qfByKvxj0w6gGx5KhQ0DqiYWxzxAus=
+  on:
+    tags: true
+notifications:
+    irc:
+      - "chat.freenode.net#openstack-chef"
+      - "chat.freenode.net#chef-hacking"

@@ -5,6 +5,7 @@ require "knife-openstack/version"
 Gem::Specification.new do |s|
   s.name        = "knife-openstack"
   s.version     = Knife::OpenStack::VERSION
+  s.version = "#{s.version}-alpha-#{ENV['TRAVIS_BUILD_NUMBER']}" if ENV['TRAVIS']
   s.platform    = Gem::Platform::RUBY
   s.has_rdoc = true
   s.extra_rdoc_files = ["README.md", "LICENSE" ]
