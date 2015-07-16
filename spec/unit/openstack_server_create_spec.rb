@@ -315,6 +315,12 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.before_bootstrap
       expect(@instance.config[:bootstrap_network]).to be == 'secure'
     end
+
+    it "set openstack ohai hint" do
+      allow(@instance.server).to receive(:addresses).and_return({"public"=>[{"version"=>4, "addr"=>"127.0.0.1"}]})
+      @instance.before_bootstrap
+      expect(@instance.config[:hints]).to be == {'openstack' => {}}
+    end
   end
 
   describe "#post_connection_validations" do
