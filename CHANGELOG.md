@@ -1,6 +1,7 @@
 ## v1.3.0
 * Formatting options for `-F`. #166
 * Added Floating IP list command #169
+* Set the openstack ohai hint when creating a server #171
 
 ## v1.2.0
 * Allow users to specify alternate private networks. #163
