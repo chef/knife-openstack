@@ -165,6 +165,9 @@ class Chef
             raise CloudExceptions::BootstrapError, error_message
           end
           config[:bootstrap_ip_address] = bootstrap_ip_address
+
+          config[:hints] ||= {}
+          config[:hints]["openstack"] ||= {}
         end
 
         def validate_params!

@@ -58,6 +58,12 @@ class Chef
             handle_excon_exception(CloudExceptions::KnifeCloudError, e)
           end
         end
+
+        def list_floating_ips
+          connection.addresses.all
+        rescue Excon::Errors::BadRequest => e
+          handle_excon_exception(CloudExceptions::CloudAPIException, e)
+        end
       end
     end
   end
