@@ -43,4 +43,14 @@ describe Chef::Knife::Cloud::OpenstackFloatingIpAllocate do
       @instance.execute_command
     end
   end
+
+  describe 'when user provides pool option ' do
+    it 'allocates floating ip in user specified pool' do
+      @instance = Chef::Knife::Cloud::OpenstackFloatingIpAllocate.new(["--pool", "test-pool"])
+      @instance.service = Chef::Knife::Cloud::Service.new
+      response = {:floating_ip => {'id' => 'test-id', 'instance_id' => 'test-instance-id', 'floating_ip' => '127.0.0.1', 'fixed_ip' => 'nil', 'pool' => 'test-pool' }}
+      expect(@instance.service).to receive(:allocate_address).and_return(response)
+      @instance.execute_command
+    end
+  end
 end
