@@ -14,8 +14,9 @@ class Chef
         banner 'knife openstack floating_ip allocate (options)'
 
         option :pool,
+          :short => '-p POOL',
           :long => '--pool POOL',
-          :description => 'Floating ip pool.',
+          :description => 'Floating IP pool to allocate from.',
           :proc => Proc.new { |key| Chef::Config[:knife][:pool] = key }
 
         def execute_command
