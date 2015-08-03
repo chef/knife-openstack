@@ -69,7 +69,7 @@ Provisioning and bootstrapping for Windows 2003 and later images is now supporte
 
 Example:
 
-    knife openstack server create -I <Image> -f <Flavor> -S <keypair_name> --bootstrap-protocol winrm -P <Administrator_Password> -x Administrator -N <chef_node_name> --template windows-chef-client-msi.erb
+    knife openstack server create -I <Image> -f <Flavor> -S <keypair_name> --bootstrap-protocol winrm -P <Administrator_Password> -x Administrator -N <chef_node_name> --bootstrap-template windows-chef-client-msi.erb
 
 NOTE:
 * Bootstrap Protocol (`--bootstrap-protocol`) is required to be set to `winrm`.
