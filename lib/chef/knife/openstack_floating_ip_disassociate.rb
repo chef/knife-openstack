@@ -4,6 +4,7 @@
 require 'chef/knife/openstack_helpers'
 require 'chef/knife/cloud/openstack_service_options'
 require 'chef/knife/cloud/openstack_service'
+require 'chef/knife/cloud/command'
 
 class Chef
   class Knife
