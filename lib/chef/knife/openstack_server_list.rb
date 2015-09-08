@@ -35,34 +35,28 @@ class Chef
         banner "knife openstack server list (options)"
 
         def before_exec_command
-          #set columns_with_info map
+          # set columns_with_info map
           @columns_with_info = [
             {:label => 'Name', :key => 'name'},
             {:label => 'Instance ID', :key => 'id'},
-            {:label => 'Public IP', :key => 'addresses', :value_callback => method(:get_public_ip_address)},
-            {:label => 'Private IP', :key => 'addresses', :value_callback => method(:get_private_ip_address)},
+            {:label => 'Addresses', :key => 'addresses', :value_callback => method(:addresses)},
             {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
             {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
             {:label => 'Keypair', :key => 'key_name'},
             {:label => 'State', :key => 'state'},
             {:label => 'Availability Zone', :key => 'availability_zone'}
           ]
-          @sort_by_field = "name"
+          @sort_by_field = 'name'
           super
         end
 
-        def get_public_ip_address (addresses)
-          primary_public_ip_address(addresses)
-        end
-
-        def get_private_ip_address (addresses)
-          primary_private_ip_address(addresses)
+        def addresses(addresses)
+          instance_addresses(addresses)
         end
 
         def get_id(value)
           value['id']
         end
-
       end
     end
   end
