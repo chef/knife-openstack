@@ -23,14 +23,12 @@ module CleanupTestResources
 
     # OPENSTACK_USERNAME, OPENSTACK_PASSWORD and OPENSTACK_AUTH_URL are mandatory params to run knife openstack commands.
     %w(OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL).each do |os_env_var|
-      if ENV[os_env_var].nil?
-        unset_env_var << os_env_var
-      end
+      unset_env_var << os_env_var if ENV[os_env_var].nil?
     end
 
     err_msg = "\nPlease set #{unset_env_var.join(', ')} environment"
-    err_msg = err_msg + ( unset_env_var.length > 1 ? " variables " : " variable " ) + "to cleanup test resources."
-    if ! unset_env_var.empty?
+    err_msg = err_msg + (unset_env_var.length > 1 ? ' variables ' : ' variable ') + 'to cleanup test resources.'
+    unless unset_env_var.empty?
       puts err_msg
       exit 1
     end
@@ -38,15 +36,14 @@ module CleanupTestResources
 
   # Use Mixlib::ShellOut to run knife openstack commands.
   def self.run(command_line)
-    shell_out = Mixlib::ShellOut.new("#{command_line}") 
+    shell_out = Mixlib::ShellOut.new("#{command_line}")
     shell_out.timeout = 3000
     shell_out.run_command
-    return shell_out
+    shell_out
   end
 
   # Use knife openstack to delete servers.
   def self.cleanup_resources
-
     delete_resources = []
 
     # Openstack credentials use during knife openstack command run.
@@ -66,9 +63,9 @@ module CleanupTestResources
 
     # We use "os-integration-test-<platform>-<randomNumber>" pattern for server name during integration tests run. So use "os-integration-test-" pattern to find out servers created during integration tests run.
     servers.each_line do |line|
-      if line.include?("os-integration-test-") || (line.include?("openstack-") && line.include?("opscode-ci-ssh"))
+      if line.include?('os-integration-test-') || (line.include?('openstack-') && line.include?('opscode-ci-ssh'))
         # Extract and add instance id of server to delete_resources list.
-        delete_resources << {"id" => line.split(" ").first, "name" => line.split(" ")[1]}
+        delete_resources << { 'id' => line.split(' ').first, 'name' => line.split(' ')[1] }
       end
     end
 

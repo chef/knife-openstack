@@ -26,19 +26,17 @@ class Chef
   class Knife
     class Cloud
       class OpenstackVolumeList < ResourceListCommand
-          include OpenstackHelpers
-          include OpenstackServiceOptions
+        include OpenstackHelpers
+        include OpenstackServiceOptions
 
-        banner "knife openstack volume list (options)"
+        banner 'knife openstack volume list (options)'
 
         def query_resource
-          begin
-            @service.connection.volumes
-          rescue Excon::Errors::BadRequest => e
-            response = Chef::JSONCompat.from_json(e.response.body)
-            ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
-            raise e
-          end
+          @service.connection.volumes
+        rescue Excon::Errors::BadRequest => e
+          response = Chef::JSONCompat.from_json(e.response.body)
+          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          raise e
         end
 
         def list(volumes)
@@ -47,14 +45,14 @@ class Chef
             ui.color('ID', :bold),
             ui.color('Status', :bold),
             ui.color('Size', :bold),
-            ui.color('Description', :bold),
+            ui.color('Description', :bold)
           ]
           begin
             volumes.sort_by(&:name).each do |volume|
               volume_list << volume.name
               volume_list << volume.id.to_s
               volume_list << volume.status
-              volume_list << "#{volume.size.to_s} GB"
+              volume_list << "#{volume.size} GB"
               volume_list << volume.description
             end
           rescue Excon::Errors::BadRequest => e

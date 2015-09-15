@@ -4,7 +4,6 @@ class Chef
   class Knife
     class Cloud
       module OpenstackHelpers
-
         def primary_private_ip_address(addresses)
           primary_network_ip_address(addresses, 'private')
         end

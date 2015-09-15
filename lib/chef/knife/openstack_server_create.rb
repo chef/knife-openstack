@@ -33,55 +33,54 @@ class Chef
         include OpenstackServerCreateOptions
         include OpenstackServiceOptions
 
-
-        banner "knife openstack server create (options)"
+        banner 'knife openstack server create (options)'
 
         def before_exec_command
-            super
-            # setup the create options
-            @create_options = {
-              :server_def => {
-                #servers require a name, knife-cloud generates the chef_node_name
-                :name => config[:chef_node_name],
-                :image_ref => service.get_image(locate_config_value(:image)).id,
-                :flavor_ref => service.get_flavor(locate_config_value(:flavor)).id,
-                :security_groups => locate_config_value(:openstack_security_groups),
-                :availability_zone => locate_config_value(:availability_zone),
-                "os:scheduler_hints" => locate_config_value(:openstack_scheduler_hints),
-                :metadata => locate_config_value(:metadata),
-                :key_name => locate_config_value(:openstack_ssh_key_id)
-              },
-              :server_create_timeout => locate_config_value(:server_create_timeout)
-            }
-            unless locate_config_value(:openstack_volumes).nil?
-              counter = 99
-              @create_options[:server_def][:block_device_mapping] = locate_config_value(:openstack_volumes).map do |vol|
-                counter += 1
-                {
-                  :volume_id => vol,
-                  :delete_on_termination => false,
-                  :device_name => "/dev/vd"+counter.chr,
-                  :volume_size => nil,
-                }
-                end
+          super
+          # setup the create options
+          @create_options = {
+            server_def: {
+              # servers require a name, knife-cloud generates the chef_node_name
+              :name => config[:chef_node_name],
+              :image_ref => service.get_image(locate_config_value(:image)).id,
+              :flavor_ref => service.get_flavor(locate_config_value(:flavor)).id,
+              :security_groups => locate_config_value(:openstack_security_groups),
+              :availability_zone => locate_config_value(:availability_zone),
+              'os:scheduler_hints' => locate_config_value(:openstack_scheduler_hints),
+              :metadata => locate_config_value(:metadata),
+              :key_name => locate_config_value(:openstack_ssh_key_id)
+            },
+            server_create_timeout: locate_config_value(:server_create_timeout)
+          }
+          unless locate_config_value(:openstack_volumes).nil?
+            counter = 99
+            @create_options[:server_def][:block_device_mapping] = locate_config_value(:openstack_volumes).map do |vol|
+              counter += 1
+              {
+                volume_id: vol,
+                delete_on_termination: false,
+                device_name: '/dev/vd' + counter.chr,
+                volume_size: nil
+              }
             end
+          end
 
-            @create_options[:server_def].merge!({:user_data => locate_config_value(:user_data)}) if locate_config_value(:user_data)
-            @create_options[:server_def].merge!({:nics => locate_config_value(:network_ids).map { |nic| nic_id = { 'net_id' => nic }}}) if locate_config_value(:network_ids)
+          @create_options[:server_def].merge!(user_data: locate_config_value(:user_data)) if locate_config_value(:user_data)
+          @create_options[:server_def].merge!(nics: locate_config_value(:network_ids).map { |nic| nic_id = { 'net_id' => nic } }) if locate_config_value(:network_ids)
 
-            Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
-            #set columns_with_info map
-            @columns_with_info = [
-            {:label => 'Instance ID', :key => 'id'},
-            {:label => 'Name', :key => 'name'},
-            {:label => 'Public IP', :key => 'addresses', :value_callback => method(:primary_public_ip_address)},
-            {:label => 'Private IP', :key => 'addresses', :value_callback => method(:primary_private_ip_address)},
-            {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
-            {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
-            {:label => 'Keypair', :key => 'key_name'},
-            {:label => 'State', :key => 'state'},
-            {:label => 'Availability Zone', :key => 'availability_zone'}
-            ]
+          Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
+          # set columns_with_info map
+          @columns_with_info = [
+            { label: 'Instance ID', key: 'id' },
+            { label: 'Name', key: 'name' },
+            { label: 'Public IP', key: 'addresses', value_callback: method(:primary_public_ip_address) },
+            { label: 'Private IP', key: 'addresses', value_callback: method(:primary_private_ip_address) },
+            { label: 'Flavor', key: 'flavor', value_callback: method(:get_id) },
+            { label: 'Image', key: 'image', value_callback: method(:get_id) },
+            { label: 'Keypair', key: 'key_name' },
+            { label: 'State', key: 'state' },
+            { label: 'Availability Zone', key: 'availability_zone' }
+          ]
         end
 
         def get_id(value)
@@ -91,22 +90,22 @@ class Chef
         # Setup the floating ip after server creation.
         def after_exec_command
           Chef::Log.debug("Addresses #{server.addresses}")
-          msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
-          msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+          msg_pair('Public IP Address', primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
+          msg_pair('Private IP Address', primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
 
           floating_address = locate_config_value(:openstack_floating_ip)
-          bind_ip = primary_network_ip_address(server.addresses,server.addresses.keys[0])
+          bind_ip = primary_network_ip_address(server.addresses, server.addresses.keys[0])
           Chef::Log.debug("Floating IP Address requested #{floating_address}")
-          unless (floating_address == '-1') #no floating IP requested
+          unless (floating_address == '-1') # no floating IP requested
             addresses = service.connection.addresses
-            #floating requested without value
+            # floating requested without value
             if floating_address.nil?
-              free_floating = addresses.find_index {|a| a.fixed_ip.nil?}
+              free_floating = addresses.find_index { |a| a.fixed_ip.nil? }
               begin
-                if free_floating.nil? #no free floating IP found
-                  error_message = "Unable to assign a Floating IP from allocated IPs."
+                if free_floating.nil? # no free floating IP found
+                  error_message = 'Unable to assign a Floating IP from allocated IPs.'
                   ui.fatal(error_message)
-                  raise CloudExceptions::ServerSetupError, error_message
+                  fail CloudExceptions::ServerSetupError, error_message
                 else
                   floating_address = addresses[free_floating].ip
                 end
@@ -117,22 +116,22 @@ class Chef
             end
 
             # Pull the port_id for the associate_floating_ip
-            port_id = @service.network.list_ports[:body]['ports'].find {|x| x['fixed_ips'][0]['ip_address'] == bind_ip}['id']
-            fixed_ip_address = service.network.list_ports[:body]["ports"].find {|x| x['id'] == port_id}['fixed_ips'][0]["ip_address"]
+            port_id = @service.network.list_ports[:body]['ports'].find { |x| x['fixed_ips'][0]['ip_address'] == bind_ip }['id']
+            fixed_ip_address = service.network.list_ports[:body]['ports'].find { |x| x['id'] == port_id }['fixed_ips'][0]['ip_address']
 
             floating_ip_id = get_floating_ip_id(floating_address)
             # Associate the floating ip via the neutron/network api
-            @service.network.associate_floating_ip(floating_ip_id, port_id, {:fixed_ip_address => fixed_ip_address })
+            @service.network.associate_floating_ip(floating_ip_id, port_id, fixed_ip_address: fixed_ip_address)
 
-            #a bit of a hack, but server.reload takes a long time
-            (server.addresses['public'] ||= []) << {"version"=>4,"addr"=>floating_address}
-            msg_pair("Floating IP Address", floating_address)
+            # a bit of a hack, but server.reload takes a long time
+            (server.addresses['public'] ||= []) << { 'version' => 4, 'addr' => floating_address }
+            msg_pair('Floating IP Address', floating_address)
           end
 
           Chef::Log.debug("Addresses #{server.addresses}")
           Chef::Log.debug("Public IP Address actual: #{primary_public_ip_address(server.addresses)}") if primary_public_ip_address(server.addresses)
 
-          msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
+          msg_pair('Private IP Address', primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
           super
         end
 
@@ -145,13 +144,13 @@ class Chef
           # The bootstrap network is always initialised to 'public' when a network name isn't specified.  Therefore,
           # only set the bootstrap network to 'private' if still initialised to public and nothing was specified for
           # the private network name.
-          config[:bootstrap_network] = 'private' if (config[:private_network] && config[:bootstrap_network] == 'public')
+          config[:bootstrap_network] = 'private' if config[:private_network] && config[:bootstrap_network] == 'public'
 
           # Which IP address to bootstrap
           unless config[:network] # --no-network
             bootstrap_ip_address = primary_public_ip_address(server.addresses) ||
-              primary_private_ip_address(server.addresses) ||
-              server.addresses.first[1][0]['addr']
+                                   primary_private_ip_address(server.addresses) ||
+                                   server.addresses.first[1][0]['addr']
             Chef::Log.debug("No Bootstrap Network: #{config[:bootstrap_network]}")
           else
             bootstrap_ip_address = primary_network_ip_address(server.addresses, config[:bootstrap_network])
@@ -160,14 +159,14 @@ class Chef
 
           Chef::Log.debug("Bootstrap IP Address: #{bootstrap_ip_address}")
           if bootstrap_ip_address.nil?
-            error_message = "No IP address available for bootstrapping."
+            error_message = 'No IP address available for bootstrapping.'
             ui.error(error_message)
-            raise CloudExceptions::BootstrapError, error_message
+            fail CloudExceptions::BootstrapError, error_message
           end
           config[:bootstrap_ip_address] = bootstrap_ip_address
 
           config[:hints] ||= {}
-          config[:hints]["openstack"] ||= {}
+          config[:hints]['openstack'] ||= {}
         end
 
         def validate_params!
@@ -178,15 +177,15 @@ class Chef
 
           if locate_config_value(:bootstrap_protocol) == 'winrm'
             if locate_config_value(:winrm_password).nil?
-              errors << "You must provide Winrm Password."
+              errors << 'You must provide Winrm Password.'
             end
           elsif locate_config_value(:bootstrap_protocol) != 'ssh'
-            errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
+            errors << 'You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]'
           end
 
-          errors << "You must provide --image-os-type option [windows/linux]" if ! (%w(windows linux).include?(locate_config_value(:image_os_type)))
-          error_message = ""
-          raise CloudExceptions::ValidationError, error_message if errors.each{|e| ui.error(e); error_message = "#{error_message} #{e}."}.any?
+          errors << 'You must provide --image-os-type option [windows/linux]' unless %w(windows linux).include?(locate_config_value(:image_os_type))
+          error_message = ''
+          fail CloudExceptions::ValidationError, error_message if errors.each { |e| ui.error(e); error_message = "#{error_message} #{e}." }.any?
         end
 
         def is_image_valid?
@@ -200,9 +199,7 @@ class Chef
         def is_floating_ip_valid?
           address = locate_config_value(:openstack_floating_ip)
 
-          if address == '-1' # no floating IP requested
-            return true
-          end
+          return true if address == '-1' # no floating IP requested
 
           addresses = service.connection.addresses
           return false if addresses.empty? # no floating IPs
@@ -225,23 +222,23 @@ class Chef
 
         def post_connection_validations
           errors = []
-          errors << "You have not provided a valid image ID. Please note the options for this value are -I or --image." if !is_image_valid?
-          errors << "You have not provided a valid flavor ID. Please note the options for this value are -f or --flavor." if !is_flavor_valid?
-          errors << "You have either requested an invalid floating IP address or none are available." if !is_floating_ip_valid?
-          error_message = ""
-          raise CloudExceptions::ValidationError, error_message if errors.each{|e| ui.error(e); error_message = "#{error_message} #{e}."}.any?
+          errors << 'You have not provided a valid image ID. Please note the options for this value are -I or --image.' unless is_image_valid?
+          errors << 'You have not provided a valid flavor ID. Please note the options for this value are -f or --flavor.' unless is_flavor_valid?
+          errors << 'You have either requested an invalid floating IP address or none are available.' unless is_floating_ip_valid?
+          error_message = ''
+          fail CloudExceptions::ValidationError, error_message if errors.each { |e| ui.error(e); error_message = "#{error_message} #{e}." }.any?
         end
 
         def get_floating_ip_id(floating_address)
           # required for this method to work
           floating_ip_id = -1
           # Figure out the id for the port that the floating ip you requested
-          @service.network.list_floating_ips[:body]["floatingips"].each do |x|
-            if x["floating_ip_address"] == floating_address
-              floating_ip_id = x["id"]
+          @service.network.list_floating_ips[:body]['floatingips'].each do |x|
+            if x['floating_ip_address'] == floating_address
+              floating_ip_id = x['id']
             end
           end
-          return floating_ip_id
+          floating_ip_id
         end
       end
     end

@@ -12,18 +12,18 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner "knife openstack flavor list (options)"
+        banner 'knife openstack flavor list (options)'
 
         def before_exec_command
-          #set columns_with_info map
+          # set columns_with_info map
           @columns_with_info = [
-            {:label => 'Name', :key => 'name'},
-            {:label => 'ID', :key => 'id'},
-            {:label => 'Virtual CPUs', :key => 'vcpus'},
-            {:label => 'RAM', :key => 'ram', :value_callback => method(:ram_in_mb)},
-            {:label => 'Disk', :key => 'disk', :value_callback => method(:disk_in_gb)}
+            { label: 'Name', key: 'name' },
+            { label: 'ID', key: 'id' },
+            { label: 'Virtual CPUs', key: 'vcpus' },
+            { label: 'RAM', key: 'ram', value_callback: method(:ram_in_mb) },
+            { label: 'Disk', key: 'disk', value_callback: method(:disk_in_gb) }
           ]
-          @sort_by_field = "name"
+          @sort_by_field = 'name'
         end
 
         def query_resource
@@ -37,7 +37,6 @@ class Chef
         def disk_in_gb(disk)
           "#{disk} GB"
         end
-
       end
     end
   end

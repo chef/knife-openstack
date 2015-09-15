@@ -26,7 +26,7 @@ describe Chef::Knife::Cloud::OpenstackFloatingIpRelease do
   before(:each) do
     @instance = Chef::Knife::Cloud::OpenstackFloatingIpRelease.new
     allow(@instance.ui).to receive(:error)
-    @instance.name_args = [ '23849038438240934n3294839248' ]
+    @instance.name_args = ['23849038438240934n3294839248']
   end
 
   describe 'create service instance' do

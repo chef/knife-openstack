@@ -32,19 +32,19 @@ class Chef
         include OpenstackServiceOptions
         include ServerListOptions
 
-        banner "knife openstack server list (options)"
+        banner 'knife openstack server list (options)'
 
         def before_exec_command
           # set columns_with_info map
           @columns_with_info = [
-            {:label => 'Name', :key => 'name'},
-            {:label => 'Instance ID', :key => 'id'},
-            {:label => 'Addresses', :key => 'addresses', :value_callback => method(:addresses)},
-            {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
-            {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
-            {:label => 'Keypair', :key => 'key_name'},
-            {:label => 'State', :key => 'state'},
-            {:label => 'Availability Zone', :key => 'availability_zone'}
+            { label: 'Name', key: 'name' },
+            { label: 'Instance ID', key: 'id' },
+            { label: 'Addresses', key: 'addresses', value_callback: method(:addresses) },
+            { label: 'Flavor', key: 'flavor', value_callback: method(:get_id) },
+            { label: 'Image', key: 'image', value_callback: method(:get_id) },
+            { label: 'Keypair', key: 'key_name' },
+            { label: 'State', key: 'state' },
+            { label: 'Availability Zone', key: 'availability_zone' }
           ]
           @sort_by_field = 'name'
           super

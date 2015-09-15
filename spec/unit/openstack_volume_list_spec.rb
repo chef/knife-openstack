@@ -25,5 +25,5 @@ require 'support/shared_examples_for_command'
 describe Chef::Knife::Cloud::OpenstackVolumeList do
   it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackVolumeList.new
 
-  include_context "#validate!", Chef::Knife::Cloud::OpenstackVolumeList.new
+  include_context '#validate!', Chef::Knife::Cloud::OpenstackVolumeList.new
 end
