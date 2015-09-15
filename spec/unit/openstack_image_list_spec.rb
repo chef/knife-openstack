@@ -25,7 +25,7 @@ require 'support/shared_examples_for_command'
 describe Chef::Knife::Cloud::OpenstackImageList do
   it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackImageList.new
 
-  let (:instance) {Chef::Knife::Cloud::OpenstackImageList.new}
+  let (:instance) { Chef::Knife::Cloud::OpenstackImageList.new }
 
-  include_context "#validate!", Chef::Knife::Cloud::OpenstackImageList.new
+  include_context '#validate!', Chef::Knife::Cloud::OpenstackImageList.new
 end

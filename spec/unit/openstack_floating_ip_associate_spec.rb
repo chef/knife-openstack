@@ -22,8 +22,8 @@ require 'ostruct'
 
 describe Chef::Knife::Cloud::OpenstackFloatingIpAssociate do
   before(:each) do
-    @instance = Chef::Knife::Cloud::OpenstackFloatingIpAssociate.new(["--instance-id", "23849038438240934n3294839248"])
-    @instance.name_args = [ '127.0.0.1' ]
+    @instance = Chef::Knife::Cloud::OpenstackFloatingIpAssociate.new(['--instance-id', '23849038438240934n3294839248'])
+    @instance.name_args = ['127.0.0.1']
   end
 
   describe 'associate floating ip' do

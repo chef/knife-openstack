@@ -16,10 +16,10 @@ class Chef
         banner 'knife openstack floating_ip disassociate IP (options)'
 
         option :instance_id,
-          :long => '--instance-id ID',
-          :description => 'Instance id to disassociate with.',
-          :proc => Proc.new { |key| Chef::Config[:knife][:instance_id] = key },
-          :required => true
+               long: '--instance-id ID',
+               description: 'Instance id to disassociate with.',
+               proc: proc { |key| Chef::Config[:knife][:instance_id] = key },
+               required: true
 
         def execute_command
           if @name_args[0]

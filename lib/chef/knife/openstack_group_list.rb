@@ -9,27 +9,25 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner "knife openstack group list (options)"
+        banner 'knife openstack group list (options)'
 
         def query_resource
-          begin
-            @service.connection.security_groups
-          rescue Excon::Errors::BadRequest => e
-            response = Chef::JSONCompat.from_json(e.response.body)
-            ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
-            raise e
-          end
+          @service.connection.security_groups
+        rescue Excon::Errors::BadRequest => e
+          response = Chef::JSONCompat.from_json(e.response.body)
+          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          raise e
         end
 
         def list(security_groups)
-          if(config[:format] == "summary")
+          if (config[:format] == 'summary')
             group_list = [
               ui.color('Name', :bold),
               ui.color('Protocol', :bold),
               ui.color('From', :bold),
               ui.color('To', :bold),
               ui.color('CIDR', :bold),
-              ui.color('Description', :bold),
+              ui.color('Description', :bold)
             ]
             security_groups.sort_by(&:name).each do |group|
               group.security_group_rules.each do |rule|

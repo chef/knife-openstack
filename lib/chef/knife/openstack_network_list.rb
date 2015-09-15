@@ -12,23 +12,22 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner "knife openstack network list (options)"
+        banner 'knife openstack network list (options)'
 
         def before_exec_command
-          #set columns_with_info map
+          # set columns_with_info map
           @columns_with_info = [
-            {:label => 'Name', :key => 'name'},
-            {:label => 'ID', :key => 'id'},
-            {:label => 'Tenant', :key => 'tenant_id'},
-            {:label => 'Shared', :key => 'shared'}
+            { label: 'Name', key: 'name' },
+            { label: 'ID', key: 'id' },
+            { label: 'Tenant', key: 'tenant_id' },
+            { label: 'Shared', key: 'shared' }
           ]
-          @sort_by_field = "name"
+          @sort_by_field = 'name'
         end
 
         def query_resource
           @service.list_networks
         end
-
       end
     end
   end

@@ -18,8 +18,7 @@ class Chef
         include OpenstackServiceOptions
         include OpenstackHelpers
 
-        banner "knife openstack server delete INSTANCEID [INSTANCEID] (options)"
-
+        banner 'knife openstack server delete INSTANCEID [INSTANCEID] (options)'
       end
     end
   end

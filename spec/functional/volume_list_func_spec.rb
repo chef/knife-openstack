@@ -22,23 +22,23 @@ require 'chef/knife/cloud/openstack_service'
 require 'support/shared_examples_for_command'
 
 describe Chef::Knife::Cloud::OpenstackVolumeList do
-  let (:instance) {Chef::Knife::Cloud::OpenstackVolumeList.new}
+  let (:instance) { Chef::Knife::Cloud::OpenstackVolumeList.new }
 
-  context "functionality" do
+  context 'functionality' do
     before do
-      resources = [ TestResource.new({:id => "volume-1", :name => "big-disk-volume", :status => "available", :size => 1024, :description => "This is the big disk"}),
-                     TestResource.new({:id => "volume-2", :name => "little-disk-volume", :status => "in-use", :size => 8, :description => "This is the little disk"})
-                   ]
+      resources = [TestResource.new(id: 'volume-1', name: 'big-disk-volume', status: 'available', size: 1024, description: 'This is the big disk'),
+                   TestResource.new(id: 'volume-2', name: 'little-disk-volume', status: 'in-use', size: 8, description: 'This is the little disk')
+                  ]
       allow(instance).to receive(:query_resource).and_return(resources)
       allow(instance).to receive(:puts)
       allow(instance).to receive(:create_service_instance).and_return(Chef::Knife::Cloud::Service.new)
       allow(instance).to receive(:validate!)
     end
 
-    it "lists formatted list of resources" do
-      expect(instance.ui).to receive(:list).with(["Name", "ID", "Status", "Size", "Description",
-                                              "big-disk-volume", "volume-1", "available", "1024 GB", "This is the big disk",
-                                              "little-disk-volume", "volume-2", "in-use", "8 GB", "This is the little disk"], :uneven_columns_across, 5)
+    it 'lists formatted list of resources' do
+      expect(instance.ui).to receive(:list).with(['Name', 'ID', 'Status', 'Size', 'Description',
+                                                  'big-disk-volume', 'volume-1', 'available', '1024 GB', 'This is the big disk',
+                                                  'little-disk-volume', 'volume-2', 'in-use', '8 GB', 'This is the little disk'], :uneven_columns_across, 5)
       instance.run
     end
   end
