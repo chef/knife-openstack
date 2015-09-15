@@ -37,8 +37,7 @@ class Chef
           @columns_with_info = [
           {:label => 'Instance ID', :key => 'id'},
           {:label => 'Name', :key => 'name'},
-          {:label => 'Public IP', :key => 'addresses', :value_callback => method(:primary_public_ip_address)},
-          {:label => 'Private IP', :key => 'addresses', :value_callback => method(:primary_private_ip_address)},
+          {:label => 'Addresses', :key => 'addresses', :value_callback => method(:instance_addresses)},
           {:label => 'Flavor', :key => 'flavor', :value_callback => method(:get_id)},
           {:label => 'Image', :key => 'image', :value_callback => method(:get_id)},
           {:label => 'Keypair', :key => 'key_name'},

@@ -14,7 +14,7 @@ class Chef
         end
 
         def primary_network_ip_address(addresses, network_name)
-          return addresses[network_name].last['addr'] if addresses[network_name] && !addresses[network_name].empty?
+          addresses[network_name].last['addr'] if addresses[network_name] && !addresses[network_name].empty?
         end
 
         def create_service_instance
@@ -23,6 +23,19 @@ class Chef
 
         def validate!
           super(:openstack_username, :openstack_password, :openstack_auth_url)
+        end
+
+        def instance_addresses(addresses)
+          info = []
+          if addresses[addresses.keys[0]] && addresses[addresses.keys[0]].size > 0
+            ips = addresses[addresses.keys[0]]
+            ips.each do |ip|
+              version = 'IPv6' if ip['version'] == 6
+              version = 'IPv4' if ip['version'] == 4
+              info << "#{addresses.keys[0]}:#{version}: #{ip['addr']}"
+            end
+          end
+          info.join(' ')
         end
       end
     end
