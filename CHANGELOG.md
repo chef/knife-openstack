@@ -1,3 +1,7 @@
+## v1.3.2.pre
+* Fix cloud command class loading #174
+* Fix for #178 for the listing of ips with `knife openstack server list`
+
 ## v1.2.0
 * Allow users to specify alternate private networks. #163
 * Vol sched 1.0.0work #142
