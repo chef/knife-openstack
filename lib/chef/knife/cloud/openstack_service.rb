@@ -18,18 +18,7 @@ class Chef
           Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure]}")
           Chef::Log.debug("openstack_region #{Chef::Config[:knife][:openstack_region]}")
 
-          super(options.merge(auth_params: {
-                                provider: 'OpenStack',
-                                openstack_username: Chef::Config[:knife][:openstack_username],
-                                openstack_api_key: Chef::Config[:knife][:openstack_password],
-                                openstack_auth_url: Chef::Config[:knife][:openstack_auth_url],
-                                openstack_endpoint_type: Chef::Config[:knife][:openstack_endpoint_type],
-                                openstack_tenant: Chef::Config[:knife][:openstack_tenant],
-                                openstack_region: Chef::Config[:knife][:openstack_region],
-                                connection_options: {
-                                  ssl_verify_peer: !Chef::Config[:knife][:openstack_insecure]
-                                }
-                              }))
+          super(options.merge(auth_params: get_auth_params))
         end
 
         # add alternate user defined api_endpoint value.
@@ -53,6 +42,28 @@ class Chef
           end
         rescue Excon::Errors::BadRequest => e
           handle_excon_exception(CloudExceptions::KnifeCloudError, e)
+        end
+
+        def get_auth_params
+          load_fog_gem
+          params = {
+            provider: 'OpenStack',
+            connection_options: {
+              ssl_verify_peer: !Chef::Config[:knife][:openstack_insecure]
+            }
+          }
+
+          (
+            Fog::Compute::OpenStack.requirements +
+            Fog::Compute::OpenStack.recognized -
+            [:openstack_api_key]
+          ).each do |k|
+            next unless k.to_s.start_with?('openstack')
+            params[k] = Chef::Config[:knife][k]
+          end
+          params[:openstack_api_key] = Chef::Config[:knife][:openstack_password] || Chef::Config[:knife][:openstack_api_key]
+
+          params
         end
       end
     end
