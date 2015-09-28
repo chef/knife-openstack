@@ -39,9 +39,10 @@ describe Chef::Knife::Cloud::OpenstackServerList do
     end
 
     it 'lists formatted list of resources' do
-      expect(instance.ui).to receive(:list).with(['Name', 'Instance ID', 'Public IP', 'Private IP', 'Flavor', 'Image', 'Keypair', 'State', 'Availability Zone',
-                                                  'ubuntu01', 'resource-1', '172.31.6.132', '172.31.6.133', '1', 'image1', 'keypair', 'ACTIVE', 'test zone',
-                                                  'windows2008', 'resource-2', '172.31.6.132', nil, 'id2', 'image2', 'keypair', 'ACTIVE', 'test zone', 'windows2008', 'resource-3-err', nil, nil, 'id2', 'image2', 'keypair', 'ERROR', 'test zone'], :uneven_columns_across, 9)
+      expect(instance.ui).to receive(:list).with(['Name', 'Instance ID', 'Addresses', 'Flavor', 'Image', 'Keypair', 'State', 'Availability Zone',
+                                                  'ubuntu01', 'resource-1', 'public:IPv4: 172.31.6.132', '1', 'image1', 'keypair', 'ACTIVE', 'test zone',
+                                                  'windows2008', 'resource-2', 'public:IPv4: 172.31.6.132', 'id2', 'image2', 'keypair', 'ACTIVE', 'test zone',
+                                                  'windows2008', 'resource-3-err', '', 'id2', 'image2', 'keypair', 'ERROR', 'test zone'], :uneven_columns_across, 8)
       instance.run
     end
 
@@ -54,22 +55,22 @@ describe Chef::Knife::Cloud::OpenstackServerList do
       end
 
       it 'lists formatted list of resources on chef data option set' do
-        expect(instance.ui).to receive(:list).with(['Name', 'Instance ID', 'Public IP', 'Private IP', 'Flavor', 'Image', 'Keypair', 'State', 'Availability Zone', 'Chef Node Name', 'Environment', 'FQDN', 'Runlist', 'Tags', 'Platform',
-                                                    'server-4', 'server-4', '172.31.6.132', '172.31.6.133', '1', 'image1', 'keypair', 'ACTIVE', 'test zone', 'server-4', '_default', 'testfqdnnode.us', '[]', '[]', 'ubuntu',
-                                                    'ubuntu01', 'resource-1', '172.31.6.132', '172.31.6.133', '1', 'image1', 'keypair', 'ACTIVE', 'test zone', '', '', '', '', '', '',
-                                                    'windows2008', 'resource-2', '172.31.6.132', nil, 'id2', 'image2', 'keypair', 'ACTIVE', 'test zone', '', '', '', '', '', '',
-                                                    'windows2008', 'resource-3-err', nil, nil, 'id2', 'image2', 'keypair', 'ERROR', 'test zone', '', '', '', '', '', ''], :uneven_columns_across, 15)
+        expect(instance.ui).to receive(:list).with(['Name', 'Instance ID', 'Addresses', 'Flavor', 'Image', 'Keypair', 'State', 'Availability Zone', 'Chef Node Name', 'Environment', 'FQDN', 'Runlist', 'Tags', 'Platform',
+                                                    'server-4', 'server-4', 'public:IPv4: 172.31.6.132', '1', 'image1', 'keypair', 'ACTIVE', 'test zone', 'server-4', '_default', 'testfqdnnode.us', '[]', '[]', 'ubuntu',
+                                                    'ubuntu01', 'resource-1', 'public:IPv4: 172.31.6.132', '1', 'image1', 'keypair', 'ACTIVE', 'test zone', '', '', '', '', '', '',
+                                                    'windows2008', 'resource-2', 'public:IPv4: 172.31.6.132', 'id2', 'image2', 'keypair', 'ACTIVE', 'test zone', '', '', '', '', '', '',
+                                                    'windows2008', 'resource-3-err', '', 'id2', 'image2', 'keypair', 'ERROR', 'test zone', '', '', '', '', '', ''], :uneven_columns_across, 14)
         instance.run
       end
 
       it 'lists formatted list of resources on chef-data and chef-node-attribute option set' do
         instance.config[:chef_node_attribute] = 'platform_family'
         expect(@node).to receive(:attribute?).with('platform_family').and_return(true)
-        expect(instance.ui).to receive(:list).with(['Name', 'Instance ID', 'Public IP', 'Private IP', 'Flavor', 'Image', 'Keypair', 'State', 'Availability Zone', 'Chef Node Name', 'Environment', 'FQDN', 'Runlist', 'Tags', 'Platform', 'platform_family',
-                                                    'server-4', 'server-4', '172.31.6.132', '172.31.6.133', '1', 'image1', 'keypair', 'ACTIVE', 'test zone', 'server-4', '_default', 'testfqdnnode.us', '[]', '[]', 'ubuntu', 'debian',
-                                                    'ubuntu01', 'resource-1', '172.31.6.132', '172.31.6.133', '1', 'image1', 'keypair', 'ACTIVE', 'test zone', '', '', '', '', '', '', '',
-                                                    'windows2008', 'resource-2', '172.31.6.132', nil, 'id2', 'image2', 'keypair', 'ACTIVE', 'test zone', '', '', '', '', '', '', '',
-                                                    'windows2008', 'resource-3-err', nil, nil, 'id2', 'image2', 'keypair', 'ERROR', 'test zone', '', '', '', '', '', '', ''], :uneven_columns_across, 16)
+        expect(instance.ui).to receive(:list).with(['Name', 'Instance ID', 'Addresses', 'Flavor', 'Image', 'Keypair', 'State', 'Availability Zone', 'Chef Node Name', 'Environment', 'FQDN', 'Runlist', 'Tags', 'Platform', 'platform_family',
+                                                    'server-4', 'server-4', 'public:IPv4: 172.31.6.132', '1', 'image1', 'keypair', 'ACTIVE', 'test zone', 'server-4', '_default', 'testfqdnnode.us', '[]', '[]', 'ubuntu', 'debian',
+                                                    'ubuntu01', 'resource-1', 'public:IPv4: 172.31.6.132', '1', 'image1', 'keypair', 'ACTIVE', 'test zone', '', '', '', '', '', '', '',
+                                                    'windows2008', 'resource-2', 'public:IPv4: 172.31.6.132', 'id2', 'image2', 'keypair', 'ACTIVE', 'test zone', '', '', '', '', '', '', '',
+                                                    'windows2008', 'resource-3-err', '', 'id2', 'image2', 'keypair', 'ERROR', 'test zone', '', '', '', '', '', '', ''], :uneven_columns_across, 15)
         instance.run
       end
 
@@ -84,11 +85,11 @@ describe Chef::Knife::Cloud::OpenstackServerList do
       it 'not display chef-data on chef-node-attribute set but chef-data option missing' do
         instance.config[:chef_data] = false
         instance.config[:chef_node_attribute] = 'platform_family'
-        expect(instance.ui).to receive(:list).with(['Name', 'Instance ID', 'Public IP', 'Private IP', 'Flavor', 'Image', 'Keypair', 'State', 'Availability Zone',
-                                                    'server-4', 'server-4', '172.31.6.132', '172.31.6.133', '1', 'image1', 'keypair', 'ACTIVE', 'test zone',
-                                                    'ubuntu01', 'resource-1', '172.31.6.132', '172.31.6.133', '1', 'image1', 'keypair', 'ACTIVE', 'test zone',
-                                                    'windows2008', 'resource-2', '172.31.6.132', nil, 'id2', 'image2', 'keypair', 'ACTIVE', 'test zone',
-                                                    'windows2008', 'resource-3-err', nil, nil, 'id2', 'image2', 'keypair', 'ERROR', 'test zone'], :uneven_columns_across, 9)
+        expect(instance.ui).to receive(:list).with(['Name', 'Instance ID', 'Addresses', 'Flavor', 'Image', 'Keypair', 'State', 'Availability Zone',
+                                                    'server-4', 'server-4', 'public:IPv4: 172.31.6.132', '1', 'image1', 'keypair', 'ACTIVE', 'test zone',
+                                                    'ubuntu01', 'resource-1', 'public:IPv4: 172.31.6.132', '1', 'image1', 'keypair', 'ACTIVE', 'test zone',
+                                                    'windows2008', 'resource-2', 'public:IPv4: 172.31.6.132', 'id2', 'image2', 'keypair', 'ACTIVE', 'test zone',
+                                                    'windows2008', 'resource-3-err', '', 'id2', 'image2', 'keypair', 'ERROR', 'test zone'], :uneven_columns_across, 8)
         instance.run
       end
     end

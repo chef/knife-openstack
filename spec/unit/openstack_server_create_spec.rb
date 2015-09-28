@@ -148,7 +148,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     it 'ensures default value for metadata' do
       options = @instance.options
-      expect(options[:metadata][:default]).to be.nil?
+      expect(options[:metadata][:default]).to be_nil
     end
   end
 

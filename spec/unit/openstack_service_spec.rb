@@ -33,21 +33,21 @@ describe Chef::Knife::Cloud::OpenstackService do
     end
 
     it 'sets the api_endpoint in auth params' do
-      expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to be.nil?
+      expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to be_nil
       @instance.add_api_endpoint
       expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to be == @api_endpoint
     end
 
     it 'does not set the endpoint when --api-endpoint option is missing' do
       Chef::Config[:knife][:api_endpoint] = nil
-      expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to be.nil?
+      expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to be_nil
       @instance.add_api_endpoint
       expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to_not be == @api_endpoint
-      expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to be.nil?
+      expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to be_nil
     end
 
     it "doesn't set an OpenStack endpoint type by default" do
-      expect(Chef::Config[:knife][:openstack_endpoint_type]).to be.nil?
+      expect(Chef::Config[:knife][:openstack_endpoint_type]).to be_nil
     end
   end
 
