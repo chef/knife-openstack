@@ -1,6 +1,7 @@
 ## v1.3.2
 * Fix cloud command class loading #174
 * Fix for #178 for the listing of ips with `knife openstack server list`
+* Support all Fog OpenStack options #179
 
 ## v1.2.0
 * Allow users to specify alternate private networks. #163
