@@ -86,4 +86,42 @@ describe Chef::Knife::Cloud::OpenstackService do
       end
     end
   end
+
+  describe '#get_auth_params' do
+    let(:auth_params) do
+      Chef::Knife::Cloud::OpenstackService.new.instance_variable_get(:@auth_params)
+    end
+
+    it 'sets ssl_verify_peer to false when openstack_insecure is true' do
+      Chef::Config[:knife][:openstack_insecure] = true
+      expect(auth_params[:connection_options][:ssl_verify_peer]).to be false
+    end
+
+    it 'only copies openstack options from Fog' do
+      params = auth_params.keys - [:provider, :connection_options]
+      expect(params.all? { |p| p.to_s.start_with?('openstack') }).to be true
+    end
+
+    context 'when openstack_password is set' do
+      before(:each) do
+        @expected = 'password'
+        Chef::Config[:knife][:openstack_password] = @expected
+      end
+
+      it 'sets openstack_api_key from openstack_password' do
+        expect(auth_params[:openstack_api_key]).to be == @expected
+      end
+
+      it 'prefers openstack_password over openstack_api_key' do
+        Chef::Config[:knife][:openstack_api_key] = 'unexpected'
+        expect(auth_params[:openstack_api_key]).to be == @expected
+      end
+    end
+
+    it 'uses openstack_api_key if openstack_password is not set' do
+      @expected = 'password'
+      Chef::Config[:knife][:openstack_api_key] = @expected
+      expect(auth_params[:openstack_api_key]).to be == @expected
+    end
+  end
 end
