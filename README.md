@@ -31,6 +31,14 @@ In order to communicate with an OpenStack API you will need to tell Knife your O
     knife[:openstack_tenant] = "Your OpenStack tenant name"
     knife[:openstack_region] = "Your OpenStack Region"
 
+All of Fog's `openstack` options (`openstack_domain_name`, `openstack_project_name`, ...) are supported. This includes support for the OpenStack Identity v3 API:
+
+    knife[:openstack_auth_url] = "http://cloud.mycompany.com:5000/v3/auth/tokens"
+    knife[:openstack_username] = "Your OpenStack Dashboard username"
+    knife[:openstack_password] = "Your OpenStack Dashboard password"
+    knife[:openstack_project_name] = "Your OpenStack project"
+    knife[:openstack_domain_name] = "Your OpenStack domain"
+
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables.  For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
 
     knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}/tokens"
