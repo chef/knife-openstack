@@ -12,7 +12,7 @@ Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issu
 * Source: <http://github.com/chef/knife-openstack/tree/master>
 * Issues: <https://github.com/chef/knife-openstack/issues>
 * IRC: `#chef` and `#openstack-chef` on Freenode
-* Mailing list: <http://lists.chef.io>
+* Mailing list: <https://discourse.chef.io/>
 
 Note: Documentation needs to be updated in chef docs
 
