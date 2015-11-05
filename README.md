@@ -1,6 +1,6 @@
 # Knife OpenStack
 
-[![Gem Version](https://badge.fury.io/rb/knife-openstack.svg)](s://rubygems.org/gems/knife-openstack)
+[![Gem Version](https://badge.fury.io/rb/knife-openstack.svg)](https://rubygems.org/gems/knife-openstack)
 [![Build Status](https://travis-ci.org/chef/knife-openstack.svg?branch=master)](https://travis-ci.org/chef/knife-openstack)
 [![Dependency Status](https://gemnasium.com/chef/knife-openstack.svg)](https://gemnasium.com/chef/knife-openstack)
 
