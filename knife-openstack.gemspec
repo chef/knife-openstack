@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/chef/knife-openstack'
   s.summary     = 'A Chef knife plugin for OpenStack clouds.'
   s.description = 'A Chef knife plugin for OpenStack clouds.'
+  s.license      = 'Apache-2.0'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
