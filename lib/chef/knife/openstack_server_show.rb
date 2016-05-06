@@ -1,8 +1,4 @@
 #
-# Author:: Seth Chisamore (<schisamo@getchef.com>)
-# Author:: Matt Ray (<matt@getchef.com>)
-# Author:: Chirag Jog (<chirag@clogeny.com>)
-# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Copyright:: Copyright (c) 2011-2013 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -19,39 +15,36 @@
 # limitations under the License.
 #
 
-require 'chef/knife/cloud/server/list_command'
+require 'chef/knife/cloud/server/show_command'
 require 'chef/knife/openstack_helpers'
+require 'chef/knife/cloud/server/show_options'
+require 'chef/knife/cloud/openstack_service'
 require 'chef/knife/cloud/openstack_service_options'
-require 'chef/knife/cloud/server/list_options'
+require 'chef/knife/cloud/exceptions'
 
 class Chef
   class Knife
     class Cloud
-      class OpenstackServerList < ServerListCommand
+      class OpenstackServerShow < ServerShowCommand
         include OpenstackHelpers
         include OpenstackServiceOptions
-        include ServerListOptions
+        include ServerShowOptions
 
-        banner 'knife openstack server list (options)'
+        banner 'knife openstack server show (options)'
 
         def before_exec_command
           # set columns_with_info map
           @columns_with_info = [
-            { label: 'Name', key: 'name' },
             { label: 'Instance ID', key: 'id' },
-            { label: 'Addresses', key: 'addresses', value_callback: method(:addresses) },
+            { label: 'Name', key: 'name' },
+            { label: 'Addresses', key: 'addresses', value_callback: method(:instance_addresses) },
             { label: 'Flavor', key: 'flavor', value_callback: method(:get_id) },
             { label: 'Image', key: 'image', value_callback: method(:get_id) },
             { label: 'Keypair', key: 'key_name' },
             { label: 'State', key: 'state' },
             { label: 'Availability Zone', key: 'availability_zone' }
           ]
-          @sort_by_field = 'name'
           super
-        end
-
-        def addresses(addresses)
-          instance_addresses(addresses)
         end
 
         def get_id(value)
