@@ -37,12 +37,18 @@ class Chef
 
         def before_exec_command
           super
+          image_name = locate_config_value(:image)
+          image_ref = if image_name
+                        service.get_image(image_name).id
+                      else
+                        ''
+                      end
           # setup the create options
           @create_options = {
             server_def: {
               # servers require a name, knife-cloud generates the chef_node_name
               :name => config[:chef_node_name],
-              :image_ref => service.get_image(locate_config_value(:image)).id,
+              :image_ref => image_ref,
               :flavor_ref => service.get_flavor(locate_config_value(:flavor)).id,
               :security_groups => locate_config_value(:openstack_security_groups),
               :availability_zone => locate_config_value(:availability_zone),
@@ -65,7 +71,7 @@ class Chef
             end
           end
           unless locate_config_value(:openstack_volumes_v2).nil?
-            @create_options[:server_def][:block_device_mapping_v2] = locate_config_value(:openstack_volumes)
+            @create_options[:server_def][:block_device_mapping_v2] = locate_config_value(:openstack_volumes_v2)
           end
 
           @create_options[:server_def].merge!(user_data: locate_config_value(:user_data)) if locate_config_value(:user_data)
