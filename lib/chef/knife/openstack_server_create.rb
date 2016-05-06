@@ -64,6 +64,9 @@ class Chef
               }
             end
           end
+          unless locate_config_value(:openstack_volumes_v2).nil?
+            @create_options[:server_def][:block_device_mapping_v2] = locate_config_value(:openstack_volumes)
+          end
 
           @create_options[:server_def].merge!(user_data: locate_config_value(:user_data)) if locate_config_value(:user_data)
           @create_options[:server_def].merge!(nics: locate_config_value(:network_ids).map { |nic| nic_id = { 'net_id' => nic } }) if locate_config_value(:network_ids)
