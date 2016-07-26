@@ -2,7 +2,7 @@ language: ruby
 cache: bundler
 sudo: false
 rvm:
-- 2.2.0
+- 2.2.3
 - 2.3.0
 script: bundle exec rake spec
 notifications:
