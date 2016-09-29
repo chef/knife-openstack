@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_dependency 'fog', '~> 1.23'
-  s.add_dependency 'chef', '>= 11'
+  s.add_dependency 'chef', '>= 12'
   s.add_dependency 'knife-cloud', '~> 1.2.0'
 
   %w(bundler rubocop rake rspec-core rspec-expectations rspec-mocks rspec_junit_formatter).each { |gem| s.add_development_dependency gem }
