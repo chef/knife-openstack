@@ -1,6 +1,6 @@
-require 'chef/knife/cloud/list_resource_command'
-require 'chef/knife/openstack_helpers'
-require 'chef/knife/cloud/openstack_service_options'
+require "chef/knife/cloud/list_resource_command"
+require "chef/knife/openstack_helpers"
+require "chef/knife/cloud/openstack_service_options"
 
 class Chef
   class Knife
@@ -9,7 +9,7 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner 'knife openstack group list (options)'
+        banner "knife openstack group list (options)"
 
         def query_resource
           @service.connection.security_groups
@@ -20,14 +20,14 @@ class Chef
         end
 
         def list(security_groups)
-          if (config[:format] == 'summary')
+          if config[:format] == "summary"
             group_list = [
-              ui.color('Name', :bold),
-              ui.color('Protocol', :bold),
-              ui.color('From', :bold),
-              ui.color('To', :bold),
-              ui.color('CIDR', :bold),
-              ui.color('Description', :bold)
+              ui.color("Name", :bold),
+              ui.color("Protocol", :bold),
+              ui.color("From", :bold),
+              ui.color("To", :bold),
+              ui.color("CIDR", :bold),
+              ui.color("Description", :bold),
             ]
             security_groups.sort_by(&:name).each do |group|
               group.security_group_rules.each do |rule|
@@ -36,7 +36,7 @@ class Chef
                   group_list << rule.ip_protocol
                   group_list << rule.from_port.to_s
                   group_list << rule.to_port.to_s
-                  group_list << rule.ip_range['cidr']
+                  group_list << rule.ip_range["cidr"]
                   group_list << group.description
                 end
               end

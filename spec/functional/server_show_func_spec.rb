@@ -15,15 +15,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'spec_helper'
-require 'chef/knife/openstack_server_show'
-require 'chef/knife/cloud/openstack_service'
+require "spec_helper"
+require "chef/knife/openstack_server_show"
+require "chef/knife/cloud/openstack_service"
 
 describe Chef::Knife::Cloud::OpenstackServerShow do
-  context 'functionality' do
+  context "functionality" do
     before do
       @instance = Chef::Knife::Cloud::OpenstackServerShow.new
-      Chef::Config[:knife][:instance_id] = 'instance_id'
+      Chef::Config[:knife][:instance_id] = "instance_id"
       @openstack_service = Chef::Knife::Cloud::OpenstackService.new
       allow(@openstack_service).to receive(:msg_pair)
       allow(@openstack_service).to receive(:print)
@@ -38,7 +38,7 @@ describe Chef::Knife::Cloud::OpenstackServerShow do
       expect(@openstack_service).to receive(:server_summary)
     end
 
-    it 'runs server show successfully' do
+    it "runs server show successfully" do
       @instance.run
     end
   end
