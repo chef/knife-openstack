@@ -1,5 +1,5 @@
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
 
 require 'bundler'
 require 'bundler/setup'
