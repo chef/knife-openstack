@@ -14,6 +14,11 @@ Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issu
 
 Note: Documentation needs to be updated in chef docs
 
+## Requirements
+
+- Chef 12.0 higher
+- Ruby 2.2.2 or higher
+
 ## Installation
 
 If you're using [ChefDK](https://downloads.chef.io/chef-dk/), simply install the Gem:
@@ -176,7 +181,7 @@ Author:: Chirag Jog ([chirag@clogeny.com](mailto:chirag@clogeny.com))
 
 Author:: JJ Asghar ([jj@chef.io](mailto:jj@chef.io))
 
-Copyright:: Copyright (c) 2011-2015 Chef Software, Inc.
+Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
 
 License:: Apache License, Version 2.0
 
