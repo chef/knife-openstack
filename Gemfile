@@ -9,7 +9,7 @@ group :development do
   gem "rake", "~> 11.0"
   gem "rspec", "~> 3.0"
   gem "chefstyle"
-  gem "rspec-expectations" 
+  gem "rspec-expectations"
   gem "rspec-mocks"
   gem "rspec_junit_formatter"
 end

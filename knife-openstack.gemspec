@@ -21,6 +21,8 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ["lib"]
 
+  s.required_ruby_version = ">= 2.2.2"
+
   s.add_dependency "fog", "~> 1.23"
   s.add_dependency "chef", ">= 12"
   s.add_dependency "knife-cloud", "~> 1.2.0"
