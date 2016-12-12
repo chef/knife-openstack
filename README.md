@@ -9,39 +9,23 @@ Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issu
 - Documentation: <https://github.com/chef/knife-openstack/blob/master/README.md>
 - Source: <http://github.com/chef/knife-openstack/tree/master>
 - Issues: <https://github.com/chef/knife-openstack/issues>
-- IRC: `#chef` and `#openstack-chef` on Freenode
+- Slack: <http://community-slack.chef.io/>
 - Mailing list: <https://discourse.chef.io/>
 
 Note: Documentation needs to be updated in chef docs
 
+## Requirements
+
+- Chef 12.0 higher
+- Ruby 2.2.2 or higher
+
 ## Installation
 
-If you're using [ChefDK](https://downloads.chef.io/chef-dk/), simply install the Gem:
+Using [ChefDK](https://downloads.chef.io/chef-dk/), simply install the Gem:
 
 ```bash
 chef gem install knife-openstack
 ```
-
-If you're using bundler, simply add Chef and Knife OpenStack to your `Gemfile`:
-
-```ruby
-gem 'chef'
-gem 'knife-openstack'
-```
-
-If you are not using bundler, you can install the gem manually. Be sure you are running Chef 0.10.10 or higher, as earlier versions do not support plugins.
-
-```bash
-$ gem install chef
-```
-
-This plugin is distributed as a Ruby Gem. To install it, run:
-
-```bash
-$ gem install knife-openstack
-```
-
-Depending on your system's configuration, you may need to run this command with root privileges.
 
 ## Configuration
 
@@ -176,7 +160,7 @@ Author:: Chirag Jog ([chirag@clogeny.com](mailto:chirag@clogeny.com))
 
 Author:: JJ Asghar ([jj@chef.io](mailto:jj@chef.io))
 
-Copyright:: Copyright (c) 2011-2015 Chef Software, Inc.
+Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
 
 License:: Apache License, Version 2.0
 

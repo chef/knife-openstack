@@ -15,19 +15,19 @@
 
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 
-require 'mixlib/shellout'
+require "mixlib/shellout"
 
 module CleanupTestResources
   def self.validate_params
     unset_env_var = []
 
     # OPENSTACK_USERNAME, OPENSTACK_PASSWORD and OPENSTACK_AUTH_URL are mandatory params to run knife openstack commands.
-    %w(OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL).each do |os_env_var|
+    %w{OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL}.each do |os_env_var|
       unset_env_var << os_env_var if ENV[os_env_var].nil?
     end
 
     err_msg = "\nPlease set #{unset_env_var.join(', ')} environment"
-    err_msg = err_msg + (unset_env_var.length > 1 ? ' variables ' : ' variable ') + 'to cleanup test resources.'
+    err_msg = err_msg + (unset_env_var.length > 1 ? " variables " : " variable ") + "to cleanup test resources."
     unless unset_env_var.empty?
       puts err_msg
       exit 1
@@ -63,9 +63,9 @@ module CleanupTestResources
 
     # We use "os-integration-test-<platform>-<randomNumber>" pattern for server name during integration tests run. So use "os-integration-test-" pattern to find out servers created during integration tests run.
     servers.each_line do |line|
-      if line.include?('os-integration-test-') || (line.include?('openstack-') && line.include?('opscode-ci-ssh'))
+      if line.include?("os-integration-test-") || (line.include?("openstack-") && line.include?("opscode-ci-ssh"))
         # Extract and add instance id of server to delete_resources list.
-        delete_resources << { 'id' => line.split(' ').first, 'name' => line.split(' ')[1] }
+        delete_resources << { "id" => line.split(" ").first, "name" => line.split(" ")[1] }
       end
     end
 
