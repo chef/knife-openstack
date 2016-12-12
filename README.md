@@ -1,25 +1,22 @@
 # Knife OpenStack
 
-[![Gem Version](https://badge.fury.io/rb/knife-openstack.svg)](https://rubygems.org/gems/knife-openstack)
-[![Build Status](https://travis-ci.org/chef/knife-openstack.svg?branch=master)](https://travis-ci.org/chef/knife-openstack)
-[![Dependency Status](https://gemnasium.com/chef/knife-openstack.svg)](https://gemnasium.com/chef/knife-openstack)
+[![Gem Version](https://badge.fury.io/rb/knife-openstack.svg)](https://rubygems.org/gems/knife-openstack) [![Build Status](https://travis-ci.org/chef/knife-openstack.svg?branch=master)](https://travis-ci.org/chef/knife-openstack) [![Dependency Status](https://gemnasium.com/chef/knife-openstack.svg)](https://gemnasium.com/chef/knife-openstack)
 
 This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Kilo` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
 Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issues.
 
-* Documentation: <https://github.com/chef/knife-openstack/blob/master/README.md>
-* Source: <http://github.com/chef/knife-openstack/tree/master>
-* Issues: <https://github.com/chef/knife-openstack/issues>
-* IRC: `#chef` and `#openstack-chef` on Freenode
-* Mailing list: <https://discourse.chef.io/>
+- Documentation: <https://github.com/chef/knife-openstack/blob/master/README.md>
+- Source: <http://github.com/chef/knife-openstack/tree/master>
+- Issues: <https://github.com/chef/knife-openstack/issues>
+- IRC: `#chef` and `#openstack-chef` on Freenode
+- Mailing list: <https://discourse.chef.io/>
 
 Note: Documentation needs to be updated in chef docs
 
 ## Installation
 
-If you're using [ChefDK](https://downloads.chef.io/chef-dk/), simply install the
-Gem:
+If you're using [ChefDK](https://downloads.chef.io/chef-dk/), simply install the Gem:
 
 ```bash
 chef gem install knife-openstack
@@ -47,6 +44,7 @@ $ gem install knife-openstack
 Depending on your system's configuration, you may need to run this command with root privileges.
 
 ## Configuration
+
 In order to communicate with an OpenStack API you will need to tell Knife your OpenStack Auth API endpoint, your Dashboard username and password (tenant is optional). The easiest way to accomplish this is to create these entries in your `knife.rb` file:
 
 ```ruby
@@ -68,7 +66,7 @@ knife[:openstack_project_name] = "Your OpenStack project"
 knife[:openstack_domain_name] = "Your OpenStack domain"
 ```
 
-If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables.  For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
+If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables. For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
 
 ```ruby
 knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}/tokens"
@@ -110,7 +108,7 @@ This plugin provides the following Knife subcommands. Specific command options c
 
 ### `knife openstack server create`
 
-Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [chef-full](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/chef-full.erb) template (default since the 10.10 release). This may be overridden using the `-d` or `--template-file` command options. If you do not have public IP addresses, use the `--openstack-private-network` option to use the private IP address for bootstrapping.  In addition, you can use the `--bootstrap-network NAME` option to specify an alternate network for either a private or public network. If a network name isn't specified, the default name will be `'public'` for a public network and `'private'` for a private network e.g. when the `--openstack-private-network` option is specified.  Please see `knife openstack server create --help` for all of the supported options.
+Provisions a new server in an OpenStack Compute cloud and then perform a Chef bootstrap (using the SSH protocol). The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists (provided by the provisioning). It is primarily intended for Chef Client systems that talk to a Chef server. By default the server is bootstrapped using the [chef-full](https://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/chef-full.erb) template (default since the 10.10 release). This may be overridden using the `-d` or `--template-file` command options. If you do not have public IP addresses, use the `--openstack-private-network` option to use the private IP address for bootstrapping. In addition, you can use the `--bootstrap-network NAME` option to specify an alternate network for either a private or public network. If a network name isn't specified, the default name will be `'public'` for a public network and `'private'` for a private network e.g. when the `--openstack-private-network` option is specified. Please see `knife openstack server create --help` for all of the supported options.
 
 #### Working with Windows Images
 
@@ -123,9 +121,10 @@ $ knife openstack server create -I <Image> -f <Flavor> -S <keypair_name> --boots
 ```
 
 NOTE:
-* Bootstrap Protocol (`--bootstrap-protocol`) is required to be set to `winrm`.
-* Administrator Username (`--winrm-user` or `-x`) and Password (`-P`) are required parameters.
-* If the Template File (`--template`) is not specified it defaults to a Linux distro (most likely Ubuntu).
+
+- Bootstrap Protocol (`--bootstrap-protocol`) is required to be set to `winrm`.
+- Administrator Username (`--winrm-user` or `-x`) and Password (`-P`) are required parameters.
+- If the Template File (`--template`) is not specified it defaults to a Linux distro (most likely Ubuntu).
 
 #### Working with Floating IPs
 
@@ -133,11 +132,11 @@ To use a floating IP address while bootstrapping nodes, use the `-a` or `--opens
 
 ### `knife openstack server delete`
 
-Deletes an existing server in the currently configured OpenStack account. If a floating IP address has been assigned to the node, it is disassociated automatically by the OpenStack server. <b>PLEASE NOTE</b> - this does not delete the associated node and client objects from the Chef server without using the `-P` option to purge the client.
+Deletes an existing server in the currently configured OpenStack account. If a floating IP address has been assigned to the node, it is disassociated automatically by the OpenStack server. **PLEASE NOTE** - this does not delete the associated node and client objects from the Chef server without using the `-P` option to purge the client.
 
 ### `knife openstack server list`
 
-Outputs a list of all servers in the currently configured OpenStack account. <b>PLEASE NOTE</b> - this shows all instances associated with the account, some of which may not be currently managed by the Chef server.
+Outputs a list of all servers in the currently configured OpenStack account. **PLEASE NOTE** - this shows all instances associated with the account, some of which may not be currently managed by the Chef server.
 
 ### `knife openstack flavor list`
 
@@ -163,20 +162,25 @@ Lists the networks available to the currently configured OpenStack account. This
 
 Lists all of the available `floating-ips` you have associated with your account. You can ask for more via: `knife openstack floating_ip allocate --pool POOL` if you have run out. You can also `knife openstack floating_ip associate FLOATING_IP --instance-id INSTANCE_ID` and too. If you need to remove the `floating-ip` you can `disassociate` with the same command. If you would like to give back the `floating-ip` you can `knife openstack floating_ip release FLOATING_IP_ID`
 
-# License
+## Contributing
 
-Author:: Seth Chisamore (<schisamo@chef.io>)
+For information on contributing to this project see <https://github.com/chef/chef/blob/master/CONTRIBUTING.md>
 
-Author:: Matt Ray (<matt@chef.io>)
+## License
 
-Author:: Chirag Jog (<chirag@clogeny.com>)
+Author:: Seth Chisamore ([schisamo@chef.io](mailto:schisamo@chef.io))
 
-Author:: JJ Asghar (<jj@chef.io>)
+Author:: Matt Ray ([matt@chef.io](mailto:matt@chef.io))
+
+Author:: Chirag Jog ([chirag@clogeny.com](mailto:chirag@clogeny.com))
+
+Author:: JJ Asghar ([jj@chef.io](mailto:jj@chef.io))
 
 Copyright:: Copyright (c) 2011-2015 Chef Software, Inc.
 
 License:: Apache License, Version 2.0
 
+```text
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -188,3 +192,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
