@@ -13,3 +13,8 @@ group :development do
   gem "rspec-mocks"
   gem "rspec_junit_formatter"
 end
+
+# our use of the fork can go away if they merge https://github.com/skywinder/github-changelog-generator/pull/453
+group(:changelog) do
+  gem "github_changelog_generator", git: "https://github.com/tduffield/github-changelog-generator", branch: "adjust-tag-section-mapping"
+end
