@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "chef/knife/cloud/openstack_service_options"
 
 class Chef

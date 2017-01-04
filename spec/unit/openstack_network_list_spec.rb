@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)

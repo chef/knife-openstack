@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "chef/knife/cloud/fog/options"
 class Chef
   class Knife

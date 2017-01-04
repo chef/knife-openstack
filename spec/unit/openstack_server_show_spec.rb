@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
 # Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.

@@ -1,4 +1,5 @@
 
+# frozen_string_literal: true
 require "chef/knife/cloud/server/create_options"
 
 class Chef

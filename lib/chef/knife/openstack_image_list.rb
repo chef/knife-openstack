@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Copyright:: Copyright (c) 2014 Chef Software, Inc.
 

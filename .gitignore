@@ -17,6 +17,11 @@ binstubs/
 .rbenv-version
 .rvmrc
 
+# chruby
+.direnv/
+.envrc
+.ruby-version
+
 # Documentation
 _site/*
 .yardoc/

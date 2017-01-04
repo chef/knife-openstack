@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "chef/knife/cloud/list_resource_command"
 require "chef/knife/openstack_helpers"
 require "chef/knife/cloud/openstack_service_options"

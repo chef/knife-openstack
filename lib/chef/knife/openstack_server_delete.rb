@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
