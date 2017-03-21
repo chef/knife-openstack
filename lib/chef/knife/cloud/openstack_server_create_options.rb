@@ -78,6 +78,16 @@ class Chef
                    long: "--metadata X=1",
                    description: "Metadata information for this server (may pass multiple times)",
                    proc: proc { |data| Chef::Config[:knife][:metadata] ||= {}; Chef::Config[:knife][:metadata].merge!(data.split("=")[0] => data.split("=")[1]) }
+
+            option :secret_file,
+                   long: "--secret-file SECRET_FILE",
+                   description: "A file containing the secret key to use to encrypt data bag item values",
+                   proc: proc { |sf| Chef::Config[:knife][:secret_file] = sf }
+
+            option :secret,
+                   long: "--secret ",
+                   description: "The secret key to use to encrypt data bag item values",
+                   proc: proc { |s| Chef::Config[:knife][:secret] = s }
           end
         end
       end
