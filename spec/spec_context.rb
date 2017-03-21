@@ -16,12 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-shared_context "#validate!" do |instance|
+shared_context '#validate!' do |instance|
   before(:each) do
-    Chef::Config[:knife][:openstack_username] = "testuser"
-    Chef::Config[:knife][:openstack_password] = "testpassword"
-    Chef::Config[:knife][:openstack_auth_url] = "tsturl"
-    Chef::Config[:knife][:openstack_region] = "test-region"
+    Chef::Config[:knife][:openstack_username] = 'testuser'
+    Chef::Config[:knife][:openstack_password] = 'testpassword'
+    Chef::Config[:knife][:openstack_auth_url] = 'tsturl'
+    Chef::Config[:knife][:openstack_region] = 'test-region'
     allow(instance).to receive(:exit)
   end
 
@@ -32,23 +32,23 @@ shared_context "#validate!" do |instance|
     Chef::Config[:knife].delete(:openstack_region)
   end
 
-  it "validate openstack mandatory options" do
+  it 'validate openstack mandatory options' do
     expect { instance.validate! }.to_not raise_error
   end
 
-  it "raise error on openstack_username missing" do
+  it 'raise error on openstack_username missing' do
     Chef::Config[:knife].delete(:openstack_username)
     expect(instance.ui).to receive(:error).with("You did not provide a valid 'Openstack Username' value.")
     expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
   end
 
-  it "raise error on openstack_password missing" do
+  it 'raise error on openstack_password missing' do
     Chef::Config[:knife].delete(:openstack_password)
     expect(instance.ui).to receive(:error).with("You did not provide a valid 'Openstack Password' value.")
     expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
   end
 
-  it "raise error on openstack_auth_url missing" do
+  it 'raise error on openstack_auth_url missing' do
     Chef::Config[:knife].delete(:openstack_auth_url)
     expect(instance.ui).to receive(:error).with("You did not provide a valid 'Openstack Auth Url' value.")
     expect { instance.validate! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)

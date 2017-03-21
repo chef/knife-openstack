@@ -16,12 +16,12 @@
 # limitations under the License.
 #
 
-require "chef/knife/cloud/server/show_command"
-require "chef/knife/openstack_helpers"
-require "chef/knife/cloud/server/show_options"
-require "chef/knife/cloud/openstack_service"
-require "chef/knife/cloud/openstack_service_options"
-require "chef/knife/cloud/exceptions"
+require 'chef/knife/cloud/server/show_command'
+require 'chef/knife/openstack_helpers'
+require 'chef/knife/cloud/server/show_options'
+require 'chef/knife/cloud/openstack_service'
+require 'chef/knife/cloud/openstack_service_options'
+require 'chef/knife/cloud/exceptions'
 
 class Chef
   class Knife
@@ -31,25 +31,25 @@ class Chef
         include OpenstackServiceOptions
         include ServerShowOptions
 
-        banner "knife openstack server show (options)"
+        banner 'knife openstack server show (options)'
 
         def before_exec_command
           # set columns_with_info map
           @columns_with_info = [
-            { label: "Instance ID", key: "id" },
-            { label: "Name", key: "name" },
-            { label: "Addresses", key: "addresses", value_callback: method(:instance_addresses) },
-            { label: "Flavor", key: "flavor", value_callback: method(:get_id) },
-            { label: "Image", key: "image", value_callback: method(:get_id) },
-            { label: "Keypair", key: "key_name" },
-            { label: "State", key: "state" },
-            { label: "Availability Zone", key: "availability_zone" },
+            { label: 'Instance ID', key: 'id' },
+            { label: 'Name', key: 'name' },
+            { label: 'Addresses', key: 'addresses', value_callback: method(:instance_addresses) },
+            { label: 'Flavor', key: 'flavor', value_callback: method(:get_id) },
+            { label: 'Image', key: 'image', value_callback: method(:get_id) },
+            { label: 'Keypair', key: 'key_name' },
+            { label: 'State', key: 'state' },
+            { label: 'Availability Zone', key: 'availability_zone' }
           ]
           super
         end
 
         def get_id(value)
-          value["id"]
+          value['id']
         end
       end
     end

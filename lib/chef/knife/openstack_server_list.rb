@@ -20,10 +20,10 @@
 # limitations under the License.
 #
 
-require "chef/knife/cloud/server/list_command"
-require "chef/knife/openstack_helpers"
-require "chef/knife/cloud/openstack_service_options"
-require "chef/knife/cloud/server/list_options"
+require 'chef/knife/cloud/server/list_command'
+require 'chef/knife/openstack_helpers'
+require 'chef/knife/cloud/openstack_service_options'
+require 'chef/knife/cloud/server/list_options'
 
 class Chef
   class Knife
@@ -33,21 +33,21 @@ class Chef
         include OpenstackServiceOptions
         include ServerListOptions
 
-        banner "knife openstack server list (options)"
+        banner 'knife openstack server list (options)'
 
         def before_exec_command
           # set columns_with_info map
           @columns_with_info = [
-            { label: "Name", key: "name" },
-            { label: "Instance ID", key: "id" },
-            { label: "Addresses", key: "addresses", value_callback: method(:addresses) },
-            { label: "Flavor", key: "flavor", value_callback: method(:get_id) },
-            { label: "Image", key: "image", value_callback: method(:get_id) },
-            { label: "Keypair", key: "key_name" },
-            { label: "State", key: "state" },
-            { label: "Availability Zone", key: "availability_zone" },
+            { label: 'Name', key: 'name' },
+            { label: 'Instance ID', key: 'id' },
+            { label: 'Addresses', key: 'addresses', value_callback: method(:addresses) },
+            { label: 'Flavor', key: 'flavor', value_callback: method(:get_id) },
+            { label: 'Image', key: 'image', value_callback: method(:get_id) },
+            { label: 'Keypair', key: 'key_name' },
+            { label: 'State', key: 'state' },
+            { label: 'Availability Zone', key: 'availability_zone' }
           ]
-          @sort_by_field = "name"
+          @sort_by_field = 'name'
           super
         end
 
@@ -56,7 +56,7 @@ class Chef
         end
 
         def get_id(value)
-          value["id"]
+          value['id']
         end
       end
     end

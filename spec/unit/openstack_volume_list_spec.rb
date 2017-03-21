@@ -18,13 +18,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "spec_helper"
-require "chef/knife/openstack_volume_list"
-require "chef/knife/cloud/openstack_service"
-require "support/shared_examples_for_command"
+require 'spec_helper'
+require 'chef/knife/openstack_volume_list'
+require 'chef/knife/cloud/openstack_service'
+require 'support/shared_examples_for_command'
 
 describe Chef::Knife::Cloud::OpenstackVolumeList do
   it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackVolumeList.new
 
-  include_context "#validate!", Chef::Knife::Cloud::OpenstackVolumeList.new
+  include_context '#validate!', Chef::Knife::Cloud::OpenstackVolumeList.new
 end

@@ -17,20 +17,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "spec_helper"
-require "chef/knife/openstack_network_list"
-require "chef/knife/cloud/openstack_service"
-require "support/shared_examples_for_command"
+require 'spec_helper'
+require 'chef/knife/openstack_network_list'
+require 'chef/knife/cloud/openstack_service'
+require 'support/shared_examples_for_command'
 
 describe Chef::Knife::Cloud::OpenstackNetworkList do
   it_behaves_like Chef::Knife::Cloud::Command, Chef::Knife::Cloud::OpenstackNetworkList.new
 
   let (:instance) { Chef::Knife::Cloud::OpenstackNetworkList.new }
 
-  include_context "#validate!", Chef::Knife::Cloud::OpenstackNetworkList.new
+  include_context '#validate!', Chef::Knife::Cloud::OpenstackNetworkList.new
 
-  context "query_resource" do
-    it "returns the networks using the fog service." do
+  context 'query_resource' do
+    it 'returns the networks using the fog service.' do
       instance.service = double
       expect(instance.service).to receive(:list_networks)
       instance.query_resource

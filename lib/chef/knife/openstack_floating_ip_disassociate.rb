@@ -2,10 +2,10 @@
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
 
-require "chef/knife/openstack_helpers"
-require "chef/knife/cloud/openstack_service_options"
-require "chef/knife/cloud/openstack_service"
-require "chef/knife/cloud/command"
+require 'chef/knife/openstack_helpers'
+require 'chef/knife/cloud/openstack_service_options'
+require 'chef/knife/cloud/openstack_service'
+require 'chef/knife/cloud/command'
 
 class Chef
   class Knife
@@ -14,11 +14,11 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner "knife openstack floating_ip disassociate IP (options)"
+        banner 'knife openstack floating_ip disassociate IP (options)'
 
         option :instance_id,
-               long: "--instance-id ID",
-               description: "Instance id to disassociate with.",
+               long: '--instance-id ID',
+               description: 'Instance id to disassociate with.',
                proc: proc { |key| Chef::Config[:knife][:instance_id] = key },
                required: true
 
@@ -26,7 +26,7 @@ class Chef
           if @name_args[0]
             floating_ip = @name_args[0]
           else
-            ui.error "Please provide Floating IP to disassociate."
+            ui.error 'Please provide Floating IP to disassociate.'
             exit 1
           end
           instance_id = locate_config_value(:instance_id)

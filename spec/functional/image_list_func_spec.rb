@@ -17,36 +17,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "spec_helper"
-require "chef/knife/openstack_image_list"
-require "chef/knife/cloud/openstack_service"
+require 'spec_helper'
+require 'chef/knife/openstack_image_list'
+require 'chef/knife/cloud/openstack_service'
 
 describe Chef::Knife::Cloud::OpenstackImageList do
   let (:instance) { Chef::Knife::Cloud::OpenstackImageList.new }
 
-  context "functionality" do
+  context 'functionality' do
     before do
-      resources = [TestResource.new(id: "resource-1", name: "image01", metadata: {}),
-                   TestResource.new(id: "resource-2", name: "initrd", metadata: {}),
-                  ]
+      resources = [TestResource.new(id: 'resource-1', name: 'image01', metadata: {}),
+                   TestResource.new(id: 'resource-2', name: 'initrd', metadata: {})]
       allow(instance).to receive(:query_resource).and_return(resources)
       allow(instance).to receive(:puts)
       allow(instance).to receive(:create_service_instance).and_return(Chef::Knife::Cloud::Service.new)
       allow(instance).to receive(:validate!)
-      instance.config[:format] = "summary"
+      instance.config[:format] = 'summary'
     end
 
-    it "displays formatted list of images, filtered by default" do
-      expect(instance.ui).to receive(:list).with(["Name", "ID", "Snapshot",
-                                                  "image01", "resource-1", "no"], :uneven_columns_across, 3)
+    it 'displays formatted list of images, filtered by default' do
+      expect(instance.ui).to receive(:list).with(['Name', 'ID', 'Snapshot',
+                                                  'image01', 'resource-1', 'no'], :uneven_columns_across, 3)
       instance.run
     end
 
-    it "lists all images when disable_filter = true" do
+    it 'lists all images when disable_filter = true' do
       instance.config[:disable_filter] = true
-      expect(instance.ui).to receive(:list).with(["Name", "ID", "Snapshot",
-                                                  "image01", "resource-1", "no",
-                                                  "initrd", "resource-2", "no"], :uneven_columns_across, 3)
+      expect(instance.ui).to receive(:list).with(['Name', 'ID', 'Snapshot',
+                                                  'image01', 'resource-1', 'no',
+                                                  'initrd', 'resource-2', 'no'], :uneven_columns_across, 3)
       instance.run
     end
   end
