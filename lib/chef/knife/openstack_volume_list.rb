@@ -19,9 +19,9 @@
 # limitations under the License.
 #
 
-require "chef/knife/cloud/list_resource_command"
-require "chef/knife/openstack_helpers"
-require "chef/knife/cloud/openstack_service_options"
+require 'chef/knife/cloud/list_resource_command'
+require 'chef/knife/openstack_helpers'
+require 'chef/knife/cloud/openstack_service_options'
 
 class Chef
   class Knife
@@ -30,7 +30,7 @@ class Chef
         include OpenstackHelpers
         include OpenstackServiceOptions
 
-        banner "knife openstack volume list (options)"
+        banner 'knife openstack volume list (options)'
 
         def query_resource
           @service.connection.volumes
@@ -42,11 +42,11 @@ class Chef
 
         def list(volumes)
           volume_list = [
-            ui.color("Name", :bold),
-            ui.color("ID", :bold),
-            ui.color("Status", :bold),
-            ui.color("Size", :bold),
-            ui.color("Description", :bold),
+            ui.color('Name', :bold),
+            ui.color('ID', :bold),
+            ui.color('Status', :bold),
+            ui.color('Size', :bold),
+            ui.color('Description', :bold)
           ]
           begin
             volumes.sort_by(&:name).each do |volume|

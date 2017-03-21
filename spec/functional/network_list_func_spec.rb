@@ -16,30 +16,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "spec_helper"
-require "chef/knife/openstack_network_list"
-require "chef/knife/cloud/openstack_service"
-require "support/shared_examples_for_command"
+require 'spec_helper'
+require 'chef/knife/openstack_network_list'
+require 'chef/knife/cloud/openstack_service'
+require 'support/shared_examples_for_command'
 
 describe Chef::Knife::Cloud::OpenstackNetworkList do
   let (:instance) { Chef::Knife::Cloud::OpenstackNetworkList.new }
 
-  context "functionality" do
+  context 'functionality' do
     before do
-      resources = [TestResource.new(id: "resource-1", name: "external", tenant_id: "1", shared: true),
-                   TestResource.new(id: "resource-2", name: "internal", tenant_id: "2", shared: false),
-                  ]
+      resources = [TestResource.new(id: 'resource-1', name: 'external', tenant_id: '1', shared: true),
+                   TestResource.new(id: 'resource-2', name: 'internal', tenant_id: '2', shared: false)]
       allow(instance).to receive(:query_resource).and_return(resources)
       allow(instance).to receive(:puts)
       allow(instance).to receive(:create_service_instance).and_return(Chef::Knife::Cloud::Service.new)
       allow(instance).to receive(:validate!)
-      instance.config[:format] = "summary"
+      instance.config[:format] = 'summary'
     end
 
-    it "lists formatted list of network resources" do
-      expect(instance.ui).to receive(:list).with(["Name", "ID", "Tenant", "Shared",
-                                                  "external", "resource-1", "1", "true",
-                                                  "internal", "resource-2", "2", "false"], :uneven_columns_across, 4)
+    it 'lists formatted list of network resources' do
+      expect(instance.ui).to receive(:list).with(['Name', 'ID', 'Tenant', 'Shared',
+                                                  'external', 'resource-1', '1', 'true',
+                                                  'internal', 'resource-2', '2', 'false'], :uneven_columns_across, 4)
       instance.run
     end
   end

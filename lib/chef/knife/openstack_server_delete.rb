@@ -5,11 +5,11 @@
 # Copyright:: Copyright (c) 2013 Chef Software, Inc.
 #
 
-require "chef/knife/cloud/server/delete_options"
-require "chef/knife/cloud/server/delete_command"
-require "chef/knife/cloud/openstack_service"
-require "chef/knife/cloud/openstack_service_options"
-require "chef/knife/openstack_helpers"
+require 'chef/knife/cloud/server/delete_options'
+require 'chef/knife/cloud/server/delete_command'
+require 'chef/knife/cloud/openstack_service'
+require 'chef/knife/cloud/openstack_service_options'
+require 'chef/knife/openstack_helpers'
 
 class Chef
   class Knife
@@ -19,7 +19,7 @@ class Chef
         include OpenstackServiceOptions
         include OpenstackHelpers
 
-        banner "knife openstack server delete INSTANCEID [INSTANCEID] (options)"
+        banner 'knife openstack server delete INSTANCEID [INSTANCEID] (options)'
       end
     end
   end

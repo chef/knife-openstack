@@ -5,7 +5,7 @@
 # Copyright:: Copyright (c) 2013 Chef Software, Inc.
 #
 
-require "chef/knife/cloud/fog/service"
+require 'chef/knife/cloud/fog/service'
 
 class Chef
   class Knife
@@ -48,10 +48,10 @@ class Chef
         def get_auth_params
           load_fog_gem
           params = {
-            provider: "OpenStack",
+            provider: 'OpenStack',
             connection_options: {
-              ssl_verify_peer: !Chef::Config[:knife][:openstack_insecure],
-            },
+              ssl_verify_peer: !Chef::Config[:knife][:openstack_insecure]
+            }
           }
 
           (
@@ -59,7 +59,7 @@ class Chef
             Fog::Compute::OpenStack.recognized -
             [:openstack_api_key]
           ).each do |k|
-            next unless k.to_s.start_with?("openstack")
+            next unless k.to_s.start_with?('openstack')
             params[k] = Chef::Config[:knife][k]
           end
           params[:openstack_api_key] = Chef::Config[:knife][:openstack_password] || Chef::Config[:knife][:openstack_api_key]
