@@ -31,7 +31,7 @@ class Chef
           end
 
           if response && response.status == 202
-            response =  @service.disassociate_address(instance_id, floating_ip)
+            response = @service.disassociate_address(instance_id, floating_ip)
             ui.info "Floating IP #{floating_ip} disassociated with Instance #{locate_config_value(:instance_id)}"
           end
         end
