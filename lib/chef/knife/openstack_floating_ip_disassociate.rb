@@ -29,10 +29,10 @@ class Chef
             ui.error "Please provide Floating IP to disassociate."
             exit 1
           end
-          instance_id = locate_config_value(:instance_id)
-          response =  @service.disassociate_address(instance_id, floating_ip)
+
           if response && response.status == 202
-            ui.info "Floating IP #{floating_ip} disassociated with Instance #{instance_id}"
+            response =  @service.disassociate_address(instance_id, floating_ip)
+            ui.info "Floating IP #{floating_ip} disassociated with Instance #{locate_config_value(:instance_id)}"
           end
         end
       end

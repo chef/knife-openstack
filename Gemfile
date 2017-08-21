@@ -7,7 +7,7 @@ gemspec
 group :development do
   gem "guard-rspec"
   gem "mixlib-shellout"
-  gem "rake", "~> 11.0"
+  gem "rake"
   gem "rspec", "~> 3.0"
   gem "chefstyle"
   gem "rspec-expectations"

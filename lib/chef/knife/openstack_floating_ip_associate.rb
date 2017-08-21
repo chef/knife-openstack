@@ -30,10 +30,9 @@ class Chef
             exit 1
           end
 
-          instance_id = locate_config_value(:instance_id)
           response = @service.associate_address(instance_id, floating_ip)
           if response && response.status == 202
-            ui.info "Floating IP #{floating_ip} associated with Instance #{instance_id}"
+            ui.info "Floating IP #{floating_ip} associated with Instance #{locate_config_value(:instance_id)}"
           end
         end
       end
