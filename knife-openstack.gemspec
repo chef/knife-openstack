@@ -27,4 +27,15 @@ Gem::Specification.new do |s|
   s.add_dependency "fog", "~> 1.23"
   s.add_dependency "chef", ">= 12"
   s.add_dependency "knife-cloud", "~> 1.2.0"
+
+  s.add_development_dependency "chefstyle"
+  s.add_development_dependency "github_changelog_generator"
+  s.add_development_dependency "guard-rspec"
+  s.add_development_dependency "mixlib-shellout"
+  s.add_development_dependency "rake"
+  s.add_development_dependency "rspec", "~> 3.0"
+  s.add_development_dependency "rspec-expectations"
+  s.add_development_dependency "rspec-mocks"
+  s.add_development_dependency "rspec_junit_formatter"
+
 end
