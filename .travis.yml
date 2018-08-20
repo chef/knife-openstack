@@ -17,4 +17,7 @@ branches:
     - master
 
 bundler_args: --jobs 7 --without docs debug
-script: bundle exec rake
+
+script:
+  - bundle exec chefstyle
+  - bundle exec rake
