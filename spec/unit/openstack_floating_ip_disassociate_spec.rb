@@ -27,8 +27,8 @@ describe Chef::Knife::Cloud::OpenstackFloatingIpDisassociate do
     @instance.name_args = ["127.0.0.1"]
   end
 
-  describe "associate floating ip" do
-    it "calls associate address" do
+  describe "disassociate floating ip" do
+    it "calls disassociate address" do
       @instance.service = Chef::Knife::Cloud::Service.new
       @response = OpenStruct.new(status: 202)
       expect(@instance.service).to receive(:disassociate_address).with("23849038438240934n3294839248", "127.0.0.1").and_return(@response)
