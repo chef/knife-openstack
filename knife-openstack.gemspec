@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# frozen_string_literal: true
+#
 $LOAD_PATH.push File.expand_path("../lib", __FILE__)
 require "knife-openstack/version"
 
@@ -22,20 +22,10 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.required_ruby_version = ">= 2.2.2"
+  s.required_ruby_version = ">= 2.3"
 
   s.add_dependency "fog", "~> 1.23"
-  s.add_dependency "chef", ">= 12"
+  s.add_dependency "chef", ">= 13"
   s.add_dependency "knife-cloud", "~> 1.2.0"
-
-  s.add_development_dependency "chefstyle"
-  s.add_development_dependency "github_changelog_generator"
-  s.add_development_dependency "guard-rspec"
-  s.add_development_dependency "mixlib-shellout"
-  s.add_development_dependency "rake"
-  s.add_development_dependency "rspec", "~> 3.0"
-  s.add_development_dependency "rspec-expectations"
-  s.add_development_dependency "rspec-mocks"
-  s.add_development_dependency "rspec_junit_formatter"
 
 end

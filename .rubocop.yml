@@ -1,0 +1,29 @@
+# Configuration parameters: AllowSafeAssignment.
+Lint/AssignmentInCondition:
+  Exclude:
+    - 'lib/chef/knife/cloud/openstack_service.rb'
+
+Lint/ParenthesesAsGroupedExpression:
+  Exclude:
+    - 'spec/functional/flavor_list_func_spec.rb'
+    - 'spec/functional/floating_ip_list_func_spec.rb'
+    - 'spec/functional/group_list_func_spec.rb'
+    - 'spec/functional/image_list_func_spec.rb'
+    - 'spec/functional/network_list_func_spec.rb'
+    - 'spec/functional/server_list_func_spec.rb'
+    - 'spec/functional/volume_list_func_spec.rb'
+    - 'spec/unit/openstack_group_list_spec.rb'
+    - 'spec/unit/openstack_image_list_spec.rb'
+    - 'spec/unit/openstack_network_list_spec.rb'
+    - 'spec/unit/openstack_server_delete_spec.rb'
+    - 'spec/unit/openstack_server_list_spec.rb'
+    - 'spec/unit/openstack_server_show_spec.rb'
+    - 'spec/unit/openstack_service_spec.rb'
+
+Lint/UselessAssignment:
+  Exclude:
+    - 'lib/chef/knife/openstack_floating_ip_disassociate.rb'
+    - 'lib/chef/knife/openstack_server_create.rb'
+    - 'spec/integration/openstack_spec.rb'
+    - 'spec/spec_helper.rb'
+    - 'spec/unit/openstack_floating_ip_release_spec.rb'

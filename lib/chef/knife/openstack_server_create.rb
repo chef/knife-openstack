@@ -1,9 +1,8 @@
-# frozen_string_literal: true
 #
-# Author:: Seth Chisamore (<schisamo@getchef.com>)
-# Author:: Matt Ray (<matt@getchef.com>)
+# Author:: Seth Chisamore (<schisamo@chef.io>)
+# Author:: Matt Ray (<matt@chef.io>)
 # Author:: Chirag Jog (<chirag@clogeny.com>)
-# Copyright:: Copyright (c) 2011-2014 Chef Software, Inc.
+# Copyright:: Copyright 2011-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
