@@ -21,6 +21,7 @@
 require "chef/knife/cloud/list_resource_command"
 require "chef/knife/openstack_helpers"
 require "chef/knife/cloud/openstack_service_options"
+require "chef/json_compat"
 
 class Chef
   class Knife
