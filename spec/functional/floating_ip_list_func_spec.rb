@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 #
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
-# Copyright:: Copyright (c) 2013-2014 Chef Software, Inc.
+# Copyright:: Copyright 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

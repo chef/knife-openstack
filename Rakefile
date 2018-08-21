@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright 2013-2018 Chef Software, Inc.
 
 require "bundler/setup"
 require "bundler/gem_tasks"

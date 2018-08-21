@@ -160,7 +160,7 @@ Author:: Chirag Jog ([chirag@clogeny.com](mailto:chirag@clogeny.com))
 
 Author:: JJ Asghar ([jj@chef.io](mailto:jj@chef.io))
 
-Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
+Copyright:: Copyright 2011-2018 Chef Software, Inc.
 
 License:: Apache License, Version 2.0
 
