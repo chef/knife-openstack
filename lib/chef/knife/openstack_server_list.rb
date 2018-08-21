@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Author:: Matt Ray (<matt@chef.io>)

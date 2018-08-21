@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+#
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
 # Copyright:: Copyright 2015-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
@@ -44,7 +44,7 @@ class Chef
             exit 1
           end
 
-          response = @service.associate_address(instance_id, floating_ip)
+          response = @service.associate_address(locate_config_value(:instance_id), floating_ip)
           if response && response.status == 202
             ui.info "Floating IP #{floating_ip} associated with Instance #{locate_config_value(:instance_id)}"
           end

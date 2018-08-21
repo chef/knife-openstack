@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 #
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
 # Copyright:: Copyright 2015-2018 Chef Software, Inc.
