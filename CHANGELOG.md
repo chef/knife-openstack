@@ -2,14 +2,17 @@
 
 <!-- latest_release -->
 <!-- latest_release -->
-<!-- release_rollup -->
+<!-- release_rollup since=2.1.1 -->
+### Changes not yet released to rubygems.org
 <!-- release_rollup -->
 <!-- latest_stable_release -->
+## [v2.1.1](https://github.com/chef/knife-openstack/tree/v2.1.1) (2018-11-20)
+<!-- latest_stable_release -->
+
 ## [v2.1.1](https://github.com/chef/knife-openstack/tree/v2.1.1) (2018-11-20)
 
 #### Merged Pull Requests
 - Have the docs team own the readme [#207](https://github.com/chef/knife-openstack/pull/207) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [2.1.0](https://github.com/chef/knife-openstack/tree/2.1.0) (2017-08-21)
 [Full Changelog](https://github.com/chef/knife-openstack/compare/v2.0.1...2.1.0)
