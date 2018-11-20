@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = s.summary
   s.license     = "Apache-2.0"
 
-  s.files         = %w(LICENSE) + Dir.glob("lib/**/*")
+  s.files         = %w{LICENSE} + Dir.glob("lib/**/*")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
