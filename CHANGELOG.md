@@ -1,9 +1,16 @@
 # knife-openstack Change Log
 
-<!-- latest_release -->
+<!-- latest_release 2.1.2 -->
+## [v2.1.2](https://github.com/chef/knife-openstack/tree/v2.1.2) (2018-11-27)
+
+#### Merged Pull Requests
+- Test on modern ruby versions [#208](https://github.com/chef/knife-openstack/pull/208) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 <!-- release_rollup since=2.1.1 -->
 ### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Test on modern ruby versions [#208](https://github.com/chef/knife-openstack/pull/208) ([tas50](https://github.com/tas50)) <!-- 2.1.2 -->
 <!-- release_rollup -->
 <!-- latest_stable_release -->
 ## [v2.1.1](https://github.com/chef/knife-openstack/tree/v2.1.1) (2018-11-20)
