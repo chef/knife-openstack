@@ -1,18 +1,23 @@
 #
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
-# Copyright:: Copyright 2013-2018 Chef Software, Inc.
+# Copyright:: Copyright 2013-2019 Chef Software, Inc.
 
 require "bundler/setup"
 require "bundler/gem_tasks"
-require "chefstyle"
-require "rubocop/rake_task"
+begin
+  require "chefstyle"
+  require "rubocop/rake_task"
+  desc "Run Chefstyle tests"
+  RuboCop::RakeTask.new(:style) do |task|
+    task.options += ["--display-cop-names", "--no-color"]
+  end
+rescue LoadError
+  puts "chefstyle gem is not installed. bundle install first to make sure all dependencies are installed."
+end
+
 require "rspec/core/rake_task"
 
-RuboCop::RakeTask.new
-
 RSpec::Core::RakeTask.new(:spec)
-
-task default: [:rubocop, :spec]
 
 begin
   require "yard"
@@ -27,3 +32,5 @@ task :console do
   ARGV.clear
   IRB.start
 end
+
+task default: %i{style spec}

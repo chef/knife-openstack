@@ -6,7 +6,7 @@ require "knife-openstack/version"
 Gem::Specification.new do |s|
   s.name        = "knife-openstack"
   s.version     = Knife::OpenStack::VERSION
-  s.version = "#{s.version}-alpha-#{ENV['TRAVIS_BUILD_NUMBER']}" if ENV["TRAVIS"]
+  s.version = "#{s.version}-alpha-#{ENV["TRAVIS_BUILD_NUMBER"]}" if ENV["TRAVIS"]
   s.authors     = ["JJ Asghar"]
   s.email       = ["jj@chef.io"]
   s.homepage    = "https://github.com/chef/knife-openstack"

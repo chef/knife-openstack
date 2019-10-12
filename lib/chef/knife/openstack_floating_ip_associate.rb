@@ -31,10 +31,10 @@ class Chef
         banner "knife openstack floating_ip associate IP (options)"
 
         option :instance_id,
-               long: "--instance-id ID",
-               description: "Instance id to associate it with.",
-               proc: proc { |key| Chef::Config[:knife][:instance_id] = key },
-               required: true
+          long: "--instance-id ID",
+          description: "Instance id to associate it with.",
+          proc: proc { |key| Chef::Config[:knife][:instance_id] = key },
+          required: true
 
         def execute_command
           if @name_args[0]

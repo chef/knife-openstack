@@ -57,7 +57,7 @@ def is_config_present
     end
   end
 
-  err_msg = "\nPlease set #{unset_env_var.join(', ')} environment"
+  err_msg = "\nPlease set #{unset_env_var.join(", ")} environment"
   err_msg = err_msg + (unset_env_var.length > 1 ? " variables " : " variable ") + "for integration tests."
   puts err_msg unless unset_env_var.empty?
 
@@ -69,7 +69,7 @@ def is_config_present
     end
   end
 
-  config_err_msg = "\nPlease set #{unset_config_options.join(', ')} config"
+  config_err_msg = "\nPlease set #{unset_config_options.join(", ")} config"
   config_err_msg = config_err_msg + (unset_config_options.length > 1 ? " options in ../spec/integration/config/environment.yml or as environment variables" : " option in ../spec/integration/config/environment.yml or as environment variable") + " for integration tests."
   puts config_err_msg unless unset_config_options.empty?
 

@@ -21,18 +21,18 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
 
 def append_openstack_creds(is_list_cmd = false)
-  openstack_creds_cmd = " --openstack-username '#{ENV['OPENSTACK_USERNAME']}' --openstack-password '#{ENV['OPENSTACK_PASSWORD']}' --openstack-api-endpoint #{ENV['OPENSTACK_AUTH_URL']}"
+  openstack_creds_cmd = " --openstack-username '#{ENV["OPENSTACK_USERNAME"]}' --openstack-password '#{ENV["OPENSTACK_PASSWORD"]}' --openstack-api-endpoint #{ENV["OPENSTACK_AUTH_URL"]}"
   openstack_creds_cmd += " -c #{temp_dir}/knife.rb"
   unless is_list_cmd
-    openstack_creds_cmd += " --openstack-tenant #{ENV['OPENSTACK_TENANT']}"
+    openstack_creds_cmd += " --openstack-tenant #{ENV["OPENSTACK_TENANT"]}"
   end
   openstack_creds_cmd
 end
 
 def append_openstack_creds_for_windows
-  openstack_creds_cmd = " --openstack-username '#{ENV['OPENSTACK_USERNAME']}' --openstack-password '#{ENV['OPENSTACK_PASSWORD']}' --openstack-api-endpoint #{ENV['OPENSTACK_AUTH_URL']} "
+  openstack_creds_cmd = " --openstack-username '#{ENV["OPENSTACK_USERNAME"]}' --openstack-password '#{ENV["OPENSTACK_PASSWORD"]}' --openstack-api-endpoint #{ENV["OPENSTACK_AUTH_URL"]} "
   openstack_creds_cmd += " -c #{temp_dir}/knife.rb"
-  openstack_creds_cmd += " --openstack-tenant #{ENV['OPENSTACK_TENANT']}"
+  openstack_creds_cmd += " --openstack-tenant #{ENV["OPENSTACK_TENANT"]}"
   openstack_creds_cmd
 end
 

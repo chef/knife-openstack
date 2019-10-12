@@ -203,6 +203,7 @@ class Chef
 
           addresses = service.connection.addresses
           return false if addresses.empty? # no floating IPs
+
           # floating requested without value
           if address.nil?
             if addresses.find_index { |a| a.fixed_ip.nil? }
