@@ -40,6 +40,11 @@ merge_actions:
   - built_in:build_gem:
       only_if: built_in:bump_version
 
+pipelines:
+  - verify:
+      description: Pull Request validation tests
+      public: true
+
 promote:
   actions:
     - built_in:rollover_changelog
