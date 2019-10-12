@@ -99,7 +99,7 @@ describe Chef::Knife::Cloud::OpenstackService do
     end
 
     it "only copies openstack options from Fog" do
-      params = auth_params.keys - [:provider, :connection_options]
+      params = auth_params.keys - %i{provider connection_options}
       expect(params.all? { |p| p.to_s.start_with?("openstack") }).to be true
     end
 

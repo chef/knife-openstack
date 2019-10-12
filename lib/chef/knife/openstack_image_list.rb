@@ -30,10 +30,10 @@ class Chef
         banner "knife openstack image list (options)"
 
         option :disable_filter,
-               long: "--disable-filter",
-               description: "Disable filtering of the image list. Currently filters names ending with 'initrd' or 'kernel'",
-               boolean: true,
-               default: false
+          long: "--disable-filter",
+          description: "Disable filtering of the image list. Currently filters names ending with 'initrd' or 'kernel'",
+          boolean: true,
+          default: false
 
         def before_exec_command
           # set resource_filters

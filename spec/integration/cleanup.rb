@@ -27,7 +27,7 @@ module CleanupTestResources
       unset_env_var << os_env_var if ENV[os_env_var].nil?
     end
 
-    err_msg = "\nPlease set #{unset_env_var.join(', ')} environment"
+    err_msg = "\nPlease set #{unset_env_var.join(", ")} environment"
     err_msg = err_msg + (unset_env_var.length > 1 ? " variables " : " variable ") + "to cleanup test resources."
     unless unset_env_var.empty?
       puts err_msg
@@ -48,7 +48,7 @@ module CleanupTestResources
     delete_resources = []
 
     # Openstack credentials use during knife openstack command run.
-    openstack_creds = "--openstack-username '#{ENV['OPENSTACK_USERNAME']}' --openstack-password '#{ENV['OPENSTACK_PASSWORD']}' --openstack-api-endpoint #{ENV['OPENSTACK_AUTH_URL']}"
+    openstack_creds = "--openstack-username '#{ENV["OPENSTACK_USERNAME"]}' --openstack-password '#{ENV["OPENSTACK_PASSWORD"]}' --openstack-api-endpoint #{ENV["OPENSTACK_AUTH_URL"]}"
 
     # List all servers in openstack using knife openstack server list command.
     list_command = "knife openstack server list #{openstack_creds}"
@@ -72,14 +72,14 @@ module CleanupTestResources
 
     # Delete servers
     delete_resources.each do |resource|
-      delete_command = "knife openstack server delete #{resource['id']} #{openstack_creds} --yes"
+      delete_command = "knife openstack server delete #{resource["id"]} #{openstack_creds} --yes"
       delete_output = run(delete_command)
 
       # check command exitstatus. Non zero exitstatus indicates command execution fails.
       if delete_output.exitstatus != 0
-        puts "Unable to delete server #{resource['name']}: #{resource['id']}. Error: #{delete_output.stderr}."
+        puts "Unable to delete server #{resource["name"]}: #{resource["id"]}. Error: #{delete_output.stderr}."
       else
-        puts "Deleted server #{resource['name']}: #{resource['id']}."
+        puts "Deleted server #{resource["name"]}: #{resource["id"]}."
       end
     end
   end

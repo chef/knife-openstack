@@ -48,7 +48,7 @@ class Chef
             ips.each do |ip|
               version = "IPv6" if ip["version"] == 6
               version = "IPv4" if ip["version"] == 4
-              info << "#{addresses.keys[0]}:#{version}: #{ip['addr']}"
+              info << "#{addresses.keys[0]}:#{version}: #{ip["addr"]}"
             end
           end
           info.join(" ")

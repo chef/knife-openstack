@@ -37,9 +37,9 @@ describe Chef::Knife::Cloud::OpenstackNetworkList do
     end
 
     it "lists formatted list of network resources" do
-      expect(instance.ui).to receive(:list).with(["Name", "ID", "Tenant", "Shared",
-                                                  "external", "resource-1", "1", "true",
-                                                  "internal", "resource-2", "2", "false"], :uneven_columns_across, 4)
+      expect(instance.ui).to receive(:list).with(%w{Name ID Tenant Shared
+                                                  external resource-1 1 true
+                                                  internal resource-2 2 false}, :uneven_columns_across, 4)
       instance.run
     end
   end

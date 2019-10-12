@@ -36,7 +36,7 @@ class Chef
           @service.connection.volumes
         rescue Excon::Errors::BadRequest => e
           response = Chef::JSONCompat.from_json(e.response.body)
-          ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+          ui.fatal("Unknown server error (#{response["badRequest"]["code"]}): #{response["badRequest"]["message"]}")
           raise e
         end
 
@@ -58,7 +58,7 @@ class Chef
             end
           rescue Excon::Errors::BadRequest => e
             response = Chef::JSONCompat.from_json(e.response.body)
-            ui.fatal("Unknown server error (#{response['badRequest']['code']}): #{response['badRequest']['message']}")
+            ui.fatal("Unknown server error (#{response["badRequest"]["code"]}): #{response["badRequest"]["message"]}")
             raise e
           end
           puts ui.list(volume_list, :uneven_columns_across, 5)

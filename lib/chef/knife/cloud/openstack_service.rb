@@ -27,7 +27,7 @@ class Chef
           Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
           Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
           Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
-          Chef::Log.debug("openstack_endpoint_type #{Chef::Config[:knife][:openstack_endpoint_type] || 'publicURL'}")
+          Chef::Log.debug("openstack_endpoint_type #{Chef::Config[:knife][:openstack_endpoint_type] || "publicURL"}")
           Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure]}")
           Chef::Log.debug("openstack_region #{Chef::Config[:knife][:openstack_region]}")
 
@@ -72,6 +72,7 @@ class Chef
             [:openstack_api_key]
           ).each do |k|
             next unless k.to_s.start_with?("openstack")
+
             params[k] = Chef::Config[:knife][k]
           end
           params[:openstack_api_key] = Chef::Config[:knife][:openstack_password] || Chef::Config[:knife][:openstack_api_key]
