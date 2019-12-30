@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require "chef/knife/cloud/openstack_service_options"
+require_relative "cloud/openstack_service_options"
 
 class Chef
   class Knife

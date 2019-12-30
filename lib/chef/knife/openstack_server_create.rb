@@ -19,10 +19,10 @@
 #
 
 require "chef/knife/cloud/server/create_command"
-require "chef/knife/openstack_helpers"
-require "chef/knife/cloud/openstack_server_create_options"
-require "chef/knife/cloud/openstack_service"
-require "chef/knife/cloud/openstack_service_options"
+require_relative "openstack_helpers"
+require_relative "cloud/openstack_server_create_options"
+require_relative "cloud/openstack_service"
+require_relative "cloud/openstack_service_options"
 require "chef/knife/cloud/exceptions"
 
 class Chef
