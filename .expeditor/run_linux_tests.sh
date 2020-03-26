@@ -22,7 +22,7 @@ fi
 bundle config --local path vendor/bundle
 
 bundle install --jobs=7 --retry=3
-bundle exec $1
+bundle exec $@
 
 if [[ -f bundle.tar.gz && -f bundle.sha256  ]]; then # dont' check the sha if we're missing either file
   if shasum --check bundle.sha256 --status; then # if the the sha matches we're done

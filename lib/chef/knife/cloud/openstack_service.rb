@@ -67,8 +67,8 @@ class Chef
           }
 
           (
-            Fog::Compute::OpenStack.requirements +
-            Fog::Compute::OpenStack.recognized -
+            Fog::OpenStack::Compute.requirements +
+            Fog::OpenStack::Compute.recognized -
             [:openstack_api_key]
           ).each do |k|
             next unless k.to_s.start_with?("openstack")

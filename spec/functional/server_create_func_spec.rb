@@ -69,7 +69,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
   describe "run" do
     before(:each) do
       allow(@knife_openstack_create).to receive(:validate_params!)
-      allow(Fog::Compute::OpenStack).to receive_message_chain(:new, :servers, :create).and_return(@new_openstack_server)
+      allow(Fog::OpenStack::Compute).to receive_message_chain(:new, :servers, :create).and_return(@new_openstack_server)
       @knife_openstack_create.config[:openstack_floating_ip] = "-1"
       allow(@new_openstack_server).to receive(:wait_for)
     end
