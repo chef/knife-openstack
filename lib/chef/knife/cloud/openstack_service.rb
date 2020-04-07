@@ -18,6 +18,7 @@
 #
 
 require "chef/knife/cloud/fog/service"
+require "fog/openstack"
 
 class Chef
   class Knife
