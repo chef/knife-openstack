@@ -175,11 +175,11 @@ class Chef
 
           errors = []
 
-          if locate_config_value(:bootstrap_protocol) == "winrm"
-            if locate_config_value(:winrm_password).nil?
-              errors << "You must provide Winrm Password."
+          if locate_config_value(:connection_protocol) == "winrm"
+            if locate_config_value(:connection_password).nil?
+              errors << "You must provide Connection Password."
             end
-          elsif locate_config_value(:bootstrap_protocol) != "ssh"
+          elsif locate_config_value(:connection_protocol) != "ssh"
             errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
           end
 

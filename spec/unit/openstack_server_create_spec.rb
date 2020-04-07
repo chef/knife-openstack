@@ -49,7 +49,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
       allow(@instance.ui).to receive(:error)
-      Chef::Config[:knife][:bootstrap_protocol] = "ssh"
+      Chef::Config[:knife][:connection_protocol] = "ssh"
       Chef::Config[:knife][:identity_file] = "identity_file"
       Chef::Config[:knife][:image_os_type] = "linux"
       Chef::Config[:knife][:openstack_ssh_key_id] = "openstack_ssh_key"
@@ -57,7 +57,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
 
     after(:all) do
-      Chef::Config[:knife].delete(:bootstrap_protocol)
+      Chef::Config[:knife].delete(:connection_protocol)
       Chef::Config[:knife].delete(:identity_file)
       Chef::Config[:knife].delete(:image_os_type)
       Chef::Config[:knife].delete(:openstack_ssh_key_id)
