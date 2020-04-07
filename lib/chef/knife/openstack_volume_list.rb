@@ -33,7 +33,7 @@ class Chef
         banner "knife openstack volume list (options)"
 
         def query_resource
-          @service.connection.volumes
+          @service.connection.volumes.all({})
         rescue Excon::Errors::BadRequest => e
           response = Chef::JSONCompat.from_json(e.response.body)
           ui.fatal("Unknown server error (#{response["badRequest"]["code"]}): #{response["badRequest"]["message"]}")
