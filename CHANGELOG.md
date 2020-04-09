@@ -1,15 +1,16 @@
 # knife-openstack Change Log
 
-<!-- latest_release 2.1.9 -->
-## [v2.1.9](https://github.com/chef/knife-openstack/tree/v2.1.9) (2020-02-28)
+<!-- latest_release 2.1.10 -->
+## [v2.1.10](https://github.com/chef/knife-openstack/tree/v2.1.10) (2020-04-09)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 0.14.0 to 0.14.1 [#219](https://github.com/chef/knife-openstack/pull/219) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Start the move to Fog 2.x [#221](https://github.com/chef/knife-openstack/pull/221) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 <!-- release_rollup since=2.1.7 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Start the move to Fog 2.x [#221](https://github.com/chef/knife-openstack/pull/221) ([tas50](https://github.com/tas50)) <!-- 2.1.10 -->
 - Update chefstyle requirement from 0.14.0 to 0.14.1 [#219](https://github.com/chef/knife-openstack/pull/219) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.9 -->
 - Update chefstyle requirement from = 0.10.0 to 0.14.0 [#217](https://github.com/chef/knife-openstack/pull/217) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.8 -->
 <!-- release_rollup -->
