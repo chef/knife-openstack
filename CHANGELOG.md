@@ -1,22 +1,20 @@
 # knife-openstack Change Log
 
-<!-- latest_release 3.0.1 -->
+<!-- latest_release -->
+<!-- latest_release -->
+<!-- release_rollup -->
+<!-- release_rollup -->
+<!-- latest_stable_release -->
 ## [v3.0.1](https://github.com/chef/knife-openstack/tree/v3.0.1) (2020-04-09)
 
 #### Merged Pull Requests
+- Update chefstyle requirement from = 0.10.0 to 0.14.0 [#217](https://github.com/chef/knife-openstack/pull/217) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 0.14.0 to 0.14.1 [#219](https://github.com/chef/knife-openstack/pull/219) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Start the move to Fog 2.x [#221](https://github.com/chef/knife-openstack/pull/221) ([tas50](https://github.com/tas50))
+- Update the badge and minor fixes to the readme [#223](https://github.com/chef/knife-openstack/pull/223) ([tas50](https://github.com/tas50))
 - Update copyrights to 2020 [#224](https://github.com/chef/knife-openstack/pull/224) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-<!-- release_rollup since=2.1.7 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update copyrights to 2020 [#224](https://github.com/chef/knife-openstack/pull/224) ([tas50](https://github.com/tas50)) <!-- 3.0.1 -->
-- Update the badge and minor fixes to the readme [#223](https://github.com/chef/knife-openstack/pull/223) ([tas50](https://github.com/tas50)) <!-- 3.0.0 -->
-- Start the move to Fog 2.x [#221](https://github.com/chef/knife-openstack/pull/221) ([tas50](https://github.com/tas50)) <!-- 2.1.10 -->
-- Update chefstyle requirement from 0.14.0 to 0.14.1 [#219](https://github.com/chef/knife-openstack/pull/219) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.9 -->
-- Update chefstyle requirement from = 0.10.0 to 0.14.0 [#217](https://github.com/chef/knife-openstack/pull/217) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.8 -->
-<!-- release_rollup -->
 <!-- latest_stable_release -->
+
 ## [v2.1.7](https://github.com/chef/knife-openstack/tree/v2.1.7) (2019-12-30)
 
 #### Merged Pull Requests
@@ -26,7 +24,6 @@
 - Add testing of PRs in Buildkite [#212](https://github.com/chef/knife-openstack/pull/212) ([tas50](https://github.com/tas50))
 - Chefstyle fixes [#213](https://github.com/chef/knife-openstack/pull/213) ([tas50](https://github.com/tas50))
 - Substitute require for require_relative [#218](https://github.com/chef/knife-openstack/pull/218) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v2.1.1](https://github.com/chef/knife-openstack/tree/v2.1.1) (2018-11-20)
 
