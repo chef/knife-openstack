@@ -3,7 +3,7 @@
 # Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
-# Copyright:: Copyright 2013-2018 Chef Software, Inc.
+# Copyright:: Copyright 2013-2020 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

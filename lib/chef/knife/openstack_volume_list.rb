@@ -3,7 +3,7 @@
 # Author:: Matt Ray (<matt@chef.io>)
 # Author:: Evan Felix (<karcaw@gmail.com>)
 # Author:: Lance Albertson (<lance@osuosl.org>)
-# Copyright:: Copyright 2011-2018 Chef Software, Inc.
+# Copyright:: Copyright 2011-2020 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
