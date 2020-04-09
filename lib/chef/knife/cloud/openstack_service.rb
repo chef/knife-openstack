@@ -1,6 +1,7 @@
 #
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
+# Author:: Lance Albertson(<lance@osuosl.org>)
 # Copyright:: Copyright 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #

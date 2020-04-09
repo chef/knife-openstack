@@ -37,21 +37,10 @@ chef gem install knife-openstack
 
 ## Configuration
 
-In order to communicate with an OpenStack API you will need to tell Knife your OpenStack Auth API endpoint, your Dashboard username and password (tenant is optional). The easiest way to accomplish this is to create these entries in your `knife.rb` file:
+In order to communicate with an OpenStack API you will need to tell Knife your OpenStack Auth API endpoint, your Dashboard username and password. The easiest way to accomplish this is to create these entries in your `knife.rb` file:
 
 ```ruby
-### Note: If you are not proxying HTTPS to the OpenStack auth port, the scheme should be HTTP
-knife[:openstack_auth_url] = "http://cloud.mycompany.com:5000/v2.0/tokens"
-knife[:openstack_username] = "Your OpenStack Dashboard username"
-knife[:openstack_password] = "Your OpenStack Dashboard password"
-knife[:openstack_tenant] = "Your OpenStack tenant name"
-knife[:openstack_region] = "Your OpenStack Region"
-```
-
-All of Fog's `openstack` options (`openstack_domain_name`, `openstack_project_name`, ...) are supported. This includes support for the OpenStack Identity v3
-
-```ruby
-knife[:openstack_auth_url] = "http://cloud.mycompany.com:5000/v3/auth/tokens"
+knife[:openstack_auth_url] = "https://cloud.mycompany.com:5000/v3/"
 knife[:openstack_username] = "Your OpenStack Dashboard username"
 knife[:openstack_password] = "Your OpenStack Dashboard password"
 knife[:openstack_project_name] = "Your OpenStack project"
@@ -61,11 +50,11 @@ knife[:openstack_domain_name] = "Your OpenStack domain"
 If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables. For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
 
 ```ruby
-knife[:openstack_auth_url] = "#{ENV['OS_AUTH_URL']}/tokens"
-knife[:openstack_username] = "#{ENV['OS_USERNAME']}"
-knife[:openstack_password] = "#{ENV['OS_PASSWORD']}"
-knife[:openstack_tenant] = "#{ENV['OS_TENANT_NAME']}"
-knife[:openstack_region] = "#{ENV['OS_REGION_NAME']}"
+knife[:openstack_auth_url] = ENV['OS_AUTH_URL']
+knife[:openstack_username] = ENV['OS_USERNAME']
+knife[:openstack_password] = ENV['OS_PASSWORD']
+knife[:openstack_project_name] = ENV['OS_PROJECT_NAME']
+knife[:openstack_domain_name] = ENV['OS_USER_DOMAIN_NAME']
 ```
 
 If your OpenStack deployment is over SSL, but does not have a valid certificate, you can add the following option to bypass SSL check:
@@ -168,6 +157,8 @@ Author:: Matt Ray ([matt@chef.io](mailto:matt@chef.io))
 Author:: Chirag Jog ([chirag@clogeny.com](mailto:chirag@clogeny.com))
 
 Author:: JJ Asghar ([jj@chef.io](mailto:jj@chef.io))
+
+Author:: Lance Albertson ([lance@osuosl.org](mailto:lance@osuosl.org))
 
 Copyright:: Copyright 2011-2018 Chef Software, Inc.
 
