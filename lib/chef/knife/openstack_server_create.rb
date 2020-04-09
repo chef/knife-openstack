@@ -208,16 +208,16 @@ class Chef
           # floating requested without value
           if address.nil?
             if addresses.find_index { |a| a.fixed_ip.nil? }
-              return true
+              true
             else
-              return false # no floating IPs available
+              false # no floating IPs available
             end
           else
             # floating requested with value
             if addresses.find_index { |a| a.ip == address }
-              return true
+              true
             else
-              return false # requested floating IP does not exist
+              false # requested floating IP does not exist
             end
           end
         end
