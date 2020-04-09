@@ -1,6 +1,7 @@
 # Knife OpenStack
 
-[![Gem Version](https://badge.fury.io/rb/knife-openstack.svg)](https://rubygems.org/gems/knife-openstack) [![Build Status](https://travis-ci.org/chef/knife-openstack.svg?branch=master)](https://travis-ci.org/chef/knife-openstack)
+[![Gem Version](https://badge.fury.io/rb/knife-openstack.svg)](https://rubygems.org/gems/knife-openstack)
+[![Build status](https://badge.buildkite.com/23e31b5c36dffc9c924711dda18b303fcf9f3282cce52d1133.svg?branch=master)](https://buildkite.com/chef-oss/chef-knife-openstack-master-verify)
 
 * **Umbrella Project: [Knife](https://github.com/chef/chef-oss-practices/blob/master/projects/knife.md)**
 
@@ -24,12 +25,12 @@ Note: Documentation needs to be updated in chef docs
 
 ## Requirements
 
-- Chef 15.0 higher
+- Chef Infra Client 15.0 higher
 - Ruby 2.6 or higher
 
 ## Installation
 
-Using [ChefDK](https://downloads.chef.io/chef-dk/), simply install the Gem:
+Using [Chef Workstation](https://downloads.chef.io/chef-workstatino/), install the gem into the Workstation installation:
 
 ```bash
 chef gem install knife-openstack
@@ -47,7 +48,7 @@ knife[:openstack_project_name] = "Your OpenStack project"
 knife[:openstack_domain_name] = "Your OpenStack domain"
 ```
 
-If your knife.rb file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables. For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
+If your config.rb (aka knife.rb) file will be checked into a SCM system (ie readable by others) you may want to read the values from environment variables. For example, using the conventions of [OpenStack's RC file](http://docs.openstack.org/user-guide/content/cli_openrc.html) (note the `openstack_auth_url`):
 
 ```ruby
 knife[:openstack_auth_url] = ENV['OS_AUTH_URL']
@@ -125,7 +126,7 @@ Provides a list of all available flavors (available "hardware" configurations fo
 
 ### `knife openstack volume list`
 
-Provides a list of all volumes in the currently configured OpenStack account. Each volume shows its size and its availibility to be attached to server. This data may be useful when choosing a volume to pass to the `knife openstack server create` subcommand.
+Provides a list of all volumes in the currently configured OpenStack account. Each volume shows its size and its availability to be attached to a server. This data may be useful when choosing a volume to pass to the `knife openstack server create` subcommand.
 
 ### `knife openstack image list`
 
@@ -160,7 +161,7 @@ Author:: JJ Asghar ([jj@chef.io](mailto:jj@chef.io))
 
 Author:: Lance Albertson ([lance@osuosl.org](mailto:lance@osuosl.org))
 
-Copyright:: Copyright 2011-2018 Chef Software, Inc.
+Copyright:: Copyright 2011-2020 Chef Software, Inc.
 
 License:: Apache License, Version 2.0
 
