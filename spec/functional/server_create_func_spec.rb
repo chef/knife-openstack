@@ -5,6 +5,7 @@
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
+# Author:: Lance Albertson (<lance@osuosl.org>)
 # Copyright:: Copyright 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -69,18 +70,18 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
   describe "run" do
     before(:each) do
       allow(@knife_openstack_create).to receive(:validate_params!)
-      allow(Fog::Compute::OpenStack).to receive_message_chain(:new, :servers, :create).and_return(@new_openstack_server)
+      allow(Fog::OpenStack::Compute).to receive_message_chain(:new, :servers, :create).and_return(@new_openstack_server)
       @knife_openstack_create.config[:openstack_floating_ip] = "-1"
       allow(@new_openstack_server).to receive(:wait_for)
     end
 
     context "for Linux" do
       before do
-        @config = { openstack_floating_ip: "-1", bootstrap_ip_address: "75.101.253.10", ssh_password: "password", hints: { "openstack" => {} } }
+        @config = { openstack_floating_ip: "-1", bootstrap_ip_address: "75.101.253.10", ssh_password: "password", hints: { "openstack" => {} }, distro: "chef-full" }
         @knife_openstack_create.config[:distro] = "chef-full"
         @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@config)
         @ssh_bootstrap_protocol = Chef::Knife::Cloud::SshBootstrapProtocol.new(@config)
-        @unix_distribution = Chef::Knife::Cloud::UnixDistribution.new(@config)
+        @bootstrapdistribution = Chef::Knife::Cloud::BootstrapDistribution.new(@config)
         allow(@ssh_bootstrap_protocol).to receive(:send_bootstrap_command)
       end
 
@@ -88,7 +89,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         expect(Chef::Knife::Cloud::Bootstrapper).to receive(:new).with(@config).and_return(@bootstrapper)
         allow(@bootstrapper).to receive(:bootstrap).and_call_original
         expect(@bootstrapper).to receive(:create_bootstrap_protocol).and_return(@ssh_bootstrap_protocol)
-        expect(@bootstrapper).to receive(:create_bootstrap_distribution).and_return(@unix_distribution)
+        expect(@bootstrapper).to receive(:create_bootstrap_distribution).and_return(@bootstrapdistribution)
         expect(@openstack_service).to receive(:server_summary).exactly(2).times
         @knife_openstack_create.run
       end
@@ -96,19 +97,19 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     context "for Windows" do
       before do
-        @config = { openstack_floating_ip: "-1", image_os_type: "windows", bootstrap_ip_address: "75.101.253.10", bootstrap_protocol: "winrm", ssh_password: "password", hints: { "openstack" => {} } }
+        @config = { openstack_floating_ip: "-1", image_os_type: "windows", bootstrap_ip_address: "75.101.253.10", bootstrap_protocol: "winrm", ssh_password: "password", hints: { "openstack" => {} }, distro: "windows-chef-client-msi" }
         @knife_openstack_create.config[:image_os_type] = "windows"
         @knife_openstack_create.config[:bootstrap_protocol] = "winrm"
         @knife_openstack_create.config[:distro] = "windows-chef-client-msi"
         @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@config)
         @winrm_bootstrap_protocol = Chef::Knife::Cloud::WinrmBootstrapProtocol.new(@config)
-        @windows_distribution = Chef::Knife::Cloud::WindowsDistribution.new(@config)
+        @bootstrapdistribution = Chef::Knife::Cloud::BootstrapDistribution.new(@config)
       end
       it "Creates an OpenStack instance for Windows and bootstraps it" do
         expect(Chef::Knife::Cloud::Bootstrapper).to receive(:new).with(@config).and_return(@bootstrapper)
         allow(@bootstrapper).to receive(:bootstrap).and_call_original
         expect(@bootstrapper).to receive(:create_bootstrap_protocol).and_return(@winrm_bootstrap_protocol)
-        expect(@bootstrapper).to receive(:create_bootstrap_distribution).and_return(@windows_distribution)
+        expect(@bootstrapper).to receive(:create_bootstrap_distribution).and_return(@bootstrapdistribution)
         allow(@winrm_bootstrap_protocol).to receive(:send_bootstrap_command)
         expect(@openstack_service).to receive(:server_summary).exactly(2).times
         @knife_openstack_create.run

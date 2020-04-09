@@ -2,6 +2,7 @@
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Author:: Matt Ray (<matt@chef.io>)
 # Author:: Evan Felix (<karcaw@gmail.com>)
+# Author:: Lance Albertson (<lance@osuosl.org>)
 # Copyright:: Copyright 2011-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -33,7 +34,7 @@ class Chef
         banner "knife openstack volume list (options)"
 
         def query_resource
-          @service.connection.volumes
+          @service.connection.volumes.all({})
         rescue Excon::Errors::BadRequest => e
           response = Chef::JSONCompat.from_json(e.response.body)
           ui.fatal("Unknown server error (#{response["badRequest"]["code"]}): #{response["badRequest"]["message"]}")

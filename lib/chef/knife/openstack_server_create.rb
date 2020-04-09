@@ -2,6 +2,7 @@
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Author:: Matt Ray (<matt@chef.io>)
 # Author:: Chirag Jog (<chirag@clogeny.com>)
+# Author:: Lance Albertson (<lance@osuosl.org>)
 # Copyright:: Copyright 2011-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -175,11 +176,11 @@ class Chef
 
           errors = []
 
-          if locate_config_value(:bootstrap_protocol) == "winrm"
-            if locate_config_value(:winrm_password).nil?
-              errors << "You must provide Winrm Password."
+          if locate_config_value(:connection_protocol) == "winrm"
+            if locate_config_value(:connection_password).nil?
+              errors << "You must provide Connection Password."
             end
-          elsif locate_config_value(:bootstrap_protocol) != "ssh"
+          elsif locate_config_value(:connection_protocol) != "ssh"
             errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
           end
 
@@ -207,16 +208,16 @@ class Chef
           # floating requested without value
           if address.nil?
             if addresses.find_index { |a| a.fixed_ip.nil? }
-              return true
+              true
             else
-              return false # no floating IPs available
+              false # no floating IPs available
             end
           else
             # floating requested with value
             if addresses.find_index { |a| a.ip == address }
-              return true
+              true
             else
-              return false # requested floating IP does not exist
+              false # requested floating IP does not exist
             end
           end
         end

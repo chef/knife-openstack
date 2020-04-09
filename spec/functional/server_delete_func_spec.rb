@@ -24,7 +24,7 @@ require "chef/knife/cloud/openstack_service"
 
 describe Chef::Knife::Cloud::OpenstackServerDelete do
   before do
-    @openstack_connection = double(Fog::Compute::OpenStack)
+    @openstack_connection = double(Fog::OpenStack::Compute)
     @chef_node = double(Chef::Node)
     @chef_client = double(Chef::ApiClient)
     @knife_openstack_delete = Chef::Knife::Cloud::OpenstackServerDelete.new
@@ -63,7 +63,7 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
     it "deletes an OpenStack instance." do
       expect(@openstack_servers).to receive(:get).and_return(@running_openstack_server)
       expect(@openstack_connection).to receive(:servers).and_return(@openstack_servers)
-      expect(Fog::Compute::OpenStack).to receive(:new).and_return(@openstack_connection)
+      expect(Fog::OpenStack::Compute).to receive(:new).and_return(@openstack_connection)
       expect(@running_openstack_server).to receive(:destroy)
       @knife_openstack_delete.run
     end
@@ -76,7 +76,7 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
       expect(@chef_client).to receive(:destroy)
       expect(@openstack_servers).to receive(:get).and_return(@running_openstack_server)
       expect(@openstack_connection).to receive(:servers).and_return(@openstack_servers)
-      expect(Fog::Compute::OpenStack).to receive(:new).and_return(@openstack_connection)
+      expect(Fog::OpenStack::Compute).to receive(:new).and_return(@openstack_connection)
       expect(@running_openstack_server).to receive(:destroy)
       @knife_openstack_delete.run
     end

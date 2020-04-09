@@ -1,6 +1,7 @@
 #
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
+# Author:: Lance Albertson(<lance@osuosl.org>)
 # Copyright:: Copyright 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -18,6 +19,7 @@
 #
 
 require "chef/knife/cloud/fog/service"
+require "fog/openstack"
 
 class Chef
   class Knife
@@ -67,8 +69,8 @@ class Chef
           }
 
           (
-            Fog::Compute::OpenStack.requirements +
-            Fog::Compute::OpenStack.recognized -
+            Fog::OpenStack::Compute.requirements +
+            Fog::OpenStack::Compute.recognized -
             [:openstack_api_key]
           ).each do |k|
             next unless k.to_s.start_with?("openstack")

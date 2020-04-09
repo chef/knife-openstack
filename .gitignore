@@ -27,6 +27,7 @@ binstubs/
 .direnv/
 .envrc
 .ruby-version
+.ruby-gemset
 
 # Documentation
 _site/*
