@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 2.3"
 
   s.add_dependency "fog-openstack", "~> 1.0"
-  s.add_dependency "chef", ">= 13"
+  s.add_dependency "chef", ">= 15"
   s.add_dependency "knife-cloud", ">= 3.0", "< 4.0"
 
 end

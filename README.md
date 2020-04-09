@@ -24,8 +24,8 @@ Note: Documentation needs to be updated in chef docs
 
 ## Requirements
 
-- Chef 12.0 higher
-- Ruby 2.2.2 or higher
+- Chef 15.0 higher
+- Ruby 2.6 or higher
 
 ## Installation
 
