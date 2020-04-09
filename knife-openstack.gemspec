@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors     = ["JJ Asghar"]
   s.email       = ["jj@chef.io"]
   s.homepage    = "https://github.com/chef/knife-openstack"
-  s.summary     = "A Chef knife plugin for OpenStack clouds."
+  s.summary     = "A Chef Infra knife plugin for OpenStack clouds."
   s.description = s.summary
   s.license     = "Apache-2.0"
 
@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.required_ruby_version = ">= 2.3"
+  s.required_ruby_version = ">= 2.6"
 
   s.add_dependency "fog-openstack", "~> 1.0"
   s.add_dependency "chef", ">= 15"
-  s.add_dependency "knife-cloud", ">= 3.0", "< 4.0"
+  s.add_dependency "knife-cloud", ">= 3.0"
 
 end
