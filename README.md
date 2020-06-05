@@ -38,7 +38,7 @@ chef gem install knife-openstack
 
 ## Configuration
 
-In order to communicate with an OpenStack API you will need to tell Knife your OpenStack Auth API endpoint, your Dashboard username and password. The easiest way to accomplish this is to create these entries in your `knife.rb` file:
+In order to communicate with an OpenStack API you will need to tell Knife your OpenStack Auth API endpoint, your Dashboard username and password.  The easiest way to accomplish this is to create these entries in your `knife.rb` file:
 
 ```ruby
 knife[:openstack_auth_url] = "https://cloud.mycompany.com:5000/v3/"
