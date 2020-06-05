@@ -1,21 +1,19 @@
 # knife-openstack Change Log
 
-<!-- latest_release 4.0.0 -->
+<!-- latest_release -->
+<!-- latest_release -->
+<!-- release_rollup -->
+<!-- release_rollup -->
+<!-- latest_stable_release -->
 ## [v4.0.0](https://github.com/chef/knife-openstack/tree/v4.0.0) (2020-06-05)
 
 #### Merged Pull Requests
+- Update chefstyle requirement from 0.15.1 to 1.0.1 [#225](https://github.com/chef/knife-openstack/pull/225) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.0.1 to 1.1.0 [#227](https://github.com/chef/knife-openstack/pull/227) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update for Chef 16 / knife-cloud v4 [#228](https://github.com/chef/knife-openstack/pull/228) ([lamont-granquist](https://github.com/lamont-granquist))
 - Major version bump [#229](https://github.com/chef/knife-openstack/pull/229) ([lamont-granquist](https://github.com/lamont-granquist))
-<!-- latest_release -->
-<!-- release_rollup since=3.0.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Major version bump [#229](https://github.com/chef/knife-openstack/pull/229) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 4.0.0 -->
-- Update for Chef 16 / knife-cloud v4 [#228](https://github.com/chef/knife-openstack/pull/228) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 3.0.4 -->
-- Update chefstyle requirement from 1.0.1 to 1.1.0 [#227](https://github.com/chef/knife-openstack/pull/227) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 3.0.3 -->
-- Update chefstyle requirement from 0.15.1 to 1.0.1 [#225](https://github.com/chef/knife-openstack/pull/225) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 3.0.2 -->
-<!-- release_rollup -->
 <!-- latest_stable_release -->
+
 ## [v3.0.1](https://github.com/chef/knife-openstack/tree/v3.0.1) (2020-04-09)
 
 #### Merged Pull Requests
@@ -24,7 +22,6 @@
 - Start the move to Fog 2.x [#221](https://github.com/chef/knife-openstack/pull/221) ([tas50](https://github.com/tas50))
 - Update the badge and minor fixes to the readme [#223](https://github.com/chef/knife-openstack/pull/223) ([tas50](https://github.com/tas50))
 - Update copyrights to 2020 [#224](https://github.com/chef/knife-openstack/pull/224) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v2.1.7](https://github.com/chef/knife-openstack/tree/v2.1.7) (2019-12-30)
 
