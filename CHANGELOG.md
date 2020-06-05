@@ -1,15 +1,16 @@
 # knife-openstack Change Log
 
-<!-- latest_release 3.0.3 -->
-## [v3.0.3](https://github.com/chef/knife-openstack/tree/v3.0.3) (2020-06-02)
+<!-- latest_release 3.0.4 -->
+## [v3.0.4](https://github.com/chef/knife-openstack/tree/v3.0.4) (2020-06-05)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 1.0.1 to 1.1.0 [#227](https://github.com/chef/knife-openstack/pull/227) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update for Chef 16 / knife-cloud v4 [#228](https://github.com/chef/knife-openstack/pull/228) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 <!-- release_rollup since=3.0.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update for Chef 16 / knife-cloud v4 [#228](https://github.com/chef/knife-openstack/pull/228) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 3.0.4 -->
 - Update chefstyle requirement from 1.0.1 to 1.1.0 [#227](https://github.com/chef/knife-openstack/pull/227) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 3.0.3 -->
 - Update chefstyle requirement from 0.15.1 to 1.0.1 [#225](https://github.com/chef/knife-openstack/pull/225) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 3.0.2 -->
 <!-- release_rollup -->
