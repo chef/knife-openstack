@@ -1,7 +1,7 @@
 #
 #
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ describe Chef::Knife::Cloud::OpenstackFloatingIpDisassociate do
 
   describe "disassociate floating ip" do
     it "calls disassociate address" do
-      @instance.service = Chef::Knife::Cloud::Service.new
+      @instance.service = Chef::Knife::Cloud::Service.new(config: @instance.config)
       response = OpenStruct.new(status: 202)
       expect(@instance.service).to receive(:disassociate_address).with("23849038438240934n3294839248", "127.0.0.1").and_return(response)
       expect(@instance.ui).to receive(:info).and_return("Floating IP 127.0.0.1 disassociated with Instance 23849038438240934n3294839248")

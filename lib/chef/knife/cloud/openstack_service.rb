@@ -2,7 +2,7 @@
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
 # Author:: Lance Albertson(<lance@osuosl.org>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,20 +25,22 @@ class Chef
   class Knife
     class Cloud
       class OpenstackService < FogService
-        def initialize(options = {})
-          Chef::Log.debug("openstack_username #{Chef::Config[:knife][:openstack_username]}")
-          Chef::Log.debug("openstack_auth_url #{Chef::Config[:knife][:openstack_auth_url]}")
-          Chef::Log.debug("openstack_tenant #{Chef::Config[:knife][:openstack_tenant]}")
-          Chef::Log.debug("openstack_endpoint_type #{Chef::Config[:knife][:openstack_endpoint_type] || "publicURL"}")
-          Chef::Log.debug("openstack_insecure #{Chef::Config[:knife][:openstack_insecure]}")
-          Chef::Log.debug("openstack_region #{Chef::Config[:knife][:openstack_region]}")
+        def initialize(config:, **kwargs)
+          super(config: config, **kwargs)
 
-          super(options.merge(auth_params: get_auth_params))
+          Chef::Log.debug("openstack_username #{config[:openstack_username]}")
+          Chef::Log.debug("openstack_auth_url #{config[:openstack_auth_url]}")
+          Chef::Log.debug("openstack_tenant #{config[:openstack_tenant]}")
+          Chef::Log.debug("openstack_endpoint_type #{config[:openstack_endpoint_type] || "publicURL"}")
+          Chef::Log.debug("openstack_insecure #{config[:openstack_insecure]}")
+          Chef::Log.debug("openstack_region #{config[:openstack_region]}")
+
+          @auth_params = get_auth_params
         end
 
         # add alternate user defined api_endpoint value.
         def add_api_endpoint
-          @auth_params.merge!(openstack_auth_url: Chef::Config[:knife][:api_endpoint]) unless Chef::Config[:knife][:api_endpoint].nil?
+          @auth_params.merge!(openstack_auth_url: config[:api_endpoint]) unless config[:api_endpoint].nil?
         end
 
         def get_server(search_term)
@@ -60,11 +62,10 @@ class Chef
         end
 
         def get_auth_params
-          load_fog_gem
           params = {
             provider: "OpenStack",
             connection_options: {
-              ssl_verify_peer: !Chef::Config[:knife][:openstack_insecure],
+              ssl_verify_peer: !config[:openstack_insecure],
             },
           }
 
@@ -75,9 +76,9 @@ class Chef
           ).each do |k|
             next unless k.to_s.start_with?("openstack")
 
-            params[k] = Chef::Config[:knife][k]
+            params[k] = config[k]
           end
-          params[:openstack_api_key] = Chef::Config[:knife][:openstack_password] || Chef::Config[:knife][:openstack_api_key]
+          params[:openstack_api_key] = config[:openstack_password] || config[:openstack_api_key]
 
           params
         end

@@ -1,7 +1,7 @@
 #
 # Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
-# Copyright:: Copyright (c) 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +45,7 @@ shared_examples_for Chef::Knife::Cloud::ServerCreateCommand do |instance|
       allow(instance).to receive(:after_exec_command)
       allow(instance).to receive(:validate!)
       allow(instance).to receive(:validate_params!)
-      instance.service = Chef::Knife::Cloud::Service.new
+      instance.service = Chef::Knife::Cloud::Service.new(config: instance.config)
       allow(instance).to receive(:create_service_instance).and_return(instance.service)
       allow(instance.service).to receive(:get_image).and_return(get_mock_resource("image_id"))
       allow(instance.service).to receive(:get_flavor).and_return(get_mock_resource("flavor_id"))
@@ -69,7 +69,7 @@ shared_examples_for Chef::Knife::Cloud::ServerCreateCommand do |instance|
       allow(instance).to receive(:after_exec_command)
       allow(instance).to receive(:validate!)
       allow(instance).to receive(:validate_params!)
-      instance.service = Chef::Knife::Cloud::Service.new
+      instance.service = Chef::Knife::Cloud::Service.new(config: instance.config)
       allow(instance).to receive(:create_service_instance).and_return(instance.service)
       allow(instance.service).to receive(:create_server).and_raise(Chef::Knife::Cloud::CloudExceptions::ServerCreateError)
       expect(instance.service).to receive(:delete_server_dependencies)
@@ -127,7 +127,7 @@ shared_examples_for Chef::Knife::Cloud::ServerCreateCommand do |instance|
   describe "#cleanup_on_failure" do
     it "delete server dependencies on delete_server_on_failure set" do
       instance.config[:delete_server_on_failure] = true
-      instance.service = Chef::Knife::Cloud::Service.new
+      instance.service = Chef::Knife::Cloud::Service.new(config: instance.config)
       expect(instance.service).to receive(:delete_server_dependencies)
       expect(instance.service).to receive(:delete_server_on_failure)
       instance.cleanup_on_failure
@@ -135,7 +135,6 @@ shared_examples_for Chef::Knife::Cloud::ServerCreateCommand do |instance|
 
     it "don't delete server dependencies on delete_server_on_failure option is missing" do
       instance.config[:delete_server_on_failure] = false
-      Chef::Config[:knife].delete(:delete_server_on_failure)
       expect(instance.service).to_not receive(:delete_server_dependencies)
       expect(instance.service).to_not receive(:delete_server_on_failure)
       instance.cleanup_on_failure

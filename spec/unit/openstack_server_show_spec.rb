@@ -1,7 +1,7 @@
 #
 #
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,12 +29,8 @@ describe Chef::Knife::Cloud::OpenstackServerShow do
   let (:instance) { Chef::Knife::Cloud::OpenstackServerShow.new }
 
   context "#validate_params!" do
-    before(:each) do
-      Chef::Config[:knife][:instance_id] = "instance_id"
-    end
-
     it "raise error on instance_id missing" do
-      Chef::Config[:knife].delete(:instance_id)
+      instance.config.delete(:instance_id)
       expect(instance.ui).to receive(:error).with("You must provide a valid Instance Id")
       expect { instance.validate_params! }.to raise_error(Chef::Knife::Cloud::CloudExceptions::ValidationError)
     end

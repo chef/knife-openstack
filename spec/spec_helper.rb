@@ -1,5 +1,5 @@
 #
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -122,4 +122,27 @@ end
 def delete_sh_user_data_file(file)
   file.close
   file.unlink
+end
+
+class UnexpectedSystemExit < RuntimeError
+  def self.from(system_exit)
+    new(system_exit.message).tap { |e| e.set_backtrace(system_exit.backtrace) }
+  end
+end
+
+RSpec.configure do |c|
+  c.raise_on_warning = true
+  c.raise_errors_for_deprecations!
+
+  c.before(:each) do
+    Chef::Config.reset
+  end
+
+  c.around(:example) do |ex|
+    begin
+      ex.run
+    rescue SystemExit => e
+      raise UnexpectedSystemExit.from(e)
+    end
+  end
 end

@@ -3,7 +3,7 @@
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,10 +33,10 @@ describe Chef::Knife::Cloud::OpenstackServerDelete do
       openstack_password: "openstack_password",
       openstack_auth_url: "openstack_auth_url",
     }.each do |key, value|
-      Chef::Config[:knife][key] = value
+      @knife_openstack_delete.config[key] = value
     end
 
-    @openstack_service = Chef::Knife::Cloud::OpenstackService.new
+    @openstack_service = Chef::Knife::Cloud::OpenstackService.new(config: @knife_openstack_delete.config)
     allow(@openstack_service).to receive(:msg_pair)
     allow(@knife_openstack_delete).to receive(:create_service_instance).and_return(@openstack_service)
     allow(@knife_openstack_delete.ui).to receive(:warn)

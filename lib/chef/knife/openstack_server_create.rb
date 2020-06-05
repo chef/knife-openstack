@@ -3,7 +3,7 @@
 # Author:: Matt Ray (<matt@chef.io>)
 # Author:: Chirag Jog (<chirag@clogeny.com>)
 # Author:: Lance Albertson (<lance@osuosl.org>)
-# Copyright:: Copyright 2011-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,19 +43,19 @@ class Chef
             server_def: {
               # servers require a name, knife-cloud generates the chef_node_name
               :name => config[:chef_node_name],
-              :image_ref => service.get_image(locate_config_value(:image)).id,
-              :flavor_ref => service.get_flavor(locate_config_value(:flavor)).id,
-              :security_groups => locate_config_value(:openstack_security_groups),
-              :availability_zone => locate_config_value(:availability_zone),
-              "os:scheduler_hints" => locate_config_value(:openstack_scheduler_hints),
-              :metadata => locate_config_value(:metadata),
-              :key_name => locate_config_value(:openstack_ssh_key_id),
+              :image_ref => service.get_image(config[:image]).id,
+              :flavor_ref => service.get_flavor(config[:flavor]).id,
+              :security_groups => config[:openstack_security_groups],
+              :availability_zone => config[:availability_zone],
+              "os:scheduler_hints" => config[:openstack_scheduler_hints],
+              :metadata => config[:metadata],
+              :key_name => config[:openstack_ssh_key_id],
             },
-            server_create_timeout: locate_config_value(:server_create_timeout),
+            server_create_timeout: config[:server_create_timeout],
           }
-          unless locate_config_value(:openstack_volumes).nil?
+          unless config[:openstack_volumes].nil?
             counter = 99
-            @create_options[:server_def][:block_device_mapping] = locate_config_value(:openstack_volumes).map do |vol|
+            @create_options[:server_def][:block_device_mapping] = config[:openstack_volumes].map do |vol|
               counter += 1
               {
                 volume_id: vol,
@@ -66,8 +66,8 @@ class Chef
             end
           end
 
-          @create_options[:server_def][:user_data] = locate_config_value(:user_data) if locate_config_value(:user_data)
-          @create_options[:server_def][:nics] = locate_config_value(:network_ids).map { |nic| nic_id = { "net_id" => nic } } if locate_config_value(:network_ids)
+          @create_options[:server_def][:user_data] = config[:user_data] if config[:user_data]
+          @create_options[:server_def][:nics] = config[:network_ids].map { |nic| nic_id = { "net_id" => nic } } if config[:network_ids]
 
           Chef::Log.debug("Create server params - server_def = #{@create_options[:server_def]}")
           # set columns_with_info map
@@ -94,7 +94,7 @@ class Chef
           msg_pair("Public IP Address", primary_public_ip_address(server.addresses)) if primary_public_ip_address(server.addresses)
           msg_pair("Private IP Address", primary_private_ip_address(server.addresses)) if primary_private_ip_address(server.addresses)
 
-          floating_address = locate_config_value(:openstack_floating_ip)
+          floating_address = config[:openstack_floating_ip]
           bind_ip = primary_network_ip_address(server.addresses, server.addresses.keys[0])
           Chef::Log.debug("Floating IP Address requested #{floating_address}")
           unless floating_address == "-1" # no floating IP requested
@@ -140,7 +140,7 @@ class Chef
           super
 
           # Use SSH password either specified from command line or from openstack server instance
-          config[:ssh_password] = locate_config_value(:ssh_password) || server.password unless config[:openstack_ssh_key_id]
+          config[:ssh_password] = config[:ssh_password] || server.password unless config[:openstack_ssh_key_id]
 
           # The bootstrap network is always initialised to 'public' when a network name isn't specified.  Therefore,
           # only set the bootstrap network to 'private' if still initialised to public and nothing was specified for
@@ -172,33 +172,33 @@ class Chef
 
         def validate_params!
           # set param vm_name to a random value if the name is not set by the user (plugin)
-          config[:chef_node_name] = get_node_name(locate_config_value(:chef_node_name), locate_config_value(:chef_node_name_prefix))
+          config[:chef_node_name] = get_node_name(config[:chef_node_name], config[:chef_node_name_prefix])
 
           errors = []
 
-          if locate_config_value(:connection_protocol) == "winrm"
-            if locate_config_value(:connection_password).nil?
+          if config[:connection_protocol] == "winrm"
+            if config[:connection_password].nil?
               errors << "You must provide Connection Password."
             end
-          elsif locate_config_value(:connection_protocol) != "ssh"
+          elsif config[:connection_protocol] != "ssh"
             errors << "You must provide a valid bootstrap protocol. options [ssh/winrm]. For linux type images, options [ssh]"
           end
 
-          errors << "You must provide --image-os-type option [windows/linux]" unless %w{windows linux}.include?(locate_config_value(:image_os_type))
+          errors << "You must provide --image-os-type option [windows/linux]" unless %w{windows linux}.include?(config[:image_os_type])
           error_message = ""
           raise CloudExceptions::ValidationError, error_message if errors.each { |e| ui.error(e); error_message = "#{error_message} #{e}." }.any?
         end
 
         def is_image_valid?
-          service.get_image(locate_config_value(:image)).nil? ? false : true
+          service.get_image(config[:image]).nil? ? false : true
         end
 
         def is_flavor_valid?
-          service.get_flavor(locate_config_value(:flavor)).nil? ? false : true
+          service.get_flavor(config[:flavor]).nil? ? false : true
         end
 
         def is_floating_ip_valid?
-          address = locate_config_value(:openstack_floating_ip)
+          address = config[:openstack_floating_ip]
 
           return true if address == "-1" # no floating IP requested
 

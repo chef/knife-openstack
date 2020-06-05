@@ -5,7 +5,7 @@
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
 # Author:: Lance Albertson (<lance@osuosl.org>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,19 +50,11 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
       allow(@instance.ui).to receive(:error)
-      Chef::Config[:knife][:connection_protocol] = "ssh"
-      Chef::Config[:knife][:identity_file] = "identity_file"
-      Chef::Config[:knife][:image_os_type] = "linux"
-      Chef::Config[:knife][:openstack_ssh_key_id] = "openstack_ssh_key"
-      Chef::Config[:knife][:openstack_region] = "test-region"
-    end
-
-    after(:all) do
-      Chef::Config[:knife].delete(:connection_protocol)
-      Chef::Config[:knife].delete(:identity_file)
-      Chef::Config[:knife].delete(:image_os_type)
-      Chef::Config[:knife].delete(:openstack_ssh_key_id)
-      Chef::Config[:knife].delete(:openstack_region)
+      @instance.config[:connection_protocol] = "ssh"
+      @instance.config[:identity_file] = "identity_file"
+      @instance.config[:image_os_type] = "linux"
+      @instance.config[:openstack_ssh_key_id] = "openstack_ssh_key"
+      @instance.config[:openstack_region] = "test-region"
     end
 
     it "run sucessfully on all params exist" do
@@ -75,23 +67,14 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
       allow(@instance.ui).to receive(:error)
       @instance.config[:chef_node_name] = "chef_node_name"
-      Chef::Config[:knife][:image] = "image"
-      Chef::Config[:knife][:flavor] = "flavor"
-      Chef::Config[:knife][:openstack_security_groups] = "openstack_security_groups"
-      Chef::Config[:knife][:server_create_timeout] = "server_create_timeout"
-      Chef::Config[:knife][:openstack_ssh_key_id] = "openstack_ssh_key"
-      Chef::Config[:knife][:network_ids] = "test_network_id"
-      allow(Chef::Config[:knife][:network_ids]).to receive(:map).and_return(Chef::Config[:knife][:network_ids])
-      Chef::Config[:knife][:metadata] = "foo=bar"
-    end
-
-    after(:all) do
-      Chef::Config[:knife].delete(:image)
-      Chef::Config[:knife].delete(:flavor)
-      Chef::Config[:knife].delete(:openstack_ssh_key_id)
-      Chef::Config[:knife].delete(:openstack_security_groups)
-      Chef::Config[:knife].delete(:server_create_timeout)
-      Chef::Config[:knife].delete(:metadata)
+      @instance.config[:image] = "image"
+      @instance.config[:flavor] = "flavor"
+      @instance.config[:openstack_security_groups] = "openstack_security_groups"
+      @instance.config[:server_create_timeout] = "server_create_timeout"
+      @instance.config[:openstack_ssh_key_id] = "openstack_ssh_key"
+      @instance.config[:network_ids] = "test_network_id"
+      allow(@instance.config[:network_ids]).to receive(:map).and_return(@instance.config[:network_ids])
+      @instance.config[:metadata] = "foo=bar"
     end
 
     it "set create_options" do
@@ -102,13 +85,13 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       expect(@instance).to receive(:post_connection_validations)
       @instance.before_exec_command
       expect(@instance.create_options[:server_def][:name]).to be == @instance.config[:chef_node_name]
-      expect(@instance.create_options[:server_def][:image_ref]).to be == Chef::Config[:knife][:image]
-      expect(@instance.create_options[:server_def][:security_groups]).to be == Chef::Config[:knife][:openstack_security_groups]
-      expect(@instance.create_options[:server_def][:flavor_ref]).to be == Chef::Config[:knife][:flavor]
-      expect(@instance.create_options[:server_def][:nics]).to be == Chef::Config[:knife][:network_ids]
-      expect(@instance.create_options[:server_def][:metadata]).to be == Chef::Config[:knife][:metadata]
-      expect(@instance.create_options[:server_def][:region]).to be == Chef::Config[:knife][:openstack_region]
-      expect(@instance.create_options[:server_create_timeout]).to be == Chef::Config[:knife][:server_create_timeout]
+      expect(@instance.create_options[:server_def][:image_ref]).to be == @instance.config[:image]
+      expect(@instance.create_options[:server_def][:security_groups]).to be == @instance.config[:openstack_security_groups]
+      expect(@instance.create_options[:server_def][:flavor_ref]).to be == @instance.config[:flavor]
+      expect(@instance.create_options[:server_def][:nics]).to be == @instance.config[:network_ids]
+      expect(@instance.create_options[:server_def][:metadata]).to be == @instance.config[:metadata]
+      expect(@instance.create_options[:server_def][:region]).to be == @instance.config[:openstack_region]
+      expect(@instance.create_options[:server_create_timeout]).to be == @instance.config[:server_create_timeout]
     end
 
     it "doesn't set user data in server_def if user_data not specified" do
@@ -122,7 +105,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     it "sets user data" do
       user_data = "echo 'hello world' >> /tmp/user_data.txt"
-      Chef::Config[:knife][:user_data] = user_data
+      @instance.config[:user_data] = user_data
       @instance.service = double("Chef::Knife::Cloud::OpenstackService", create_server_dependencies: nil)
       allow(@instance.service).to receive(:get_image).and_return(get_mock_resource("image"))
       allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource("flavor"))
@@ -137,8 +120,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
         allow(@instance.service).to receive(:get_image).and_return(get_mock_resource("image"))
         allow(@instance.service).to receive(:get_flavor).and_return(get_mock_resource("flavor"))
         expect(@instance.service).to receive(:create_server_dependencies)
-        Chef::Config[:knife][:network_ids] = "test_network_id1,test_network_id2"
-        allow(Chef::Config[:knife][:network_ids]).to receive(:map).and_return(Chef::Config[:knife][:network_ids].split(","))
+        @instance.config[:network_ids] = "test_network_id1,test_network_id2"
+        allow(@instance.config[:network_ids]).to receive(:map).and_return(@instance.config[:network_ids].split(","))
         expect(@instance).to receive(:post_connection_validations)
       end
 
@@ -160,14 +143,10 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       allow(@instance).to receive(:msg_pair)
     end
 
-    after(:all) do
-      Chef::Config[:knife].delete(:openstack_floating_ip)
-    end
-
     it "don't set openstack_floating_ip on missing openstack_floating_ip option" do
       # default openstack_floating_ip is '-1'
-      Chef::Config[:knife][:openstack_floating_ip] = "-1"
-      @instance.service = Chef::Knife::Cloud::Service.new
+      @instance.config[:openstack_floating_ip] = "-1"
+      @instance.service = Chef::Knife::Cloud::Service.new(config: @instance.config)
       @instance.server = double
       allow(@instance.server).to receive(:addresses).and_return({ "public" => [{ "version" => 4, "addr" => "127.0.1.1" }] })
       expect(@instance).to receive(:bootstrap)
@@ -175,8 +154,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
 
     it "set openstack_floating_ip on openstack_floating_ip option" do
-      Chef::Config[:knife][:openstack_floating_ip] = nil
-      @instance.service = Chef::Knife::Cloud::Service.new
+      @instance.config[:openstack_floating_ip] = nil
+      @instance.service = Chef::Knife::Cloud::Service.new(config: @instance.config)
       @instance.server = double
 
       @network = double
@@ -200,8 +179,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
 
     it "raise error on unavailability of free_floating ip" do
-      Chef::Config[:knife][:openstack_floating_ip] = nil
-      @instance.service = Chef::Knife::Cloud::Service.new
+      @instance.config[:openstack_floating_ip] = nil
+      @instance.service = Chef::Knife::Cloud::Service.new(config: @instance.config)
       allow(@instance.ui).to receive(:fatal)
       @instance.server = double
       allow(@instance.server).to receive(:addresses).and_return({ "public" => [{ "version" => 4, "addr" => "127.0.1.1" }] })
@@ -222,11 +201,11 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.config[:bootstrap_network] = "public"
       # default no network is true
       @instance.config[:network] = true
-      Chef::Config[:knife][:ssh_password] = "config_ssh_password"
+      @instance.config[:ssh_password] = "config_ssh_password"
     end
 
     after(:each) do
-      Chef::Config[:knife].delete(:ssh_password)
+      @instance.config.delete(:ssh_password)
     end
 
     context "when no-network option specified" do
@@ -286,7 +265,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     it "configures the bootstrap to use the server password" do
       allow(@instance.server).to receive(:addresses).and_return({ "public" => [{ "version" => 4, "addr" => "127.0.0.1" }] })
-      Chef::Config[:knife].delete(:ssh_password)
+      @instance.config.delete(:ssh_password)
       server_password = "adFRjk1089"
       allow(@instance.server).to receive(:password).and_return(server_password)
       @instance.before_bootstrap
@@ -296,7 +275,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     it "configures the bootstrap to use the config ssh password" do
       allow(@instance.server).to receive(:addresses).and_return({ "public" => [{ "version" => 4, "addr" => "127.0.0.1" }] })
       server_password = "config_ssh_password"
-      Chef::Config[:knife][:ssh_password] = server_password
+      @instance.config[:ssh_password] = server_password
       expect(@instance.server).to_not receive(:password)
       @instance.before_bootstrap
       expect(@instance.config[:ssh_password]).to be == server_password
@@ -356,12 +335,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
       # Default value
-      Chef::Config[:knife][:openstack_floating_ip] = "-1"
+      @instance.config[:openstack_floating_ip] = "-1"
       @instance.service = double
-    end
-
-    after(:all) do
-      Chef::Config[:knife].delete(:openstack_floating_ip)
     end
 
     it "returns true for default" do
@@ -369,14 +344,14 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
 
     it "returns false if no floating IPs" do
-      Chef::Config[:knife].delete(:openstack_floating_ip)
+      @instance.config.delete(:openstack_floating_ip)
       expect(@instance.service).to receive_message_chain(:connection, :addresses).and_return([])
       expect(@instance.is_floating_ip_valid?).to be false
     end
 
     context "when floating ip requested without value" do
       it "returns true if fixed_ip is nil" do
-        Chef::Config[:knife][:openstack_floating_ip] = nil
+        @instance.config[:openstack_floating_ip] = nil
         obj = Object.new
         obj.define_singleton_method(:fixed_ip) { nil }
         expect(@instance.service).to receive_message_chain(:connection, :addresses).and_return([obj])
@@ -385,8 +360,8 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     end
 
     context "when floating ip requested with value" do
-      before { Chef::Config[:knife][:openstack_floating_ip] = "127.0.0.1" }
-      after { Chef::Config[:knife].delete(:openstack_floating_ip) }
+      before { @instance.config[:openstack_floating_ip] = "127.0.0.1" }
+      after { @instance.config.delete(:openstack_floating_ip) }
 
       it "returns true if requested floating IP is exist" do
         obj = Object.new
@@ -408,11 +383,11 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
       @instance.service = double
-      Chef::Config[:knife][:image] = "image_id"
+      @instance.config[:image] = "image_id"
     end
 
     after(:each) do
-      Chef::Config[:knife].delete(:image)
+      @instance.config.delete(:image)
     end
 
     it "returns false on invalid image" do
@@ -430,11 +405,11 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
     before(:each) do
       @instance = Chef::Knife::Cloud::OpenstackServerCreate.new
       @instance.service = double
-      Chef::Config[:knife][:flavor] = "flavor"
+      @instance.config[:flavor] = "flavor"
     end
 
     after(:each) do
-      Chef::Config[:knife].delete(:flavor)
+      @instance.config.delete(:flavor)
     end
 
     it "returns false on invalid flavor" do

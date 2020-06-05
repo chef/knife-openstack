@@ -3,7 +3,7 @@
 # Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,12 +25,8 @@ describe Chef::Knife::Cloud::OpenstackService do
   describe "#add_api_endpoint" do
     before(:each) do
       @api_endpoint = "https://test_openstack_api_endpoint"
-      Chef::Config[:knife][:api_endpoint] = @api_endpoint
-      @instance = Chef::Knife::Cloud::OpenstackService.new
-    end
-
-    after(:each) do
-      Chef::Config[:knife].delete(:api_endpoint)
+      @instance = Chef::Knife::Cloud::OpenstackService.new(config: {})
+      @instance.config[:api_endpoint] = @api_endpoint
     end
 
     it "sets the api_endpoint in auth params" do
@@ -40,7 +36,7 @@ describe Chef::Knife::Cloud::OpenstackService do
     end
 
     it "does not set the endpoint when --api-endpoint option is missing" do
-      Chef::Config[:knife][:api_endpoint] = nil
+      @instance.config[:api_endpoint] = nil
       expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to be_nil
       @instance.add_api_endpoint
       expect(@instance.instance_variable_get(:@auth_params)[:openstack_auth_url]).to_not be == @api_endpoint
@@ -48,13 +44,13 @@ describe Chef::Knife::Cloud::OpenstackService do
     end
 
     it "doesn't set an OpenStack endpoint type by default" do
-      expect(Chef::Config[:knife][:openstack_endpoint_type]).to be_nil
+      expect(@instance.config[:openstack_endpoint_type]).to be_nil
     end
   end
 
   describe "#get_server" do
     before(:each) do
-      @instance = Chef::Knife::Cloud::OpenstackService.new
+      @instance = Chef::Knife::Cloud::OpenstackService.new(config: {})
       allow(@instance).to receive_message_chain(:connection, :servers, :get)
     end
 
@@ -89,40 +85,34 @@ describe Chef::Knife::Cloud::OpenstackService do
   end
 
   describe "#get_auth_params" do
-    let(:auth_params) do
-      Chef::Knife::Cloud::OpenstackService.new.instance_variable_get(:@auth_params)
-    end
-
     it "sets ssl_verify_peer to false when openstack_insecure is true" do
-      Chef::Config[:knife][:openstack_insecure] = true
-      expect(auth_params[:connection_options][:ssl_verify_peer]).to be false
+      instance = Chef::Knife::Cloud::OpenstackService.new(config: { openstack_insecure: true })
+      expect(instance.auth_params[:connection_options][:ssl_verify_peer]).to be false
     end
 
     it "only copies openstack options from Fog" do
-      params = auth_params.keys - %i{provider connection_options}
+      instance = Chef::Knife::Cloud::OpenstackService.new(config: {})
+      params = instance.auth_params.keys - %i{provider connection_options}
       expect(params.all? { |p| p.to_s.start_with?("openstack") }).to be true
     end
 
     context "when openstack_password is set" do
-      before(:each) do
-        @expected = "password"
-        Chef::Config[:knife][:openstack_password] = @expected
-      end
-
       it "sets openstack_api_key from openstack_password" do
-        expect(auth_params[:openstack_api_key]).to be == @expected
+        instance = Chef::Knife::Cloud::OpenstackService.new(config: { openstack_password: "password" })
+        expect(instance.auth_params[:openstack_api_key]).to be == "password"
       end
 
       it "prefers openstack_password over openstack_api_key" do
-        Chef::Config[:knife][:openstack_api_key] = "unexpected"
-        expect(auth_params[:openstack_api_key]).to be == @expected
+        instance = Chef::Knife::Cloud::OpenstackService.new(config: { openstack_api_key: "unexpected", openstack_password: "password" })
+        expect(instance.auth_params[:openstack_api_key]).to be == "password"
       end
     end
 
     it "uses openstack_api_key if openstack_password is not set" do
-      @expected = "password"
-      Chef::Config[:knife][:openstack_api_key] = @expected
-      expect(auth_params[:openstack_api_key]).to be == @expected
+      expected = "password"
+      instance = Chef::Knife::Cloud::OpenstackService.new(config: { openstack_api_key: expected })
+      instance.config[:openstack_api_key] = expected
+      expect(instance.auth_params[:openstack_api_key]).to be == expected
     end
   end
 end

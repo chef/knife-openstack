@@ -1,6 +1,6 @@
 #
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
-# Copyright:: Copyright 2015-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,6 @@ class Chef
         option :instance_id,
           long: "--instance-id ID",
           description: "Instance id to associate it with.",
-          proc: proc { |key| Chef::Config[:knife][:instance_id] = key },
           required: true
 
         def execute_command
@@ -44,9 +43,9 @@ class Chef
             exit 1
           end
 
-          response = @service.associate_address(locate_config_value(:instance_id), floating_ip)
+          response = @service.associate_address(config[:instance_id], floating_ip)
           if response && response.status == 202
-            ui.info "Floating IP #{floating_ip} associated with Instance #{locate_config_value(:instance_id)}"
+            ui.info "Floating IP #{floating_ip} associated with Instance #{config[:instance_id]}"
           end
         end
       end
