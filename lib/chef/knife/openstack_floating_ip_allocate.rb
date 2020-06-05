@@ -1,6 +1,6 @@
 #
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
-# Copyright:: Copyright 2015-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,11 +32,10 @@ class Chef
         option :pool,
           short: "-p POOL",
           long: "--pool POOL",
-          description: "Floating IP pool to allocate from.",
-          proc: proc { |key| Chef::Config[:knife][:pool] = key }
+          description: "Floating IP pool to allocate from."
 
         def execute_command
-          @resource = @service.allocate_address(locate_config_value(:pool))
+          @resource = @service.allocate_address(config[:pool])
         end
 
         def after_exec_command

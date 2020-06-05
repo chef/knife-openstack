@@ -1,5 +1,5 @@
 #
-# Copyright:: Copyright 2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,8 +45,7 @@ class Chef
 
             option :openstack_scheduler_hints,
               long: "--scheduler-hints HINTS",
-              description: "A scheduler group hint to OpenStack",
-              proc: proc { |i| Chef::Config[:knife][:openstack_scheduler_hints] = i }
+              description: "A scheduler group hint to OpenStack"
 
             option :openstack_security_groups,
               short: "-G X,Y,Z",
@@ -58,8 +57,7 @@ class Chef
             option :openstack_ssh_key_id,
               short: "-S KEY",
               long: "--openstack-ssh-key-id KEY",
-              description: "The OpenStack SSH keypair id",
-              proc: proc { |key| Chef::Config[:knife][:openstack_ssh_key_id] = key }
+              description: "The OpenStack SSH keypair id"
 
             option :user_data,
               long: "--user-data USER_DATA",
@@ -85,24 +83,24 @@ class Chef
             option :availability_zone,
               short: "-Z ZONE_NAME",
               long: "--availability-zone ZONE_NAME",
-              description: "The availability zone for this server",
-              proc: proc { |z| Chef::Config[:knife][:availability_zone] = z }
+              description: "The availability zone for this server"
 
             option :metadata,
               short: "-M X=1",
               long: "--metadata X=1",
               description: "Metadata information for this server (may pass multiple times)",
-              proc: proc { |data| Chef::Config[:knife][:metadata] ||= {}; Chef::Config[:knife][:metadata].merge!(data.split("=")[0] => data.split("=")[1]) }
+              proc: proc { |data, accumulator|
+                accumulator ||= {}
+                accumulator.merge!(data.split("=")[0] => data.split("=")[1])
+              }
 
             option :secret_file,
               long: "--secret-file SECRET_FILE",
-              description: "A file containing the secret key to use to encrypt data bag item values",
-              proc: proc { |sf| Chef::Config[:knife][:secret_file] = sf }
+              description: "A file containing the secret key to use to encrypt data bag item values"
 
             option :secret,
               long: "--secret ",
-              description: "The secret key to use to encrypt data bag item values",
-              proc: proc { |s| Chef::Config[:knife][:secret] = s }
+              description: "The secret key to use to encrypt data bag item values"
           end
         end
       end

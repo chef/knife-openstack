@@ -1,7 +1,7 @@
 #
 #
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +23,8 @@ require "chef/knife/cloud/openstack_service"
 describe Chef::Knife::Cloud::OpenstackServerShow do
   context "functionality" do
     before do
-      @instance = Chef::Knife::Cloud::OpenstackServerShow.new
-      Chef::Config[:knife][:instance_id] = "instance_id"
-      @openstack_service = Chef::Knife::Cloud::OpenstackService.new
+      @instance = Chef::Knife::Cloud::OpenstackServerShow.new(["instance_id"])
+      @openstack_service = Chef::Knife::Cloud::OpenstackService.new(config: @instance.config)
       allow(@openstack_service).to receive(:msg_pair)
       allow(@openstack_service).to receive(:print)
       allow_message_expectations_on_nil

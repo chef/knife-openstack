@@ -2,7 +2,7 @@
 #
 # Author:: Mukta Aphale (<mukta.aphale@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@ describe Chef::Knife::Cloud::OpenstackFlavorList do
                   ]
       allow(instance).to receive(:query_resource).and_return(resources)
       allow(instance).to receive(:puts)
-      allow(instance).to receive(:create_service_instance).and_return(Chef::Knife::Cloud::Service.new)
+      allow(instance).to receive(:create_service_instance).and_return(Chef::Knife::Cloud::Service.new(config: instance.config))
       allow(instance).to receive(:validate!)
       instance.config[:format] = "summary"
     end

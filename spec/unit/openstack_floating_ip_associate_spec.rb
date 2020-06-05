@@ -1,7 +1,7 @@
 #
 #
 # Author:: Vasundhara Jagdale (<vasundhara.jagdale@clogeny.com>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ describe Chef::Knife::Cloud::OpenstackFloatingIpAssociate do
   describe "associate floating ip" do
     it "calls associate address" do
       success_message = "Floating IP 127.0.0.1 associated with Instance 23849038438240934n3294839248"
-      @instance.service = Chef::Knife::Cloud::Service.new
+      @instance.service = Chef::Knife::Cloud::Service.new(config: @instance.config)
       response = OpenStruct.new(status: 202)
       expect(@instance.service).to receive(:associate_address).and_return(response)
       expect(@instance.ui).to receive(:info).and_return(success_message)

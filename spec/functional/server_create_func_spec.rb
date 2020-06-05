@@ -6,7 +6,7 @@
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
 # Author:: Lance Albertson (<lance@osuosl.org>)
-# Copyright:: Copyright 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,10 +33,10 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       openstack_auth_url: "openstack_auth_url",
       server_create_timeout: 1000,
     }.each do |key, value|
-      Chef::Config[:knife][key] = value
+      @knife_openstack_create.config[key] = value
     end
 
-    @openstack_service = Chef::Knife::Cloud::OpenstackService.new
+    @openstack_service = Chef::Knife::Cloud::OpenstackService.new(config: @knife_openstack_create.config)
     allow(@openstack_service).to receive(:msg_pair)
     allow(@openstack_service).to receive(:print)
     image = Object.new
@@ -77,16 +77,15 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     context "for Linux" do
       before do
-        @config = { openstack_floating_ip: "-1", bootstrap_ip_address: "75.101.253.10", ssh_password: "password", hints: { "openstack" => {} }, distro: "chef-full" }
-        @knife_openstack_create.config[:distro] = "chef-full"
-        @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@config)
-        @ssh_bootstrap_protocol = Chef::Knife::Cloud::SshBootstrapProtocol.new(@config)
-        @bootstrapdistribution = Chef::Knife::Cloud::BootstrapDistribution.new(@config)
+        @knife_openstack_create.config.merge!({ openstack_floating_ip: "-1", bootstrap_ip_address: "75.101.253.10", ssh_password: "password", hints: { "openstack" => {} }, distro: "chef-full" })
+        @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@knife_openstack_create.config)
+        @ssh_bootstrap_protocol = Chef::Knife::Cloud::SshBootstrapProtocol.new(@knife_openstack_create.config)
+        @bootstrapdistribution = Chef::Knife::Cloud::BootstrapDistribution.new(@knife_openstack_create.config)
         allow(@ssh_bootstrap_protocol).to receive(:send_bootstrap_command)
       end
 
       it "Creates an OpenStack instance and bootstraps it" do
-        expect(Chef::Knife::Cloud::Bootstrapper).to receive(:new).with(@config).and_return(@bootstrapper)
+        expect(Chef::Knife::Cloud::Bootstrapper).to receive(:new).with(@knife_openstack_create.config).and_return(@bootstrapper)
         allow(@bootstrapper).to receive(:bootstrap).and_call_original
         expect(@bootstrapper).to receive(:create_bootstrap_protocol).and_return(@ssh_bootstrap_protocol)
         expect(@bootstrapper).to receive(:create_bootstrap_distribution).and_return(@bootstrapdistribution)
@@ -97,16 +96,13 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
 
     context "for Windows" do
       before do
-        @config = { openstack_floating_ip: "-1", image_os_type: "windows", bootstrap_ip_address: "75.101.253.10", bootstrap_protocol: "winrm", ssh_password: "password", hints: { "openstack" => {} }, distro: "windows-chef-client-msi" }
-        @knife_openstack_create.config[:image_os_type] = "windows"
-        @knife_openstack_create.config[:bootstrap_protocol] = "winrm"
-        @knife_openstack_create.config[:distro] = "windows-chef-client-msi"
-        @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@config)
-        @winrm_bootstrap_protocol = Chef::Knife::Cloud::WinrmBootstrapProtocol.new(@config)
-        @bootstrapdistribution = Chef::Knife::Cloud::BootstrapDistribution.new(@config)
+        @knife_openstack_create.config.merge!({ openstack_floating_ip: "-1", image_os_type: "windows", bootstrap_ip_address: "75.101.253.10", bootstrap_protocol: "winrm", ssh_password: "password", hints: { "openstack" => {} }, distro: "windows-chef-client-msi" })
+        @bootstrapper = Chef::Knife::Cloud::Bootstrapper.new(@knife_openstack_create.config)
+        @winrm_bootstrap_protocol = Chef::Knife::Cloud::WinrmBootstrapProtocol.new(@knife_openstack_create.config)
+        @bootstrapdistribution = Chef::Knife::Cloud::BootstrapDistribution.new(@knife_openstack_create.config)
       end
       it "Creates an OpenStack instance for Windows and bootstraps it" do
-        expect(Chef::Knife::Cloud::Bootstrapper).to receive(:new).with(@config).and_return(@bootstrapper)
+        expect(Chef::Knife::Cloud::Bootstrapper).to receive(:new).with(@knife_openstack_create.config).and_return(@bootstrapper)
         allow(@bootstrapper).to receive(:bootstrap).and_call_original
         expect(@bootstrapper).to receive(:create_bootstrap_protocol).and_return(@winrm_bootstrap_protocol)
         expect(@bootstrapper).to receive(:create_bootstrap_distribution).and_return(@bootstrapdistribution)
