@@ -2,8 +2,6 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "knife-cloud", path: "../knife-cloud"
-
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new("2.7")
   gem "chef-zero", "~> 15"
   gem "chef", "~> 15"
