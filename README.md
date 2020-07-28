@@ -130,7 +130,7 @@ Provides a list of all volumes in the currently configured OpenStack account. Ea
 
 ### `knife openstack image list`
 
-Lists all available images and snapshots available to the currently configured OpenStack account. An image is a collection of files used to create or rebuild a server. The retuned list filters out image names ending in 'initrd', 'kernel', 'loader', 'virtual' or 'vmlinuz' (this may be disabled with `--disable-filter`). This data may be useful when choosing an image to pass to the `knife openstack server create` subcommand.
+Lists all available images and snapshots available to the currently configured OpenStack account. An image is a collection of files used to create or rebuild a server. The returned list filters out image names ending in 'initrd', 'kernel', 'loader', 'virtual' or 'vmlinuz' (this may be disabled with `--disable-filter`). This data may be useful when choosing an image to pass to the `knife openstack server create` subcommand.
 
 ### `knife openstack group list`
 

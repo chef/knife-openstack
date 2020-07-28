@@ -57,7 +57,7 @@ describe Chef::Knife::Cloud::OpenstackServerCreate do
       @instance.config[:openstack_region] = "test-region"
     end
 
-    it "run sucessfully on all params exist" do
+    it "run successfully on all params exist" do
       expect { @instance.validate_params! }.to_not raise_error
     end
   end
