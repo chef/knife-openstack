@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-$:.unshift File.expand_path("../../lib", __FILE__)
+$:.unshift File.expand_path("../lib", __dir__)
 
 # Common helper methods used accrossed knife plugin during Integration testing.
 #

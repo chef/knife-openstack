@@ -20,7 +20,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require File.expand_path("../../spec_helper", __FILE__)
+require File.expand_path("../spec_helper", __dir__)
 require "chef/knife/openstack_server_create"
 require "support/shared_examples_for_servercreatecommand"
 require "support/shared_examples_for_command"

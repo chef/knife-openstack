@@ -16,7 +16,7 @@
 
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "chef/knife/bootstrap"
 require "chef/knife/openstack_helpers"
 require "fog/openstack"
@@ -45,8 +45,8 @@ def is_config_present
   unset_env_var = []
   unset_config_options = []
   is_config = true
-  config_file_exist = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
-  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if config_file_exist
+  config_file_exist = File.exist?(File.expand_path("integration/config/environment.yml", __dir__))
+  openstack_config = YAML.load(File.read(File.expand_path("integration/config/environment.yml", __dir__))) if config_file_exist
   %w{OPENSTACK_USERNAME OPENSTACK_PASSWORD OPENSTACK_AUTH_URL OPENSTACK_TENANT}.each do |os_env_var|
     if ENV[os_env_var].nil?
       unset_env_var << os_env_var
@@ -90,14 +90,14 @@ def init_openstack_test
   init_test
 
   begin
-    data_to_write = File.read(File.expand_path("../integration/config/incorrect_openstack.pem", __FILE__))
+    data_to_write = File.read(File.expand_path("integration/config/incorrect_openstack.pem", __dir__))
     File.open("#{temp_dir}/incorrect_openstack.pem", "w") { |f| f.write(data_to_write) }
   rescue
     puts "Error while creating file - incorrect_openstack.pem"
   end
 
-  config_file_exist = File.exist?(File.expand_path("../integration/config/environment.yml", __FILE__))
-  openstack_config = YAML.load(File.read(File.expand_path("../integration/config/environment.yml", __FILE__))) if config_file_exist
+  config_file_exist = File.exist?(File.expand_path("integration/config/environment.yml", __dir__))
+  openstack_config = YAML.load(File.read(File.expand_path("integration/config/environment.yml", __dir__))) if config_file_exist
 
   %w{OS_SSH_USER OPENSTACK_KEY_PAIR OPENSTACK_PRI_KEY OS_WINDOWS_SSH_USER OS_WINDOWS_SSH_PASSWORD OS_WINRM_USER OS_WINRM_PASSWORD OS_LINUX_IMAGE OS_LINUX_FLAVOR OS_INVALID_FLAVOR OS_INVALID_FLOATING_IP OS_WINDOWS_FLAVOR OS_WINDOWS_IMAGE OS_WINDOWS_SSH_IMAGE OS_NETWORK_IDS OS_AVAILABILITY_ZONE}.each do |os_config_opt|
     instance_variable_set("@#{os_config_opt.downcase}", (openstack_config[os_config_opt] if openstack_config) || ENV[os_config_opt])
