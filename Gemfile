@@ -14,7 +14,7 @@ group :docs do
 end
 
 group :test do
-  gem "chefstyle", "1.4.0"
+  gem "chefstyle", "1.4.2"
   gem "guard-rspec"
   gem "mixlib-shellout"
   gem "rake"
