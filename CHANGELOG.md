@@ -1,15 +1,16 @@
 # knife-openstack Change Log
 
-<!-- latest_release 4.0.10 -->
-## [v4.0.10](https://github.com/chef/knife-openstack/tree/v4.0.10) (2020-10-09)
+<!-- latest_release 4.0.11 -->
+## [v4.0.11](https://github.com/chef/knife-openstack/tree/v4.0.11) (2020-10-13)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 1.4.3 to 1.4.4 [#242](https://github.com/chef/knife-openstack/pull/242) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.4.4 to 1.4.5 [#243](https://github.com/chef/knife-openstack/pull/243) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
 <!-- latest_release -->
 <!-- release_rollup since=4.0.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update chefstyle requirement from 1.4.4 to 1.4.5 [#243](https://github.com/chef/knife-openstack/pull/243) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 4.0.11 -->
 - Update chefstyle requirement from 1.4.3 to 1.4.4 [#242](https://github.com/chef/knife-openstack/pull/242) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 4.0.10 -->
 - Update chefstyle requirement from 1.4.2 to 1.4.3 [#241](https://github.com/chef/knife-openstack/pull/241) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 4.0.9 -->
 - Update chefstyle requirement from 1.4.0 to 1.4.2 [#240](https://github.com/chef/knife-openstack/pull/240) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 4.0.8 -->
