@@ -5,6 +5,7 @@ gemspec
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new("2.7")
   gem "chef-zero", "~> 15"
   gem "chef", "~> 15"
+  gem "knife", "~> 15"
 end
 
 group :docs do
