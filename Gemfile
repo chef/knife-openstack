@@ -2,11 +2,6 @@ source "https://rubygems.org"
 
 gemspec
 
-if Gem::Version.new(RUBY_VERSION) < Gem::Version.new("2.7")
-  gem "chef-zero", "~> 15"
-  gem "chef", "~> 15"
-end
-
 group :docs do
   gem "github-markup"
   gem "redcarpet"
@@ -14,7 +9,7 @@ group :docs do
 end
 
 group :test do
-  gem "chefstyle", "2.0.5"
+  gem "chefstyle", "2.0.6"
   gem "guard-rspec"
   gem "mixlib-shellout"
   gem "rake"
