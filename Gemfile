@@ -9,7 +9,7 @@ group :docs do
 end
 
 group :test do
-  gem "chefstyle", "2.0.7"
+  gem "chefstyle", "2.0.8"
   gem "guard-rspec"
   gem "mixlib-shellout"
   gem "rake"
