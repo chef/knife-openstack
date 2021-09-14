@@ -89,7 +89,7 @@ describe "knife-openstack integration test", if: is_config_present do
   end
 
   describe "display help for command" do
-    %w{flavor\ list server\ create server\ delete server\ list group\ list image\ list network\ list }.each do |command|
+    ["flavor list", "server create", "server delete", "server list", "group list", "image list", "network list"].each do |command|
       context "when --help option used with #{command} command" do
         let(:command) { "knife openstack #{command} --help" }
         run_cmd_check_stdout("--help")
