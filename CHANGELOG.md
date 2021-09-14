@@ -1,15 +1,16 @@
 # knife-openstack Change Log
 
-<!-- latest_release 5.0.1 -->
-## [v5.0.1](https://github.com/chef/knife-openstack/tree/v5.0.1) (2021-07-26)
+<!-- latest_release 5.0.2 -->
+## [v5.0.2](https://github.com/chef/knife-openstack/tree/v5.0.2) (2021-09-14)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 2.0.6 to 2.0.7 [#262](https://github.com/chef/knife-openstack/pull/262) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update chefstyle requirement from 2.0.7 to 2.0.9 [#264](https://github.com/chef/knife-openstack/pull/264) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 <!-- release_rollup since=5.0.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update chefstyle requirement from 2.0.7 to 2.0.9 [#264](https://github.com/chef/knife-openstack/pull/264) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 5.0.2 -->
 - Update chefstyle requirement from 2.0.6 to 2.0.7 [#262](https://github.com/chef/knife-openstack/pull/262) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 5.0.1 -->
 <!-- release_rollup -->
 <!-- latest_stable_release -->
