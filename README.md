@@ -3,14 +3,6 @@
 [![Gem Version](https://badge.fury.io/rb/knife-openstack.svg)](https://rubygems.org/gems/knife-openstack)
 [![Build status](https://badge.buildkite.com/23e31b5c36dffc9c924711dda18b303fcf9f3282cce52d1133.svg?branch=master)](https://buildkite.com/chef-oss/chef-knife-openstack-master-verify)
 
-* **Umbrella Project: [Knife](https://github.com/chef/chef-oss-practices/blob/master/projects/knife.md)**
-
-* **Project State [Active](https://github.com/chef/chef-oss-practices/blob/master/repo-management/repo-states.md#active)**
-
-* **Issues [Response Time Maximum](https://github.com/chef/chef-oss-practices/blob/master/repo-management/repo-states.md#what-is-the-response-time-maximum): 14 days**
-
-* **Pull Request [Response Time Maximum](https://github.com/chef/chef-oss-practices/blob/master/repo-management/repo-states.md#what-is-the-response-time-maximum): 14 days**
-
 This is the official Chef Knife plugin for OpenStack Compute (Nova). This plugin gives knife the ability to create, bootstrap and manage instances in OpenStack Compute clouds. It has been tested against the `Diablo` through `Kilo` releases in configurations using Keystone against the OpenStack API (as opposed to the EC2 API).
 
 Please refer to the [CHANGELOG](CHANGELOG.md) for version history and known issues.
