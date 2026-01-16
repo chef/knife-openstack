@@ -153,8 +153,6 @@ Author:: JJ Asghar ([jj@chef.io](mailto:jj@chef.io))
 
 Author:: Lance Albertson ([lance@osuosl.org](mailto:lance@osuosl.org))
 
-Copyright:: Copyright 2011-2020 Chef Software, Inc.
-
 License:: Apache License, Version 2.0
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -169,3 +167,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+# Copyright
+See [COPYRIGHT.md](./COPYRIGHT.md).
