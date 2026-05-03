@@ -1,6 +1,6 @@
 #
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
-# Copyright:: Copyright 2013-2019 Chef Software, Inc.
+# Copyright:: Copyright (c) 2011-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 
 require "bundler/setup"
 require "bundler/gem_tasks"

@@ -5,7 +5,7 @@
 # Author:: Siddheshwar More (<siddheshwar.more@clogeny.com>)
 # Author:: Ameya Varade (<ameya.varade@clogeny.com>)
 # Author:: Lance Albertson (<lance@osuosl.org>)
-# Copyright:: Copyright (c) Chef Software Inc.
+# Copyright:: Copyright (c) 2011-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
